@@ -5,6 +5,7 @@ from datetime import date, timedelta
 today = date.today()
 import mysql.connector
 import string
+import json
 alphabets = list(string.ascii_uppercase)
 
 # filepath = r"C:\Users\kpras\Desktop\AutomatedBorrowerUploadTemplate.xlsx"
@@ -244,11 +245,14 @@ def sma(dpd):
 df_template['Loan Ac Classification In F.I.'] = df_template['Current DPD'].apply(sma)
 df_template['SMA/Bucket'] = df_template['Loan Ac Classification In F.I.'].str[-1:]
 
+with open('db_config.json') as f:
+    config = json.load(f)
+
 conn = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="Punjab1$",
-    database="mynewproject"
+    host=config["host"],
+    user=config["user"],
+    password=config["password"],
+    database=config["database"]
 )
 
 cursor = conn.cursor()

@@ -1,10 +1,14 @@
 import pymysql
+import json
+
+with open('db_config.json') as f:
+    config = json.load(f)
 
 conn = pymysql.connect(
-    host="localhost",  # e.g., "localhost"
-    user="root",
-    password="Punjab1$",
-    database="mynewproject"
+    host=config["host"],
+    user=config["user"],
+    password=config["password"],
+    database=config["database"]
 )
 
 cursor = conn.cursor()

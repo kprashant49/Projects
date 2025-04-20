@@ -1,11 +1,13 @@
 import pandas as pd
 from sqlalchemy import create_engine
+import json
+with open('db_config.json') as f:
+    config = json.load(f)
 
-# Database connection details
-host = "localhost"
-user = "root"
-password = "Punjab1$"
-database = "mynewproject"
+host=config["host"]
+user=config["user"]
+password=config["password"]
+database=config["database"]
 
 # Create engine
 engine = create_engine(f"mysql+pymysql://{user}:{password}@{host}/{database}")

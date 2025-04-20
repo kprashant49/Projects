@@ -2,15 +2,20 @@ from fastapi import FastAPI, HTTPException
 from sqlalchemy import create_engine, text
 import pymysql
 import pandas as pd
+import json
+
+# Database connection details
+with open('db_config.json') as f:
+    config = json.load(f)
+
+host=config["host"]
+user=config["user"]
+password=config["password"]
+database=config["database"]
 
 # Initialize FastAPI
 app = FastAPI()
 
-# Database connection details
-host = "localhost"
-user = "root"
-password = "Punjab1$"
-database = "mynewproject"
 
 # Create SQLAlchemy engine
 engine = create_engine(f"mysql+pymysql://{user}:{password}@{host}/{database}")

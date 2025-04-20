@@ -1,11 +1,13 @@
 import pandas as pd
 from sqlalchemy import create_engine
+import json
+with open('db_config.json') as f:
+    config = json.load(f)
 
-# Database connection details
-host = "localhost"
-user = "root"
-password = "Punjab1$"
-database = "mynewproject"
+host=config["host"]
+user=config["user"]
+password=config["password"]
+database=config["database"]
 
 # Create SQLAlchemy engine
 engine = create_engine(f"mysql+mysqlconnector://{user}:{password}@{host}/{database}")
@@ -18,9 +20,9 @@ engine = create_engine(f"mysql+mysqlconnector://{user}:{password}@{host}/{databa
 # df = pd.DataFrame(data)
 
 new_data = {
-    "id": [4, 5],  # Make sure ID is unique if it's a PRIMARY KEY
-    "name": ["David", "Emma"],
-    "age": [28, 24]
+    "id": [6, 7],  # Make sure ID is unique if it's a PRIMARY KEY
+    "name": ["Scott", "Emily"],
+    "age": [22, 25]
 }
 df_new = pd.DataFrame(new_data)
 

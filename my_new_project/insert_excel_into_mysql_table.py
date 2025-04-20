@@ -1,15 +1,17 @@
 import pandas as pd
 import pymysql
 from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, DateTime
+import json
+with open('db_config.json') as f:
+    config = json.load(f)
 
-# Database connection details
-DB_USER = "root"
-DB_PASSWORD = "Punjab1$"
-DB_HOST = "localhost"
-DB_NAME = "mynewproject"
+host=config["host"]
+user=config["user"]
+password=config["password"]
+database=config["database"]
 
 # Create SQLAlchemy engine
-engine = create_engine(f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}?charset=utf8mb4")
+engine = create_engine(f"mysql+pymysql://{user}:{password}@{host}/{database}?charset=utf8mb4")
 metadata = MetaData()
 
 # Define Table Schema

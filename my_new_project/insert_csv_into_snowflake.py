@@ -4,7 +4,7 @@ import pandas as pd
 # Snowflake connection parameters
 SNOWFLAKE_CONFIG = {
     "user": "KPRASHANT49",
-    "password": "KumarPapillonA3604",
+    "password": "KrPapillonA6",
     "account": "CAVKSJX-DS08600",
     "warehouse": "COMPUTE_WH",
     "database": "MYFIRSTPROJECT",

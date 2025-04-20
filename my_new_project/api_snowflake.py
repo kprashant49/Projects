@@ -6,7 +6,7 @@ app = FastAPI()
 # Snowflake connection configuration
 SNOWFLAKE_CONFIG = {
     "user": "KPRASHANT49",
-    "password": "KumarPapillonA3604",
+    "password": "KrPapillonA6",
     "account": "CAVKSJX-DS08600",
     # "warehouse": "your_warehouse",
     "database": "MYFIRSTPROJECT",

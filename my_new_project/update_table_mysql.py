@@ -1,18 +1,21 @@
 import mysql.connector
 import pandas as pd
+import json
 
-# Connect to MySQL
+with open('db_config.json') as f:
+    config = json.load(f)
+
 conn = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="Punjab1$",
-    database="mynewproject"
+    host=config["host"],
+    user=config["user"],
+    password=config["password"],
+    database=config["database"]
 )
 cursor = conn.cursor()
 
 update_data = {
     "id": [1, 2],
-    "name": ["Alice_updated", "Bob_updated"],
+    "name": ["Alice", "Bob"],
     "age": [26, 31]
 }
 df_update = pd.DataFrame(update_data)
