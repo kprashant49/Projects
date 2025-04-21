@@ -70,9 +70,9 @@ headers_static = ['PAI_A/c_Number', 'Principal Outstanding', 'Interest Outstandi
 
 df_template = pd.DataFrame(columns=headers_static)
 
-Bank = "HDFC"
-Count = 10
-Collateral = 'Home'
+Bank = "iDFC"
+Count = 2000
+Collateral = ''
 df_borrowers = []
 POS = []
 IOS = []
@@ -97,6 +97,11 @@ PHONE = []
 PHONE2 = []
 DOB = []
 LEAD = []
+MFG_REG_YEAR = []
+ENG = []
+CHA = []
+REF1_PNE = []
+REF2_PNE = []
 
 for i in range(Count):
     borrower = Bank + str(randint(1000000, 9999999))
@@ -123,6 +128,8 @@ for i in range(Count):
     apr_date = today - timedelta(days=apr_days)
     apr_date_str = apr_date.strftime('%Y-%m-%d')
     APR_DT.append(apr_date_str)
+    mfg_reg_year = apr_date.year
+    MFG_REG_YEAR.append(mfg_reg_year)
     disb_date = apr_date + timedelta(days=30)
     disb_date_str = disb_date.strftime('%Y-%m-%d')
     DISB_DT.append(disb_date_str)
@@ -168,6 +175,30 @@ for i in range(Count):
     rto_number = randint(1000, 9999)
     rto_number_str = str(rto_series1) + str(rto_series2) + str(rto_number)
     RTO.append(rto_number_str)
+    eng_letter1 = random.choice(alphabets)
+    eng_letter2 = random.choice(alphabets)
+    eng_letter3 = random.choice(alphabets)
+    eng_letter4 = random.choice(alphabets)
+    eng_letter5 = random.choice(alphabets)
+    eng_letter6 = random.choice(alphabets)
+    eng_num = randint(1000000, 9999999)
+    eng_no = eng_letter1 + eng_letter2 + eng_letter3 + str(eng_num) + eng_letter4 + eng_letter5 + eng_letter6
+    ENG.append(eng_no)
+    cha_letter1 = random.choice(alphabets)
+    cha_letter2 = random.choice(alphabets)
+    cha_letter3 = random.choice(alphabets)
+    cha_letter4 = random.choice(alphabets)
+    cha_letter5 = random.choice(alphabets)
+    cha_letter6 = random.choice(alphabets)
+    cha_num = randint(1000000, 9999999)
+    cha_no = cha_letter1 + cha_letter2 + cha_letter3 + str(cha_num) + cha_letter4 + cha_letter5 + cha_letter6
+    CHA.append(cha_no)
+    ref1_phone = randint(100000000,999999999)
+    ref1_phone = "9" + str(ref1_phone)
+    REF1_PNE.append(ref1_phone)
+    ref2_phone = randint(100000000, 999999999)
+    ref2_phone = "9" + str(ref2_phone)
+    REF2_PNE.append(ref2_phone)
 
 # Variable headers
 df_template['PAI_A/c_Number'] = df_borrowers
@@ -203,13 +234,12 @@ df_template['KYC Number 1'] = PAN
 df_template['KYC Number 2'] = UID
 df_template['Lead Id'] = LEAD
 df_template['Last Borrower Contact No. Contacted'] = PHONE
-df_template['Registration date'] = APR_DT
-df_template['Valuation_Amount'] = APR
 
 # Hard-coded headers
 df_template.loc[:,'Last_Charges_Amount'] = 0
 df_template.loc[:,'Charges Outstanding'] = 0
 df_template.loc[:,'Other Charges'] = 0
+df_template.loc[:,'AUM'] = 0
 df_template.loc[:,'CBC (Cheque Bounce Charges)'] = 0
 df_template.loc[:,'Loan Status'] = 'Active'
 df_template.loc[:,'Penal Rate Of Interest'] = 0
@@ -291,6 +321,37 @@ sampled_rows_companies = random.choices(rows_companies, k=Count)
 
 companies = [row[0] for row in sampled_rows_companies]
 
+query_ref1_names = f"SELECT Full_Name FROM sample_indian_names"
+cursor.execute(query_ref1_names)
+rows_ref1_names = cursor.fetchall()
+sampled_rows_ref1_names = random.choices(rows_ref1_names, k=Count)
+
+ref1_names = [row[0] for row in sampled_rows_ref1_names]
+ref1_email = [f"{name.replace(' ', '')}{randint(1, 90)}@gmail.com" for name in ref1_names]
+
+query_ref1_addresses = f"Select officename, regionname, divisionname, district, statename, pincode FROM pincode_master"
+cursor.execute(query_ref1_addresses)
+rows_ref1_address  = cursor.fetchall()
+sampled_rows_ref1_address = random.choices(rows_ref1_address, k=Count)
+
+ref1_address = [f"{row[0]} {row[1]} {row[2]} {row[3]} {row[4]} {row[5]}" for row in sampled_rows_ref1_address]
+
+query_ref2_names = f"SELECT Full_Name FROM sample_indian_names"
+cursor.execute(query_ref2_names)
+rows_ref2_names = cursor.fetchall()
+sampled_rows_ref2_names = random.choices(rows_ref2_names, k=Count)
+
+ref2_names = [row[0] for row in sampled_rows_ref2_names]
+ref2_email = [f"{name.replace(' ', '')}{randint(1, 90)}@gmail.com" for name in ref2_names]
+
+query_ref2_addresses = f"Select officename, regionname, divisionname, district, statename, pincode FROM pincode_master"
+cursor.execute(query_ref2_addresses)
+rows_ref2_address  = cursor.fetchall()
+sampled_rows_ref2_address = random.choices(rows_ref2_address, k=Count)
+
+ref2_address = [f"{row[0]} {row[1]} {row[2]} {row[3]} {row[4]} {row[5]}" for row in sampled_rows_ref2_address]
+
+
 if Collateral == 'Car':
 
     query_rto = f"SELECT REGISTRATION_NUMBER, upper(CITY_UT) as CITY_UT, upper(STATE) as STATE FROM rto_data where length(REGISTRATION_NUMBER) <= 4"
@@ -322,6 +383,15 @@ if Collateral == 'Car':
     df_template['Vehicle Model'] = model
     df_template.loc[:,'Collateral Type'] = 'Car'
     df_template.loc[:, 'Vehicle Type'] = 'Car'
+    df_template['Registration date'] = APR_DT
+    df_template['Valuation_Amount'] = APR
+    df_template['Manufacture Year'] = MFG_REG_YEAR
+    df_template['Registration Year'] = MFG_REG_YEAR
+    df_template['Engine Number'] = ENG
+    df_template['Chassis Number'] = CHA
+    df_template.loc[:, 'Type_of_loan'] = 'Vehicle'
+    df_template.loc[:, 'Product'] = 'Vehicle Loan'
+    df_template.loc[:, 'Product Category'] = 'Secured'
 
 elif Collateral == 'Home':
 
@@ -330,6 +400,7 @@ elif Collateral == 'Home':
     df_template.loc[:, 'Communication Address is Collateral'] = 'Yes'
     df_template.loc[:, 'Type of Property Sub'] = 'Apartment'
     df_template.loc[:, 'Dealer/Builder Name'] = 'NA'
+    df_template['Completion Year'] = MFG_REG_YEAR
     df_template['Collateral Address 1'] = address1
     df_template['Collateral Address 2'] = address2
     df_template['Collateral Landmark'] = address3
@@ -337,6 +408,15 @@ elif Collateral == 'Home':
     df_template['Collateral State'] = state
     df_template['Collateral Pincode'] = pincode
     df_template['Property District'] = city
+    df_template.loc[:, 'Type_of_loan'] = 'Home'
+    df_template.loc[:, 'Product'] = 'Home Loan'
+    df_template.loc[:, 'Product Category'] = 'Secured'
+
+else:
+
+    df_template.loc[:, 'Type_of_loan'] = 'Personal'
+    df_template.loc[:, 'Product'] = 'Personal Loan'
+    df_template.loc[:, 'Product Category'] = 'Unsecured'
 
 cursor.close()
 conn.close()
@@ -363,5 +443,15 @@ df_template['Company(office) Address State']=state
 df_template['Company(office) Address Pin code']=pincode
 
 df_template['Company Name']=companies
+
+df_template['RERERENCE 1 NAME']=ref1_names
+df_template['REFERENCE 1 ADDRESS']=ref1_address
+df_template['REFERENCE 1 CONTACT']=REF1_PNE
+df_template['REFERENCE 1 EMAIL']=ref1_email
+
+df_template['RERERENCE 2 NAME']=ref2_names
+df_template['REFERENCE 2 ADDRESS']=ref2_address
+df_template['REFERENCE 2 CONTACT']=REF2_PNE
+df_template['REFERENCE 2 EMAIL']=ref2_email
 
 df_template.to_excel(r"C:\Users\kpras\Desktop\Template_py.xlsx", index=False)
