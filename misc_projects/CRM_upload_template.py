@@ -70,9 +70,9 @@ headers_static = ['PAI_A/c_Number', 'Principal Outstanding', 'Interest Outstandi
 
 df_template = pd.DataFrame(columns=headers_static)
 
-Bank = "iDFC"
+Bank = "IDFC"
 Count = 2000
-Collateral = ''
+Collateral = 'Car'
 df_borrowers = []
 POS = []
 IOS = []
@@ -454,4 +454,4 @@ df_template['REFERENCE 2 ADDRESS']=ref2_address
 df_template['REFERENCE 2 CONTACT']=REF2_PNE
 df_template['REFERENCE 2 EMAIL']=ref2_email
 
-df_template.to_excel(r"C:\Users\kpras\Desktop\Template_py.xlsx", index=False)
+df_template.to_excel(r"C:\Users\kpras\Desktop\CRM_template_py.xlsx", index=False)
