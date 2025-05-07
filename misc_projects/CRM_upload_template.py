@@ -68,7 +68,19 @@ headers_static = ['PAI_A/c_Number', 'Principal Outstanding', 'Interest Outstandi
                   'Guarantor KYC Number 1', 'Guarantor KYC TYPE 2', 'Guarantor KYC Number 2', 'Guarantor KYC for POI',
                   'Guarantor KYC for POA', 'Guarantor District', 'Guarantor Gst No.']
 
+headers_static_pmt = ['Lead Id','Borrowers Code','Payment Detail Name','Payment Detail Allocated Agent','Payment Detail Allocated Agent Id',
+                      'Payment Detail Bank/Client LAN','Payment Detail Payment Amount','Payment Detail Payment Mode','Payment Detail Deposit Date',
+                      'Payment Detail Receipting  Transaction Date','Payment Detail CRM System LAN','Payment Detail Status','State','Borrower State',
+                      'Payment Detail Transaction of Receipting','Payment Detail Date Of Modification / Deletion','Payment Detail Reasons For Modification / Deletion',
+                      'Financial Institution Contact Address','Financial Institution Contact Mail Id','Financial Institution Contact No',
+                      'Financial Institution Contact Person Email Id','Financial Institution Contact Person Name','Financial Institution Contact Person No',
+                      'Financial Institution Soucing Branch Name','Payment Detail Financial Institution Name(ORG)','Payment Detail Financial Institution Name(ORG) Id',
+                      'Payment Detail OTS / NON OTS / EMI Payment','NPA Date','Principal Outstanding','Loan Product','Type Of Loan',
+                      'Payment Detail User / Telecaller  / Field Agent Name','SMA/Bucket','Loan Ac Classification In F.I.','FI Allocation / Assignment Date',
+                      'FI Allocation / Assignment End Date','Payment Detail Pepper Receipting  Date','Payment Detail Created By','Payment Detail Created By Id']
+
 df_template = pd.DataFrame(columns=headers_static)
+df_template_pmt = pd.DataFrame(columns=headers_static_pmt)
 
 Bank = "IDFC"
 Count = 2000
@@ -102,6 +114,7 @@ ENG = []
 CHA = []
 REF1_PNE = []
 REF2_PNE = []
+PMT_DT = []
 
 for i in range(Count):
     borrower = Bank + str(randint(1000000, 9999999))
@@ -199,6 +212,9 @@ for i in range(Count):
     ref2_phone = randint(100000000, 999999999)
     ref2_phone = "9" + str(ref2_phone)
     REF2_PNE.append(ref2_phone)
+    pmt_date = today - timedelta(days=1)
+    pmt_date_str = pmt_date.strftime('%Y-%m-%d')
+    PMT_DT.append(pmt_date_str)
 
 # Variable headers
 df_template['PAI_A/c_Number'] = df_borrowers
@@ -455,3 +471,17 @@ df_template['REFERENCE 2 CONTACT']=REF2_PNE
 df_template['REFERENCE 2 EMAIL']=ref2_email
 
 df_template.to_excel(r"C:\Users\kpras\Desktop\CRM_template_py.xlsx", index=False)
+
+df_template_pmt['Lead Id'] = df_borrowers
+df_template_pmt['Payment Detail Bank/Client LAN'] = df_borrowers
+df_template_pmt['Payment Detail Name'] = full_names
+df_template_pmt['Payment Detail Payment Amount'] = TOS
+df_template_pmt['Payment Detail Deposit Date'] = PMT_DT
+df_template_pmt['Payment Detail Receipting  Transaction Date'] = PMT_DT
+
+df_template_pmt.loc[:,'Payment Detail Payment Mode'] = 'UPI'
+df_template_pmt.loc[:,'Payment Detail Status'] = 'Received'
+df_template_pmt.loc[:,'Payment Detail OTS / NON OTS / EMI Payment'] = 'EMI Payment'
+df_template_pmt.loc[:,'Payment Detail Financial Institution Name(ORG)'] = Bank
+
+df_template_pmt.to_excel(r"C:\Users\kpras\Desktop\CRM_pmt_template_py.xlsx", index=False)
