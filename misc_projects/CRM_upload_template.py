@@ -61,7 +61,8 @@ headers_static = ['PAI_A/c_Number', 'Principal Outstanding', 'Interest Outstandi
                   'PAI Zonal Manager Name', 'PAI Zone Name', 'PAI Regional Manager Name', 'PAI Region Name', 'PAI Hub Name', 'PAI Branch Name',
                   'PAI Spoke Location Name', 'PAI Business Sourcing Staff Name', 'PAI Business Sourcing Staff Emp Code',
                   'PAI Business Sourcing Date', 'Name Of Contacted', 'Guarantor First Name', 'Guarantor Middle Name', 'Guarantor Last Name',
-                  'Guarantor Full Name', 'Guarantor Gender', 'Guarantor MaritalStatus', 'Guarantor Address_Type', 'Guarantor Address_Tag',
+                  'Guarantor Full Name', 'Guarantor Gender', 'Guarantor MaritalStatus', 'Guarantor Contact Number','Guarantor Alternate Contact Number',
+                  'Guarantor Date of Birth','Guarantor Address_Type', 'Guarantor Address_Tag',
                   'Guarantor Address 1', 'Guarantor Address 2', 'Guarantor Address 3', 'Guarantor Landmark', 'Guarantor City',
                   'Guarantor State', 'Guarantor Pincode', 'Guarantor Co-ordinates_Lattitue', 'Guarantor Co-ordinates_Longitutde',
                   'Guarantor Address_Verified', 'Guarantor Distance from Median', 'Guarantor Median', 'Guarantor KYC TYPE 1',
@@ -83,7 +84,7 @@ df_template = pd.DataFrame(columns=headers_static)
 df_template_pmt = pd.DataFrame(columns=headers_static_pmt)
 
 Bank = "IDFC"
-Count = 2000
+Count = 300
 Collateral = 'Car'
 df_borrowers = []
 POS = []
