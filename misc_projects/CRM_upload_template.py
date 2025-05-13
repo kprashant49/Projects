@@ -275,8 +275,8 @@ df_template.loc[:,'Address_Tag'] = 'Residential'
 df_template.loc[:,'Address_Verified'] = 'No'
 df_template.loc[:,'KYC TYPE 1'] = 'PAN'
 df_template.loc[:,'KYC TYPE 2'] = 'Aadhaar'
-df_template.loc[:,'KYC for POI'] = 'PAN'
-df_template.loc[:,'KYC for POA'] = 'Aadhaar'
+df_template.loc[:,'KYC for POI'] = 'Yes'
+df_template.loc[:,'KYC for POA'] = 'Yes'
 df_template.loc[:,'Code'] = 'Individual'
 df_template.loc[:,'Borrower Status'] = 'Active'
 df_template.loc[:,'Country'] = 'India'
@@ -471,7 +471,7 @@ df_template['REFERENCE 2 ADDRESS']=ref2_address
 df_template['REFERENCE 2 CONTACT']=REF2_PNE
 df_template['REFERENCE 2 EMAIL']=ref2_email
 
-df_template.to_excel(r"C:\Users\kpras\Desktop\CRM_template_py.xlsx", index=False)
+df_template.to_excel(r"C:\Users\kpras\Desktop\CRM_borrower_upload_template_py.xlsx", index=False)
 
 df_template_pmt['Lead Id'] = df_borrowers
 df_template_pmt['Payment Detail Bank/Client LAN'] = df_borrowers
