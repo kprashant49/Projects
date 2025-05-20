@@ -490,7 +490,6 @@ if Co_borrower == 'Yes':
     df_template['Co-Borrower LAST_NAME'] = surnames_cb
     df_template['Co-Borrower FATHER_NAME'] = father_names_cb
     df_template['Co-Borrower Email'] = email_cb
-
     df_template['Co-Borrower Address 1'] = address1_cb
     df_template['Co-Borrower Address 2'] = address2_cb
     df_template['Co-Borrower Address 3'] = address3_cb
@@ -499,21 +498,17 @@ if Co_borrower == 'Yes':
     df_template['Co-Borrower District'] = city_cb
     df_template['Co-Borrower State'] = state_cb
     df_template['Co-Borrower Pincode'] = pincode_cb
-
     df_template['Co-Borrower Company(office) Address'] = df_template['Co-Borrower Address 1'] + " " + df_template['Co-Borrower Address 2'] + " " + \
                                              df_template['Co-Borrower Address 3']
     df_template['Co-Borrower Company(office) Address City'] = city_cb
     df_template['Co-Borrower Company(office) Address State'] = state_cb
     df_template['Co-Borrower Company(office) Address Pin code'] = pincode_cb
-
     df_template['Co-Borrower Company Name'] = companies_cb
-
     df_template['Co-Borrower Contact Number'] = PHONE_CB
     df_template['Co-Borrower Alternate Contact Number'] = PHONE2_CB
     df_template['Co-Borrower DATE_OF_BIRTH'] = DOB_CB
     df_template['Co-Borrower KYC Number 1'] = PAN_CB
     df_template['Co-Borrower KYC Number 2'] = UID_CB
-
     df_template.loc[:, 'Co-Borrower CUSTOMER_TYPE'] = 'Individual'
     df_template.loc[:, 'Co-Borrower INDUSTRY_CODE'] = 'Manufacturing'
     df_template.loc[:, 'Co-Borrower GENDER'] = 'Male'
@@ -676,4 +671,4 @@ df_template_pmt.loc[:,'Payment Detail Status'] = 'Received'
 df_template_pmt.loc[:,'Payment Detail OTS / NON OTS / EMI Payment'] = 'EMI Payment'
 df_template_pmt.loc[:,'Payment Detail Financial Institution Name(ORG)'] = Bank
 
-df_template_pmt.to_excel(r"C:\Users\kpras\Desktop\CRM_pmt_template_py.xlsx", index=False)
+df_template_pmt.to_excel(r"C:\Users\kpras\Desktop\CRM_payment_upload_template_py.xlsx", index=False)
