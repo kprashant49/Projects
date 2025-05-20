@@ -86,6 +86,8 @@ df_template_pmt = pd.DataFrame(columns=headers_static_pmt)
 Bank = "IDFC"
 Count = 300
 Collateral = 'Car'
+Co_borrower = 'No'
+
 df_borrowers = []
 POS = []
 IOS = []
@@ -96,7 +98,9 @@ EMI_DT = []
 TENOR = []
 ROI = []
 PAN = []
+PAN_CB = []
 UID = []
+UID_CB = []
 RTO = []
 APR = []
 APR_DT = []
@@ -107,8 +111,11 @@ TERM_REM = []
 LTV = []
 TERM_PAID = []
 PHONE = []
+PHONE_CB = []
 PHONE2 = []
+PHONE2_CB = []
 DOB = []
+DOB_CB = []
 LEAD = []
 MFG_REG_YEAR = []
 ENG = []
@@ -162,15 +169,25 @@ for i in range(Count):
     phone = randint(100000000,999999999)
     phone = "9" + str(phone)
     PHONE.append(phone)
+    phone_cb = randint(100000000,999999999)
+    phone_cb = "9" + str(phone_cb)
+    PHONE_CB.append(phone_cb)
     phone2 = randint(100000000, 999999999)
     phone2 = "9" + str(phone2)
     PHONE2.append(phone2)
+    phone2_cb = randint(100000000, 999999999)
+    phone2_cb = "9" + str(phone2_cb)
+    PHONE2_CB.append(phone2_cb)
     ltv = randint(50, 90)
     LTV.append(ltv)
     dob_days = randint(25, 50)
     dob = today - timedelta(days=(dob_days * 365))
     dob_str = dob.strftime('%Y-%m-%d')
     DOB.append(dob_str)
+    dob_days_cb = randint(25, 50)
+    dob_cb = today - timedelta(days=(dob_days_cb * 365))
+    dob_str_cb = dob_cb.strftime('%Y-%m-%d')
+    DOB_CB.append(dob_str_cb)
     lead = randint(100000,999999)
     LEAD.append(lead)
     pan_letter1 = random.choice(alphabets)
@@ -181,9 +198,20 @@ for i in range(Count):
     pan_num = randint(1000, 9999)
     pan_no = pan_letter1 + pan_letter2 + pan_letter3 + "P" + pan_letter4 + str(pan_num) + pan_letter5
     PAN.append(pan_no)
+    pan_letter_cb1 = random.choice(alphabets)
+    pan_letter_cb2 = random.choice(alphabets)
+    pan_letter_cb3 = random.choice(alphabets)
+    pan_letter_cb4 = random.choice(alphabets)
+    pan_letter_cb5 = random.choice(alphabets)
+    pan_num_cb = randint(1000, 9999)
+    pan_no_cb = pan_letter_cb1 + pan_letter_cb2 + pan_letter_cb3 + "P" + pan_letter_cb4 + str(pan_num_cb) + pan_letter_cb5
+    PAN_CB.append(pan_no_cb)
     uid_num = randint(1000, 9999)
     uid = "XXXXXXXX"+str(uid_num)
     UID.append(uid)
+    uid_num_cb = randint(1000, 9999)
+    uid_cb = "XXXXXXXX" + str(uid_num_cb)
+    UID_CB.append(uid_cb)
     rto_series1 = random.choice(alphabets)
     rto_series2 = random.choice(alphabets)
     rto_number = randint(1000, 9999)
@@ -367,6 +395,87 @@ rows_ref2_address  = cursor.fetchall()
 sampled_rows_ref2_address = random.choices(rows_ref2_address, k=Count)
 
 ref2_address = [f"{row[0]} {row[1]} {row[2]} {row[3]} {row[4]} {row[5]}" for row in sampled_rows_ref2_address]
+
+# Co-borrower details
+
+cursor = conn.cursor()
+query_names_cb = f"SELECT First_Name, Middle_Name, Surname FROM sample_indian_names"
+cursor.execute(query_names_cb)
+rows_names_cb = cursor.fetchall()
+sampled_rows_names_cb = random.choices(rows_names_cb, k=Count)
+
+first_names_cb = [row[0] for row in sampled_rows_names_cb]
+middle_names_cb = [row[1] for row in sampled_rows_names_cb]
+surnames_cb = [row[2] for row in sampled_rows_names_cb]
+full_names_cb = [f"{row[0]} {row[1]} {row[2]}" for row in sampled_rows_names_cb]
+father_names_cb = [f"{row[1]} {row[2]}" for row in sampled_rows_names_cb]
+email_cb = [f"{row[0]}.{row[2]}{randint(1, 90)}@gmail.com" for row in sampled_rows_names_cb]
+
+query_addresses_cb = f"Select officename, regionname, divisionname, district, statename, pincode FROM pincode_master"
+cursor.execute(query_addresses_cb)
+rows_address_cb  = cursor.fetchall()
+sampled_rows_address_cb = random.choices(rows_address_cb, k=Count)
+
+address1_cb = [row[0] for row in sampled_rows_address_cb]
+address2_cb = [row[1] for row in sampled_rows_address_cb]
+address3_cb = [row[2] for row in sampled_rows_address_cb]
+city_cb = [row[3] for row in sampled_rows_address_cb]
+state_cb = [row[4] for row in sampled_rows_address_cb]
+pincode_cb = [row[5] for row in sampled_rows_address_cb]
+
+query_companies_cb = f"Select CompanyName FROM company_names"
+cursor.execute(query_companies_cb)
+rows_companies_cb  = cursor.fetchall()
+sampled_rows_companies_cb = random.choices(rows_companies_cb, k=Count)
+
+companies_cb = [row[0] for row in sampled_rows_companies_cb]
+
+if Co_borrower == 'Yes':
+
+    df_template['Co-Borrower FULL_NAME'] = full_names_cb
+    df_template['Co-Borrower FIRST_NAME'] = first_names_cb
+    df_template['Co-Borrower MIDDLE_NAME'] = middle_names_cb
+    df_template['Co-Borrower LAST_NAME'] = surnames_cb
+    df_template['Co-Borrower FATHER_NAME'] = father_names_cb
+    df_template['Co-Borrower Email'] = email_cb
+
+    df_template['Co-Borrower Address 1'] = address1_cb
+    df_template['Co-Borrower Address 2'] = address2_cb
+    df_template['Co-Borrower Address 3'] = address3_cb
+    df_template['Co-Borrower Landmark'] = address3_cb
+    df_template['Co-Borrower City'] = city_cb
+    df_template['Co-Borrower District'] = city_cb
+    df_template['Co-Borrower State'] = state_cb
+    df_template['Co-Borrower Pincode'] = pincode_cb
+
+    df_template['Co-Borrower Company(office) Address'] = df_template['Co-Borrower Address 1'] + " " + df_template['Co-Borrower Address 2'] + " " + \
+                                             df_template['Co-Borrower Address 3']
+    df_template['Co-Borrower Company(office) Address City'] = city_cb
+    df_template['Co-Borrower Company(office) Address State'] = state_cb
+    df_template['Co-Borrower Company(office) Address Pin code'] = pincode_cb
+
+    df_template['Co-Borrower Company Name'] = companies_cb
+
+    df_template['Co-Borrower Contact Number'] = PHONE_CB
+    df_template['Co-Borrower Alternate Contact Number'] = PHONE2_CB
+    df_template['Co-Borrower DATE_OF_BIRTH'] = DOB_CB
+    df_template['Co-Borrower KYC Number 1'] = PAN_CB
+    df_template['Co-Borrower KYC Number 2'] = UID_CB
+
+    df_template.loc[:, 'Co-Borrower CUSTOMER_TYPE'] = 'Individual'
+    df_template.loc[:, 'Co-Borrower INDUSTRY_CODE'] = 'Manufacturing'
+    df_template.loc[:, 'Co-Borrower GENDER'] = 'Male'
+    df_template.loc[:, 'Co-Borrower MARITAL_STATUS_CODE'] = 'Married'
+    df_template.loc[:, 'Co-Borrower NATIONALITY'] = 'Indian'
+    df_template.loc[:, 'Co-Borrower SALUTATION'] = 'Mr'
+    df_template.loc[:, 'Co-Borrower Address_Type'] = 'Home'
+    df_template.loc[:, 'Co-Borrower Address_Tag'] = 'Residential'
+    df_template.loc[:, 'Co-Borrower Address_Verified'] = 'No'
+    df_template.loc[:, 'Co-Borrower KYC TYPE 1'] = 'PAN'
+    df_template.loc[:, 'Co-Borrower KYC TYPE 2'] = 'Aadhaar'
+    df_template.loc[:, 'Co-Borrower KYC for POI'] = 'Yes'
+    df_template.loc[:, 'Co-Borrower KYC for POA'] = 'Yes'
+    df_template.loc[:, 'Constitution (Only for Co-borrower)'] = 'Individual'
 
 
 if Collateral == 'Car':
