@@ -83,10 +83,11 @@ headers_static_pmt = ['Lead Id','Borrowers Code','Payment Detail Name','Payment 
 df_template = pd.DataFrame(columns=headers_static)
 df_template_pmt = pd.DataFrame(columns=headers_static_pmt)
 
-Bank = "IDFC"
-Count = 300
+Bank = "HDFC"
+Count = 10
 Collateral = 'Car'
-Co_borrower = 'No'
+Co_borrower = 'Yes'
+Guarantor = 'Yes'
 
 df_borrowers = []
 POS = []
@@ -99,8 +100,10 @@ TENOR = []
 ROI = []
 PAN = []
 PAN_CB = []
+PAN_G = []
 UID = []
 UID_CB = []
+UID_G = []
 RTO = []
 APR = []
 APR_DT = []
@@ -112,10 +115,13 @@ LTV = []
 TERM_PAID = []
 PHONE = []
 PHONE_CB = []
+PHONE_G = []
 PHONE2 = []
 PHONE2_CB = []
+PHONE2_G = []
 DOB = []
 DOB_CB = []
+DOB_G = []
 LEAD = []
 MFG_REG_YEAR = []
 ENG = []
@@ -172,12 +178,18 @@ for i in range(Count):
     phone_cb = randint(100000000,999999999)
     phone_cb = "9" + str(phone_cb)
     PHONE_CB.append(phone_cb)
+    phone_g = randint(100000000, 999999999)
+    phone_g = "9" + str(phone_g)
+    PHONE_G.append(phone_g)
     phone2 = randint(100000000, 999999999)
     phone2 = "9" + str(phone2)
     PHONE2.append(phone2)
     phone2_cb = randint(100000000, 999999999)
     phone2_cb = "9" + str(phone2_cb)
     PHONE2_CB.append(phone2_cb)
+    phone2_g = randint(100000000, 999999999)
+    phone2_g = "9" + str(phone2_g)
+    PHONE2_G.append(phone2_g)
     ltv = randint(50, 90)
     LTV.append(ltv)
     dob_days = randint(25, 50)
@@ -188,6 +200,10 @@ for i in range(Count):
     dob_cb = today - timedelta(days=(dob_days_cb * 365))
     dob_str_cb = dob_cb.strftime('%Y-%m-%d')
     DOB_CB.append(dob_str_cb)
+    dob_days_g = randint(25, 50)
+    dob_g = today - timedelta(days=(dob_days_g * 365))
+    dob_str_g = dob_g.strftime('%Y-%m-%d')
+    DOB_G.append(dob_str_g)
     lead = randint(100000,999999)
     LEAD.append(lead)
     pan_letter1 = random.choice(alphabets)
@@ -206,12 +222,23 @@ for i in range(Count):
     pan_num_cb = randint(1000, 9999)
     pan_no_cb = pan_letter_cb1 + pan_letter_cb2 + pan_letter_cb3 + "P" + pan_letter_cb4 + str(pan_num_cb) + pan_letter_cb5
     PAN_CB.append(pan_no_cb)
+    pan_letter_g1 = random.choice(alphabets)
+    pan_letter_g2 = random.choice(alphabets)
+    pan_letter_g3 = random.choice(alphabets)
+    pan_letter_g4 = random.choice(alphabets)
+    pan_letter_g5 = random.choice(alphabets)
+    pan_num_g = randint(1000, 9999)
+    pan_no_g = pan_letter_g1 + pan_letter_g2 + pan_letter_g3 + "P" + pan_letter_g4 + str(pan_num_g) + pan_letter_g5
+    PAN_G.append(pan_no_g)
     uid_num = randint(1000, 9999)
     uid = "XXXXXXXX"+str(uid_num)
     UID.append(uid)
     uid_num_cb = randint(1000, 9999)
     uid_cb = "XXXXXXXX" + str(uid_num_cb)
     UID_CB.append(uid_cb)
+    uid_num_g = randint(1000, 9999)
+    uid_g = "XXXXXXXX" + str(uid_num_g)
+    UID_G.append(uid_g)
     rto_series1 = random.choice(alphabets)
     rto_series2 = random.choice(alphabets)
     rto_number = randint(1000, 9999)
@@ -430,6 +457,31 @@ sampled_rows_companies_cb = random.choices(rows_companies_cb, k=Count)
 
 companies_cb = [row[0] for row in sampled_rows_companies_cb]
 
+# Guarantor details
+
+cursor = conn.cursor()
+query_names_g = f"SELECT First_Name, Middle_Name, Surname FROM sample_indian_names"
+cursor.execute(query_names_g)
+rows_names_g = cursor.fetchall()
+sampled_rows_names_g = random.choices(rows_names_g, k=Count)
+
+first_names_g = [row[0] for row in sampled_rows_names_g]
+middle_names_g = [row[1] for row in sampled_rows_names_g]
+surnames_g = [row[2] for row in sampled_rows_names_g]
+full_names_g = [f"{row[0]} {row[1]} {row[2]}" for row in sampled_rows_names_g]
+
+query_addresses_g = f"Select officename, regionname, divisionname, district, statename, pincode FROM pincode_master"
+cursor.execute(query_addresses_g)
+rows_address_g  = cursor.fetchall()
+sampled_rows_address_g = random.choices(rows_address_g, k=Count)
+
+address1_g = [row[0] for row in sampled_rows_address_g]
+address2_g = [row[1] for row in sampled_rows_address_g]
+address3_g = [row[2] for row in sampled_rows_address_g]
+city_g = [row[3] for row in sampled_rows_address_g]
+state_g = [row[4] for row in sampled_rows_address_g]
+pincode_g = [row[5] for row in sampled_rows_address_g]
+
 if Co_borrower == 'Yes':
 
     df_template['Co-Borrower FULL_NAME'] = full_names_cb
@@ -477,6 +529,35 @@ if Co_borrower == 'Yes':
     df_template.loc[:, 'Co-Borrower KYC for POA'] = 'Yes'
     df_template.loc[:, 'Constitution (Only for Co-borrower)'] = 'Individual'
 
+if Guarantor == 'Yes':
+
+    df_template['Guarantor Full Name'] = full_names_g
+    df_template['Guarantor First Name'] = first_names_g
+    df_template['Guarantor Middle Name'] = middle_names_g
+    df_template['Guarantor Last Name'] = surnames_g
+    df_template['Guarantor Address 1'] = address1_g
+    df_template['Guarantor Address 2'] = address2_g
+    df_template['Guarantor Address 3'] = address3_g
+    df_template['Guarantor Landmark'] = address3_g
+    df_template['Guarantor City'] = city_g
+    df_template['Guarantor District'] = city_g
+    df_template['Guarantor State'] = state_g
+    df_template['Guarantor Pincode'] = pincode_g
+    df_template['Guarantor Contact Number'] = PHONE_G
+    df_template['Guarantor Alternate Contact Number'] = PHONE2_G
+    df_template['Guarantor Date of Birth'] = DOB_G
+    df_template['Guarantor KYC Number 1'] = PAN_G
+    df_template['Guarantor KYC Number 2'] = UID_G
+    df_template.loc[:, 'Guarantor Gender'] = 'Male'
+    df_template.loc[:, 'Guarantor MaritalStatus'] = 'Married'
+    df_template.loc[:, 'Guarantor Address_Type'] = 'Indian'
+    df_template.loc[:, 'Guarantor Address_Type'] = 'Home'
+    df_template.loc[:, 'Guarantor Address_Tag'] = 'Residential'
+    df_template.loc[:, 'Guarantor Address_Verified'] = 'No'
+    df_template.loc[:, 'Guarantor KYC TYPE 1'] = 'PAN'
+    df_template.loc[:, 'Guarantor KYC TYPE 2'] = 'Aadhaar'
+    df_template.loc[:, 'Guarantor KYC for POI'] = 'Yes'
+    df_template.loc[:, 'Guarantor KYC for POA'] = 'Yes'
 
 if Collateral == 'Car':
 
@@ -560,6 +641,7 @@ df_template['Address 3']=address3
 df_template['City']=city
 df_template['Borrower District']=city
 df_template['Area']=city
+df_template['Landmark']=city
 df_template['State']=state
 df_template['Pincode']=pincode
 
