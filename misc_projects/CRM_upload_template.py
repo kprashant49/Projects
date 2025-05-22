@@ -84,8 +84,8 @@ df_template = pd.DataFrame(columns=headers_static)
 df_template_pmt = pd.DataFrame(columns=headers_static_pmt)
 
 Bank = "HDFC"
-Count = 10
-Collateral = 'Car'
+Count = 100
+Collateral = 'Home'
 Co_borrower = 'Yes'
 Guarantor = 'Yes'
 
@@ -370,7 +370,7 @@ full_names = [f"{row[0]} {row[1]} {row[2]}" for row in sampled_rows_names]
 father_names = [f"{row[1]} {row[2]}" for row in sampled_rows_names]
 email = [f"{row[0]}.{row[2]}{randint(1, 90)}@gmail.com" for row in sampled_rows_names]
 
-query_addresses = f"Select officename, regionname, divisionname, district, statename, pincode FROM pincode_master"
+query_addresses = f"SELECT officename, regionname, divisionname, district, statename, pincode FROM pincode_master WHERE divisionname LIKE '%Pune City%'"
 cursor.execute(query_addresses)
 rows_address  = cursor.fetchall()
 sampled_rows_address = random.choices(rows_address, k=Count)
@@ -401,7 +401,7 @@ sampled_rows_ref1_names = random.choices(rows_ref1_names, k=Count)
 ref1_names = [row[0] for row in sampled_rows_ref1_names]
 ref1_email = [f"{name.replace(' ', '')}{randint(1, 90)}@gmail.com" for name in ref1_names]
 
-query_ref1_addresses = f"Select officename, regionname, divisionname, district, statename, pincode FROM pincode_master"
+query_ref1_addresses = f"SELECT officename, regionname, divisionname, district, statename, pincode FROM pincode_master WHERE divisionname LIKE '%Pune City%'"
 cursor.execute(query_ref1_addresses)
 rows_ref1_address  = cursor.fetchall()
 sampled_rows_ref1_address = random.choices(rows_ref1_address, k=Count)
@@ -416,7 +416,7 @@ sampled_rows_ref2_names = random.choices(rows_ref2_names, k=Count)
 ref2_names = [row[0] for row in sampled_rows_ref2_names]
 ref2_email = [f"{name.replace(' ', '')}{randint(1, 90)}@gmail.com" for name in ref2_names]
 
-query_ref2_addresses = f"Select officename, regionname, divisionname, district, statename, pincode FROM pincode_master"
+query_ref2_addresses = f"SELECT officename, regionname, divisionname, district, statename, pincode FROM pincode_master WHERE divisionname LIKE '%Pune City%'"
 cursor.execute(query_ref2_addresses)
 rows_ref2_address  = cursor.fetchall()
 sampled_rows_ref2_address = random.choices(rows_ref2_address, k=Count)
@@ -438,7 +438,7 @@ full_names_cb = [f"{row[0]} {row[1]} {row[2]}" for row in sampled_rows_names_cb]
 father_names_cb = [f"{row[1]} {row[2]}" for row in sampled_rows_names_cb]
 email_cb = [f"{row[0]}.{row[2]}{randint(1, 90)}@gmail.com" for row in sampled_rows_names_cb]
 
-query_addresses_cb = f"Select officename, regionname, divisionname, district, statename, pincode FROM pincode_master"
+query_addresses_cb = f"SELECT officename, regionname, divisionname, district, statename, pincode FROM pincode_master WHERE divisionname LIKE '%Pune City%'"
 cursor.execute(query_addresses_cb)
 rows_address_cb  = cursor.fetchall()
 sampled_rows_address_cb = random.choices(rows_address_cb, k=Count)
@@ -470,7 +470,7 @@ middle_names_g = [row[1] for row in sampled_rows_names_g]
 surnames_g = [row[2] for row in sampled_rows_names_g]
 full_names_g = [f"{row[0]} {row[1]} {row[2]}" for row in sampled_rows_names_g]
 
-query_addresses_g = f"Select officename, regionname, divisionname, district, statename, pincode FROM pincode_master"
+query_addresses_g = f"SELECT officename, regionname, divisionname, district, statename, pincode FROM pincode_master WHERE divisionname LIKE '%Pune City%'"
 cursor.execute(query_addresses_g)
 rows_address_g  = cursor.fetchall()
 sampled_rows_address_g = random.choices(rows_address_g, k=Count)
@@ -665,6 +665,7 @@ df_template_pmt['Payment Detail Name'] = full_names
 df_template_pmt['Payment Detail Payment Amount'] = TOS
 df_template_pmt['Payment Detail Deposit Date'] = PMT_DT
 df_template_pmt['Payment Detail Receipting  Transaction Date'] = PMT_DT
+df_template_pmt['Payment Detail Transaction of Receipting'] = df_borrowers
 
 df_template_pmt.loc[:,'Payment Detail Payment Mode'] = 'UPI'
 df_template_pmt.loc[:,'Payment Detail Status'] = 'Received'
