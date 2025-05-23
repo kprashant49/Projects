@@ -370,7 +370,7 @@ full_names = [f"{row[0]} {row[1]} {row[2]}" for row in sampled_rows_names]
 father_names = [f"{row[1]} {row[2]}" for row in sampled_rows_names]
 email = [f"{row[0]}.{row[2]}{randint(1, 90)}@gmail.com" for row in sampled_rows_names]
 
-query_addresses = f"SELECT officename, regionname, divisionname, district, statename, pincode FROM pincode_master WHERE divisionname LIKE '%Pune City%'"
+query_addresses = f"SELECT officename, regionname, divisionname, district, statename, pincode, latitude, longitude FROM pincode_master WHERE divisionname LIKE '%Pune City%' AND latitude != 'NA'"
 cursor.execute(query_addresses)
 rows_address  = cursor.fetchall()
 sampled_rows_address = random.choices(rows_address, k=Count)
@@ -381,6 +381,8 @@ address3 = [row[2] for row in sampled_rows_address]
 city = [row[3] for row in sampled_rows_address]
 state = [row[4] for row in sampled_rows_address]
 pincode = [row[5] for row in sampled_rows_address]
+latitude = [row[6] for row in sampled_rows_address]
+longitude = [row[7] for row in sampled_rows_address]
 
 df_city = pd.DataFrame(city, columns=['CITY_UT'])
 df_state = pd.DataFrame(state, columns=['STATE'])
@@ -438,7 +440,7 @@ full_names_cb = [f"{row[0]} {row[1]} {row[2]}" for row in sampled_rows_names_cb]
 father_names_cb = [f"{row[1]} {row[2]}" for row in sampled_rows_names_cb]
 email_cb = [f"{row[0]}.{row[2]}{randint(1, 90)}@gmail.com" for row in sampled_rows_names_cb]
 
-query_addresses_cb = f"SELECT officename, regionname, divisionname, district, statename, pincode FROM pincode_master WHERE divisionname LIKE '%Pune City%'"
+query_addresses_cb = f"SELECT officename, regionname, divisionname, district, statename, pincode, latitude, longitude FROM pincode_master WHERE divisionname LIKE '%Pune City%' AND latitude != 'NA'"
 cursor.execute(query_addresses_cb)
 rows_address_cb  = cursor.fetchall()
 sampled_rows_address_cb = random.choices(rows_address_cb, k=Count)
@@ -449,6 +451,8 @@ address3_cb = [row[2] for row in sampled_rows_address_cb]
 city_cb = [row[3] for row in sampled_rows_address_cb]
 state_cb = [row[4] for row in sampled_rows_address_cb]
 pincode_cb = [row[5] for row in sampled_rows_address_cb]
+latitude_cb = [row[6] for row in sampled_rows_address_cb]
+longitude_cb = [row[7] for row in sampled_rows_address_cb]
 
 query_companies_cb = f"Select CompanyName FROM company_names"
 cursor.execute(query_companies_cb)
@@ -470,7 +474,7 @@ middle_names_g = [row[1] for row in sampled_rows_names_g]
 surnames_g = [row[2] for row in sampled_rows_names_g]
 full_names_g = [f"{row[0]} {row[1]} {row[2]}" for row in sampled_rows_names_g]
 
-query_addresses_g = f"SELECT officename, regionname, divisionname, district, statename, pincode FROM pincode_master WHERE divisionname LIKE '%Pune City%'"
+query_addresses_g = f"SELECT officename, regionname, divisionname, district, statename, pincode, latitude, longitude FROM pincode_master WHERE divisionname LIKE '%Pune City%' AND latitude != 'NA'"
 cursor.execute(query_addresses_g)
 rows_address_g  = cursor.fetchall()
 sampled_rows_address_g = random.choices(rows_address_g, k=Count)
@@ -481,6 +485,8 @@ address3_g = [row[2] for row in sampled_rows_address_g]
 city_g = [row[3] for row in sampled_rows_address_g]
 state_g = [row[4] for row in sampled_rows_address_g]
 pincode_g = [row[5] for row in sampled_rows_address_g]
+latitude_g = [row[6] for row in sampled_rows_address_g]
+longitude_g = [row[7] for row in sampled_rows_address_g]
 
 if Co_borrower == 'Yes':
 
@@ -498,6 +504,8 @@ if Co_borrower == 'Yes':
     df_template['Co-Borrower District'] = city_cb
     df_template['Co-Borrower State'] = state_cb
     df_template['Co-Borrower Pincode'] = pincode_cb
+    df_template['Co-Borrower Co-ordinates_Lattitue'] = latitude_cb
+    df_template['Co-Borrower Co-ordinates_Longitutde'] = longitude_cb
     df_template['Co-Borrower Company(office) Address'] = df_template['Co-Borrower Address 1'] + " " + df_template['Co-Borrower Address 2'] + " " + \
                                              df_template['Co-Borrower Address 3']
     df_template['Co-Borrower Company(office) Address City'] = city_cb
@@ -538,6 +546,8 @@ if Guarantor == 'Yes':
     df_template['Guarantor District'] = city_g
     df_template['Guarantor State'] = state_g
     df_template['Guarantor Pincode'] = pincode_g
+    df_template['Guarantor Co-ordinates_Lattitue'] = latitude_g
+    df_template['Guarantor Co-ordinates_Longitutde'] = longitude_g
     df_template['Guarantor Contact Number'] = PHONE_G
     df_template['Guarantor Alternate Contact Number'] = PHONE2_G
     df_template['Guarantor Date of Birth'] = DOB_G
@@ -638,6 +648,8 @@ df_template['Area']=city
 df_template['Landmark']=city
 df_template['State']=state
 df_template['Pincode']=pincode
+df_template['Co-ordinates_Lattitue']=latitude
+df_template['Co-ordinates_Longitutde']=longitude
 
 df_template['Company(office) Address']=df_template['Address 1']+" "+df_template['Address 2']+" "+df_template['Address 3']
 df_template['Company(office) Address City']=city
