@@ -83,11 +83,47 @@ headers_static_pmt = ['Lead Id','Borrowers Code','Payment Detail Name','Payment 
 df_template = pd.DataFrame(columns=headers_static)
 df_template_pmt = pd.DataFrame(columns=headers_static_pmt)
 
-Bank = "HDFC"
-Count = 100
-Collateral = 'Home'
-Co_borrower = 'Yes'
-Guarantor = 'Yes'
+print("Hi! This program generates randomly created Borrower and Payment Upload templates for CRM India project. Kindly enter the details to generate your template.")
+while True:
+    Bank = input("Enter FI Name: ").strip()
+    if Bank:
+        break
+    print("FI Name cannot be empty!")
+
+while True:
+    try:
+        Count = int(input("Enter the number of records required: "))
+        if Count > 0:
+            break
+        else:
+            print("Number must be greater than 0!")
+    except ValueError:
+        print("Please enter a valid integer!")
+
+while True:
+    Collateral = input("Enter collateral type: ").strip()
+    if Collateral:
+        break
+    print("Collateral type cannot be empty!")
+
+while True:
+    Co_borrower = input("Do you need Co-borrowers in the loans? (yes/no): ").strip().lower()
+    if Co_borrower in ["yes", "no"]:
+        break
+    print("Please enter 'yes' or 'no'!")
+
+while True:
+    Guarantor = input("Do you need Guarantor in the loans? (yes/no): ").strip().lower()
+    if Guarantor in ["yes", "no"]:
+        break
+    print("Please enter 'yes' or 'no'!")
+
+
+# Bank = "HDFC"
+# Count = 100
+# Collateral = 'Home'
+# Co_borrower = 'Yes'
+# Guarantor = 'Yes'
 
 df_borrowers = []
 POS = []
@@ -488,7 +524,7 @@ pincode_g = [row[5] for row in sampled_rows_address_g]
 latitude_g = [row[6] for row in sampled_rows_address_g]
 longitude_g = [row[7] for row in sampled_rows_address_g]
 
-if Co_borrower == 'Yes':
+if Co_borrower == 'yes':
 
     df_template['Co-Borrower FULL_NAME'] = full_names_cb
     df_template['Co-Borrower FIRST_NAME'] = first_names_cb
@@ -532,7 +568,7 @@ if Co_borrower == 'Yes':
     df_template.loc[:, 'Co-Borrower KYC for POA'] = 'Yes'
     df_template.loc[:, 'Constitution (Only for Co-borrower)'] = 'Individual'
 
-if Guarantor == 'Yes':
+if Guarantor == 'yes':
 
     df_template['Guarantor Full Name'] = full_names_g
     df_template['Guarantor First Name'] = first_names_g
@@ -669,6 +705,7 @@ df_template['REFERENCE 2 CONTACT']=REF2_PNE
 df_template['REFERENCE 2 EMAIL']=ref2_email
 
 df_template.to_excel(r"C:\Users\kpras\Desktop\CRM_borrower_upload_template_py.xlsx", index=False)
+print("Borrower file exported to C:/Users/kpras/Desktop/CRM_borrower_upload_template_py.xlsx")
 
 df_template_pmt['Lead Id'] = df_borrowers
 df_template_pmt['Payment Detail Bank/Client LAN'] = df_borrowers
@@ -684,3 +721,4 @@ df_template_pmt.loc[:,'Payment Detail OTS / NON OTS / EMI Payment'] = 'EMI Payme
 df_template_pmt.loc[:,'Payment Detail Financial Institution Name(ORG)'] = Bank
 
 df_template_pmt.to_excel(r"C:\Users\kpras\Desktop\CRM_payment_upload_template_py.xlsx", index=False)
+print("Payment file exported to C:/Users/kpras/Desktop/CRM_payment_upload_template_py.xlsx")
