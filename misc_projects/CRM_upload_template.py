@@ -85,7 +85,7 @@ df_template_pmt = pd.DataFrame(columns=headers_static_pmt)
 
 print("Hi! This program generates randomly created Borrower and Payment Upload templates for CRM India project. Kindly enter the details to generate your template.")
 while True:
-    Bank = input("Enter FI Name: ").strip()
+    Bank = input("Enter FI Name: ").strip().upper()
     if Bank:
         break
     print("FI Name cannot be empty!")
@@ -101,7 +101,7 @@ while True:
         print("Please enter a valid integer!")
 
 while True:
-    Collateral = input("Enter collateral type: ").strip()
+    Collateral = input("Enter collateral type (car/home/enter any value for personal loan): ").strip().lower()
     if Collateral:
         break
     print("Collateral type cannot be empty!")
@@ -117,7 +117,6 @@ while True:
     if Guarantor in ["yes", "no"]:
         break
     print("Please enter 'yes' or 'no'!")
-
 
 # Bank = "HDFC"
 # Count = 100
@@ -599,7 +598,7 @@ if Guarantor == 'yes':
     df_template.loc[:, 'Guarantor KYC for POI'] = 'Yes'
     df_template.loc[:, 'Guarantor KYC for POA'] = 'Yes'
 
-if Collateral == 'Car':
+if Collateral == 'car':
 
     query_rto = f"SELECT REGISTRATION_NUMBER, upper(CITY_UT) as CITY_UT, upper(STATE) as STATE FROM rto_data where length(REGISTRATION_NUMBER) <= 4"
     cursor.execute(query_rto)
@@ -640,7 +639,7 @@ if Collateral == 'Car':
     df_template.loc[:, 'Product'] = 'Vehicle Loan'
     df_template.loc[:, 'Product Category'] = 'Secured'
 
-elif Collateral == 'Home':
+elif Collateral == 'home':
 
     df_template.loc[:, 'Collateral Type'] = 'Home'
     df_template.loc[:, 'Building Type'] = 'Apartment'
@@ -720,5 +719,5 @@ df_template_pmt.loc[:,'Payment Detail Status'] = 'Received'
 df_template_pmt.loc[:,'Payment Detail OTS / NON OTS / EMI Payment'] = 'EMI Payment'
 df_template_pmt.loc[:,'Payment Detail Financial Institution Name(ORG)'] = Bank
 
-df_template_pmt.to_excel(r"C:\Users\kpras\Desktop\CRM_payment_upload_template_py.xlsx", index=False)
-print("Payment file exported to C:/Users/kpras/Desktop/CRM_payment_upload_template_py.xlsx")
+# df_template_pmt.to_excel(r"C:\Users\kpras\Desktop\CRM_payment_upload_template_py.xlsx", index=False)
+# print("Payment file exported to C:/Users/kpras/Desktop/CRM_payment_upload_template_py.xlsx")
