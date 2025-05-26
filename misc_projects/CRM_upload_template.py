@@ -1,11 +1,14 @@
 import pandas as pd
 import random
 from random import randint
-from datetime import date, timedelta
-today = date.today()
+from datetime import date, timedelta, datetime
 import mysql.connector
 import string
 import json
+
+today = date.today()
+now = datetime.now()
+timestamp_str = now.strftime("%Y%m%d_%H%M")
 alphabets = list(string.ascii_uppercase)
 
 # filepath = r"C:\Users\kpras\Desktop\AutomatedBorrowerUploadTemplate.xlsx"
@@ -83,7 +86,8 @@ headers_static_pmt = ['Lead Id','Borrowers Code','Payment Detail Name','Payment 
 df_template = pd.DataFrame(columns=headers_static)
 df_template_pmt = pd.DataFrame(columns=headers_static_pmt)
 
-print("Hi! This program generates randomly created Borrower and Payment Upload templates for CRM India project. Kindly enter the details to generate your template.")
+print("Hello! This program generates Borrower and Payment upload templates for the CRM India project. Kindly enter the details to generate your template.")
+
 while True:
     Bank = input("Enter FI Name: ").strip().upper()
     if Bank:
@@ -99,6 +103,12 @@ while True:
             print("Number must be greater than 0!")
     except ValueError:
         print("Please enter a valid integer!")
+
+while True:
+    Portfolio = input("Enter type of portfolio (Retail/NPA): ").strip().lower()
+    if Portfolio in ["retail", "npa"]:
+        break
+    print("Please enter 'Retail' or 'NPA'!")
 
 while True:
     Collateral = input("Enter collateral type (car/home/enter any value for personal loan): ").strip().lower()
@@ -175,7 +185,10 @@ for i in range(Count):
     tos = pos+ios
     TOS.append(tos)
     EMI_OS.append(tos)
-    dpd = randint(1, 90)
+    if Portfolio == 'npa':
+        dpd = randint(91, 180)
+    else:
+        dpd = randint(1, 90)
     DPD.append(dpd)
     emi_date = today - timedelta(days=dpd)
     emi_date_str = emi_date.strftime('%Y-%m-%d')
@@ -373,14 +386,20 @@ df_template.loc[:,'Country'] = 'India'
 df_template.loc[:,'Constitution'] = 'Individual'
 
 def sma(dpd):
-    if dpd >= 60:
+    if dpd > 90:
+        return 'NPA'
+    elif dpd > 60 and dpd <= 90:
         return 'SMA2'
-    elif dpd >= 30 and dpd < 60:
+    elif dpd > 30 and dpd <= 60:
         return 'SMA1'
     else:
         return 'SMA0'
 df_template['Loan Ac Classification In F.I.'] = df_template['Current DPD'].apply(sma)
-df_template['SMA/Bucket'] = df_template['Loan Ac Classification In F.I.'].str[-1:]
+
+if Portfolio == 'retail':
+    df_template['SMA/Bucket'] = df_template['Loan Ac Classification In F.I.'].str[-1:]
+else:
+    df_template.loc[:,'SMA/Bucket'] = "3"
 
 with open('db_config.json') as f:
     config = json.load(f)
@@ -703,8 +722,8 @@ df_template['REFERENCE 2 ADDRESS']=ref2_address
 df_template['REFERENCE 2 CONTACT']=REF2_PNE
 df_template['REFERENCE 2 EMAIL']=ref2_email
 
-df_template.to_excel(r"C:\Users\kpras\Desktop\CRM_borrower_upload_template_py.xlsx", index=False)
-print("Borrower file exported to C:/Users/kpras/Desktop/CRM_borrower_upload_template_py.xlsx")
+df_template.to_excel(fr"C:\Users\kpras\Desktop\CRM_borrower_upload_template_py_{Bank}_{timestamp_str}.xlsx", index=False)
+print(f"Borrower file exported to C:/Users/kpras/Desktop/CRM_borrower_upload_template_py_{Bank}_{timestamp_str}.xlsx")
 
 df_template_pmt['Lead Id'] = df_borrowers
 df_template_pmt['Payment Detail Bank/Client LAN'] = df_borrowers
@@ -719,5 +738,5 @@ df_template_pmt.loc[:,'Payment Detail Status'] = 'Received'
 df_template_pmt.loc[:,'Payment Detail OTS / NON OTS / EMI Payment'] = 'EMI Payment'
 df_template_pmt.loc[:,'Payment Detail Financial Institution Name(ORG)'] = Bank
 
-# df_template_pmt.to_excel(r"C:\Users\kpras\Desktop\CRM_payment_upload_template_py.xlsx", index=False)
-# print("Payment file exported to C:/Users/kpras/Desktop/CRM_payment_upload_template_py.xlsx")
+df_template_pmt.to_excel(fr"C:\Users\kpras\Desktop\CRM_payment_upload_template_py_{Bank}_{timestamp_str}.xlsx", index=False)
+print(f"Payment file exported to C:/Users/kpras/Desktop/CRM_payment_upload_template_py_{Bank}_{timestamp_str}.xlsx")
