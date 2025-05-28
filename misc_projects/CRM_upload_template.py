@@ -722,8 +722,8 @@ df_template['REFERENCE 2 ADDRESS']=ref2_address
 df_template['REFERENCE 2 CONTACT']=REF2_PNE
 df_template['REFERENCE 2 EMAIL']=ref2_email
 
-df_template.to_excel(fr"C:\Users\kpras\Desktop\CRM_borrower_upload_template_py_{Bank}_{timestamp_str}.xlsx", index=False)
-print(f"Borrower file exported to C:/Users/kpras/Desktop/CRM_borrower_upload_template_py_{Bank}_{timestamp_str}.xlsx")
+df_template.to_excel(fr"C:\Users\kpras\Desktop\CRM_Borrower_py_{Bank}_{Portfolio.upper()}_{timestamp_str}.xlsx", index=False)
+print(f"Borrower file exported to C:/Users/kpras/Desktop/CRM_Borrower_py_{Bank}_{Portfolio.upper()}_{timestamp_str}.xlsx")
 
 df_template_pmt['Lead Id'] = df_borrowers
 df_template_pmt['Payment Detail Bank/Client LAN'] = df_borrowers
@@ -738,5 +738,5 @@ df_template_pmt.loc[:,'Payment Detail Status'] = 'Received'
 df_template_pmt.loc[:,'Payment Detail OTS / NON OTS / EMI Payment'] = 'EMI Payment'
 df_template_pmt.loc[:,'Payment Detail Financial Institution Name(ORG)'] = Bank
 
-df_template_pmt.to_excel(fr"C:\Users\kpras\Desktop\CRM_payment_upload_template_py_{Bank}_{timestamp_str}.xlsx", index=False)
-print(f"Payment file exported to C:/Users/kpras/Desktop/CRM_payment_upload_template_py_{Bank}_{timestamp_str}.xlsx")
+df_template_pmt.to_excel(fr"C:\Users\kpras\Desktop\CRM_Payment_py_{Bank}_{Portfolio.upper()}_{timestamp_str}.xlsx", index=False)
+print(f"Payment file exported to C:/Users/kpras/Desktop/CRM_Payment_py_{Bank}_{Portfolio.upper()}_{timestamp_str}.xlsx")
