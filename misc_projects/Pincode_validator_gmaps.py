@@ -4,20 +4,21 @@ import requests
 
 filepath = r"C:\Users\kpras\Desktop\pincodes.xlsx"
 df = pd.read_excel(filepath,sheet_name='Sheet1', engine = 'openpyxl')
+GOOGLE_API_KEY = 'AIzaSyBxpjmBBn1vhY_iJ2aLYGBd4udbiKdING8'
 
-client = openai.OpenAI(api_key="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")
-GOOGLE_API_KEY = "AIzaSyBxpjmBBn1vhY_iJ2aLYGBd4udbiKdING8"
+openai.api_key = "lm-studio"  # This value is ignored
+openai.api_base = "http://localhost:1234/v1"
 
 def fix_address(raw):
     prompt = f"Fix and complete this Indian address for geolocation: '{raw}'"
-    response = client.chat.completions.create(
-        model="gpt-4o",
+    response = openai.ChatCompletion.create(
+        model="phi-2",  # Use model name shown in LM Studio
         messages=[{"role": "user", "content": prompt}],
         temperature=0.3
     )
-    return response.choices[0].message.content.strip()
+    return response.choices[0].message["content"].strip()
 
-df["Fixed_address"] = df["Address"].apply(fix_address)
+# df["Fixed_address"] = df["Address"].apply(fix_address)
 
 def get_pincode_google(address):
     url = "https://maps.googleapis.com/maps/api/geocode/json"
@@ -38,7 +39,7 @@ def get_pincode_google(address):
     except Exception as e:
         return str(e)
 
-df["Pincode"] = df["Fixed_address"].apply(get_pincode_google)
-# df["Pincode"] = df["Address"].apply(get_pincode_google)
-df.to_excel(r"C:\Users\kpras\Desktop\pincodes.xlsx", index=False)
+# df["Pincode"] = df["Fixed_address"].apply(get_pincode_google)
+df["Pincode"] = df["Address"].apply(get_pincode_google)
+df.to_excel(r"C:\Users\kpras\Desktop\pincodes_output.xlsx", index=False)
 print(df)
