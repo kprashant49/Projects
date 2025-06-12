@@ -4,8 +4,11 @@ import requests
 
 filepath = r"C:\Users\kpras\Desktop\pincodes_nf.xlsx"
 df = pd.read_excel(filepath,sheet_name='Sheet1', engine = 'openpyxl')
-GOOGLE_API_KEY = 'AIzaSyBxpjmBBn1vhY_iJ2aLYGBd4udbiKdING8'
 
+with open('gmaps_api_key.txt', 'r') as file:
+    GOOGLE_API_KEY = file.read().strip()
+
+print(GOOGLE_API_KEY)
 openai.api_key = "lm-studio"
 openai.api_base = "http://localhost:1234/v1"
 
