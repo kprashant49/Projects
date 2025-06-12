@@ -128,11 +128,11 @@ while True:
         break
     print("Please enter 'yes' or 'no'!")
 
-# Bank = "HDFC"
-# Count = 100
-# Collateral = 'Home'
-# Co_borrower = 'Yes'
-# Guarantor = 'Yes'
+while True:
+    Separate = input("Do you want a separate file? (yes/no): ").strip().lower()
+    if Separate in ["yes", "no"]:
+        break
+    print("Please enter 'yes' or 'no'!")
 
 df_borrowers = []
 POS = []
@@ -709,7 +709,6 @@ df_template['Company(office) Address']=df_template['Address 1']+" "+df_template[
 df_template['Company(office) Address City']=city
 df_template['Company(office) Address State']=state
 df_template['Company(office) Address Pin code']=pincode
-
 df_template['Company Name']=companies
 
 df_template['RERERENCE 1 NAME']=ref1_names
@@ -721,9 +720,6 @@ df_template['RERERENCE 2 NAME']=ref2_names
 df_template['REFERENCE 2 ADDRESS']=ref2_address
 df_template['REFERENCE 2 CONTACT']=REF2_PNE
 df_template['REFERENCE 2 EMAIL']=ref2_email
-
-df_template.to_excel(fr"C:\Users\kpras\Desktop\CRM_Borrower_py_{Bank}_{Portfolio.upper()}_{timestamp_str}.xlsx", index=False)
-print(f"Borrower file exported to C:/Users/kpras/Desktop/CRM_Borrower_py_{Bank}_{Portfolio.upper()}_{timestamp_str}.xlsx")
 
 df_template_pmt['Lead Id'] = df_borrowers
 df_template_pmt['Payment Detail Bank/Client LAN'] = df_borrowers
@@ -738,5 +734,13 @@ df_template_pmt.loc[:,'Payment Detail Status'] = 'Received'
 df_template_pmt.loc[:,'Payment Detail OTS / NON OTS / EMI Payment'] = 'EMI Payment'
 df_template_pmt.loc[:,'Payment Detail Financial Institution Name(ORG)'] = Bank
 
-df_template_pmt.to_excel(fr"C:\Users\kpras\Desktop\CRM_Payment_py_{Bank}_{Portfolio.upper()}_{timestamp_str}.xlsx", index=False)
-print(f"Payment file exported to C:/Users/kpras/Desktop/CRM_Payment_py_{Bank}_{Portfolio.upper()}_{timestamp_str}.xlsx")
+if Separate == 'yes':
+    df_template.to_excel(fr"C:\Users\kpras\Desktop\CRM_Borrower_py_{Bank}_{Portfolio.upper()}_{Count}_{timestamp_str}.xlsx", index=False)
+    print(f"Borrower file exported to C:/Users/kpras/Desktop/CRM_Borrower_py_{Bank}_{Portfolio.upper()}_{Count}_{timestamp_str}.xlsx")
+    df_template_pmt.to_excel(fr"C:\Users\kpras\Desktop\CRM_Payment_py_{Bank}_{Portfolio.upper()}_{Count}_{timestamp_str}.xlsx", index=False)
+    print(f"Payment file exported to C:/Users/kpras/Desktop/CRM_Payment_py_{Bank}_{Portfolio.upper()}_{Count}_{timestamp_str}.xlsx")
+else:
+    with pd.ExcelWriter(fr"C:\Users\kpras\Desktop\CRM_Borrower+Payment_py_{Bank}_{Portfolio.upper()}_{Count}_{timestamp_str}.xlsx") as writer:
+        df_template.to_excel(writer, sheet_name='Borrower', index=False)
+        df_template_pmt.to_excel(writer, sheet_name='Payment', index=False)
+        print(f"Borrower file exported to C:/Users/kpras/Desktop/CRM_Borrower+Payment_py_{Bank}_{Portfolio.upper()}_{Count}_{timestamp_str}.xlsx")
