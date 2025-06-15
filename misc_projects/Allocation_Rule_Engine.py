@@ -3,7 +3,7 @@ import mysql.connector
 import string
 import json
 
-filepath_input = r"C:\Users\PrashantKumar\OneDrive - Pepper India Resolution Private Limited\Desktop\Collection.xlsx"
+filepath_input = r"C:\Users\kpras\Desktop\Allocation.xlsx"
 df = pd.read_excel(filepath_input,sheet_name='Sheet1', engine = 'openpyxl')
 
 assign = df['MAILINGZIPCODE']
@@ -20,7 +20,7 @@ conn = mysql.connector.connect(
 )
 
 cursor = conn.cursor()
-cursor.execute("SHOW COLUMNS FROM employee_pincode_mapper")
+cursor.execute("SHOW COLUMNS FROM pai_emp_pincode_mapper")
 columns = [col[0] for col in cursor.fetchall()]
 constant = "_rule_engine"
 selected_indices = [1, 2]
@@ -33,7 +33,7 @@ for i, val in enumerate(columns):
 
 all_results = []
 for zip_code in assign:
-    cursor.execute("SELECT * FROM employee_pincode_mapper WHERE MAILINGZIPCODE = %s limit 1", (zip_code,))
+    cursor.execute("SELECT * FROM pai_emp_pincode_mapper WHERE MAILINGZIPCODE = %s limit 1", (zip_code,))
     rows = cursor.fetchall()
     all_results.extend(rows)
 cursor.close()
@@ -45,5 +45,5 @@ merged_df = pd.merge(df, result_df, how='left', on='MAILINGZIPCODE')
 merged_df['FOS NAME_rule_engine'] = merged_df['FOS NAME_rule_engine'].fillna('OGL')
 merged_df['AWS CODE_rule_engine'] = merged_df['AWS CODE_rule_engine'].fillna('OGL')
 
-filepath_output = r"C:\Users\PrashantKumar\OneDrive - Pepper India Resolution Private Limited\Desktop\Output.xlsx"
+filepath_output = r"C:\Users\kpras\Desktop\Allocation_output.xlsx"
 merged_df.to_excel(filepath_output, sheet_name='Sheet1', index=False)
