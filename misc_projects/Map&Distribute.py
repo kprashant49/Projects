@@ -40,7 +40,6 @@ result = []
 for key in set(table_a['common_key']) & set(table_b['common_key']):
     a_group = table_a[table_a['common_key'] == key]
     b_group = table_b[table_b['common_key'] == key]
-
     b_cycle = itertools.cycle(b_group['id_b'].tolist())
 
     for idx, row in a_group.iterrows():
