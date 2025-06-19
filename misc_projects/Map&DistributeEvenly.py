@@ -1,5 +1,29 @@
 import pandas as pd
 from collections import defaultdict
+import mysql.connector
+import json
+
+filepath_input = r"C:\Users\kpras\Desktop\Allocation.xlsx"
+df = pd.read_excel(filepath_input,sheet_name='Sheet1', engine = 'openpyxl')
+table_a_1 = df[['AGREEMENTID','MAILINGZIPCODE']]
+
+with open('db_config.json') as f:
+    config = json.load(f)
+
+conn = mysql.connector.connect(
+    host=config["host"],
+    user=config["user"],
+    password=config["password"],
+    database=config["database"]
+)
+
+cursor = conn.cursor()
+cursor.execute("SELECT `AWS CODE`, `MAILINGZIPCODE`, `FOS NAME` FROM pai_emp_pincode_mapper")
+rows = cursor.fetchall()
+columns = [desc[0] for desc in cursor.description]
+cursor.close()
+conn.close()
+table_b_1 = pd.DataFrame(rows, columns=columns)
 
 # Input tables
 table_a = pd.DataFrame({
@@ -51,5 +75,7 @@ for idx, row in table_a.iterrows():
 mapped_df = pd.DataFrame(result).set_index('index').sort_index().reset_index(drop=True)
 
 print(table_a)
+print(table_a_1)
 print(table_b)
+print(table_b_1)
 print(mapped_df)
