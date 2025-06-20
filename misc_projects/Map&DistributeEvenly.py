@@ -3,27 +3,27 @@ from collections import defaultdict
 import mysql.connector
 import json
 
-filepath_input = r"C:\Users\kpras\Desktop\Allocation.xlsx"
-df = pd.read_excel(filepath_input,sheet_name='Sheet1', engine = 'openpyxl')
-table_a_1 = df[['AGREEMENTID','MAILINGZIPCODE']]
-
-with open('db_config.json') as f:
-    config = json.load(f)
-
-conn = mysql.connector.connect(
-    host=config["host"],
-    user=config["user"],
-    password=config["password"],
-    database=config["database"]
-)
-
-cursor = conn.cursor()
-cursor.execute("SELECT `AWS CODE`, `MAILINGZIPCODE`, `FOS NAME` FROM pai_emp_pincode_mapper")
-rows = cursor.fetchall()
-columns = [desc[0] for desc in cursor.description]
-cursor.close()
-conn.close()
-table_b_1 = pd.DataFrame(rows, columns=columns)
+# filepath_input = r"C:\Users\kpras\Desktop\Allocation.xlsx"
+# df = pd.read_excel(filepath_input,sheet_name='Sheet1', engine = 'openpyxl')
+# table_a_1 = df[['AGREEMENTID','MAILINGZIPCODE']]
+#
+# with open('db_config.json') as f:
+#     config = json.load(f)
+#
+# conn = mysql.connector.connect(
+#     host=config["host"],
+#     user=config["user"],
+#     password=config["password"],
+#     database=config["database"]
+# )
+#
+# cursor = conn.cursor()
+# cursor.execute("SELECT `AWS CODE`, `MAILINGZIPCODE`, `FOS NAME` FROM pai_emp_pincode_mapper")
+# rows = cursor.fetchall()
+# columns = [desc[0] for desc in cursor.description]
+# cursor.close()
+# conn.close()
+# table_b_1 = pd.DataFrame(rows, columns=columns)
 
 # Input tables
 table_a = pd.DataFrame({
@@ -36,7 +36,7 @@ table_b = pd.DataFrame({
     'common_key': ['X', 'X', 'Y', 'Z', 'Z']
 })
 
-# Pre-existing mapping counts
+# Pre-existing mapping counts (can be empty!)
 existing_counts = {
     'B1': 2,
     'B2': 0,
@@ -45,19 +45,30 @@ existing_counts = {
     'B5': 8
 }
 
-# Default to 0 if not in existing_counts
+# Safe default to 0 if key not present
 assignment_counter = defaultdict(int, existing_counts)
 
 result = []
 
-# Group A by common_key and assign to least-loaded B for that key
+# Assign A rows to least-loaded B rows for each common_key
 for idx, row in table_a.iterrows():
     key = row['common_key']
 
     # Get all matching B rows for this key
     b_group = table_b[table_b['common_key'] == key]['id_b'].tolist()
 
-    # Find the B with minimum total load (existing + assigned)
+    if not b_group:
+        # No matching B for this A — skip or assign None
+        result.append({
+            'index': idx,
+            'id_a': row['id_a'],
+            'common_key': key,
+            'id_b': None,
+            'b_mapping_count': None
+        })
+        continue
+
+    # Find least-loaded B based on current + existing
     min_b = min(b_group, key=lambda b: assignment_counter[b])
 
     # Assign and update count
@@ -71,11 +82,9 @@ for idx, row in table_a.iterrows():
         'b_mapping_count': assignment_counter[min_b]
     })
 
-# Final DataFrame sorted like table_a
+# Final output DataFrame with Table A's order
 mapped_df = pd.DataFrame(result).set_index('index').sort_index().reset_index(drop=True)
 
 print(table_a)
-print(table_a_1)
 print(table_b)
-print(table_b_1)
 print(mapped_df)
