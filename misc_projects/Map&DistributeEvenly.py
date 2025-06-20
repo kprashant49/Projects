@@ -3,46 +3,40 @@ from collections import defaultdict
 import mysql.connector
 import json
 
-# filepath_input = r"C:\Users\kpras\Desktop\Allocation.xlsx"
-# df = pd.read_excel(filepath_input,sheet_name='Sheet1', engine = 'openpyxl')
-# table_a_1 = df[['AGREEMENTID','MAILINGZIPCODE']]
-#
-# with open('db_config.json') as f:
-#     config = json.load(f)
-#
-# conn = mysql.connector.connect(
-#     host=config["host"],
-#     user=config["user"],
-#     password=config["password"],
-#     database=config["database"]
-# )
-#
-# cursor = conn.cursor()
-# cursor.execute("SELECT `AWS CODE`, `MAILINGZIPCODE`, `FOS NAME` FROM pai_emp_pincode_mapper")
-# rows = cursor.fetchall()
-# columns = [desc[0] for desc in cursor.description]
-# cursor.close()
-# conn.close()
-# table_b_1 = pd.DataFrame(rows, columns=columns)
+filepath_input = r"C:\Users\kpras\Desktop\Allocation.xlsx"
+df = pd.read_excel(filepath_input,sheet_name='Sheet1', engine = 'openpyxl')
+table_a = df[['AGREEMENTID','MAILINGZIPCODE']]
 
-# Input tables
-table_a = pd.DataFrame({
-    'id_a': ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9', 'A10', 'A11', 'A12', 'A13', 'A14', 'A15'],
-    'common_key': ['X', 'X', 'Y', 'Y', 'Y', 'Y', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z']
-})
+with open('db_config.json') as f:
+    config = json.load(f)
 
-table_b = pd.DataFrame({
-    'id_b': ['B1', 'B2', 'B3', 'B4', 'B5'],
-    'common_key': ['X', 'X', 'Y', 'Z', 'Z']
-})
+conn = mysql.connector.connect(
+    host=config["host"],
+    user=config["user"],
+    password=config["password"],
+    database=config["database"]
+)
+
+cursor = conn.cursor()
+cursor.execute("SELECT `MAILINGZIPCODE`, `AWS CODE`, `FOS NAME` FROM pai_emp_pincode_mapper")
+rows = cursor.fetchall()
+columns = [desc[0] for desc in cursor.description]
+cursor.close()
+conn.close()
+table_b = pd.DataFrame(rows, columns=columns)
+
+# Convert ZIP codes to string and strip any leading/trailing spaces
+table_a = df[['AGREEMENTID', 'MAILINGZIPCODE']].copy()
+table_a['MAILINGZIPCODE'] = table_a['MAILINGZIPCODE'].astype(str).str.strip()
+table_b['MAILINGZIPCODE'] = table_b['MAILINGZIPCODE'].astype(str).str.strip()
 
 # Pre-existing mapping counts (can be empty!)
 existing_counts = {
-    'B1': 2,
-    'B2': 0,
-    'B3': 0,
-    'B4': 5,
-    'B5': 8
+    # 'B1': 2,
+    # 'B2': 0,
+    # 'B3': 0,
+    # 'B4': 5,
+    # 'B5': 8
 }
 
 # Safe default to 0 if key not present
@@ -52,19 +46,20 @@ result = []
 
 # Assign A rows to least-loaded B rows for each common_key
 for idx, row in table_a.iterrows():
-    key = row['common_key']
+    key = row['MAILINGZIPCODE']
 
     # Get all matching B rows for this key
-    b_group = table_b[table_b['common_key'] == key]['id_b'].tolist()
+    b_group = table_b[table_b['MAILINGZIPCODE'] == key]['AWS CODE'].tolist()
 
     if not b_group:
         # No matching B for this A — skip or assign None
         result.append({
             'index': idx,
-            'id_a': row['id_a'],
-            'common_key': key,
-            'id_b': None,
-            'b_mapping_count': None
+            'AGREEMENTID': row['AGREEMENTID'],
+            'MAILINGZIPCODE': key,
+            'AWS CODE': None,
+            'FOS_mapping_count': None,
+            'Rule_Engine_Status': 'OGL'
         })
         continue
 
@@ -76,15 +71,13 @@ for idx, row in table_a.iterrows():
 
     result.append({
         'index': idx,
-        'id_a': row['id_a'],
-        'common_key': key,
-        'id_b': min_b,
-        'b_mapping_count': assignment_counter[min_b]
+        'AGREEMENTID': row['AGREEMENTID'],
+        'MAILINGZIPCODE': key,
+        'AWS CODE': min_b,
+        'FOS_mapping_count': assignment_counter[min_b],
+        'Rule_Engine_Status': 'Assigned'
     })
 
-# Final output DataFrame with Table A's order
 mapped_df = pd.DataFrame(result).set_index('index').sort_index().reset_index(drop=True)
-
-print(table_a)
-print(table_b)
 print(mapped_df)
+mapped_df.to_excel(r"C:\Users\kpras\Desktop\mapped_df.xlsx", index=False)
