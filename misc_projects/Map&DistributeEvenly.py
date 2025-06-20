@@ -32,11 +32,7 @@ table_b['MAILINGZIPCODE'] = table_b['MAILINGZIPCODE'].astype(str).str.strip()
 
 # Pre-existing mapping counts (can be empty!)
 existing_counts = {
-    # 'B1': 2,
-    # 'B2': 0,
-    # 'B3': 0,
-    # 'B4': 5,
-    # 'B5': 8
+    '162023': 10,
 }
 
 # Safe default to 0 if key not present
