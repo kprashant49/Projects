@@ -5,6 +5,8 @@ from datetime import date, timedelta, datetime
 import mysql.connector
 import string
 import json
+import base64
+from mysql.connector import Error
 
 today = date.today()
 now = datetime.now()
@@ -683,9 +685,6 @@ else:
     df_template.loc[:, 'Product'] = 'Personal Loan'
     df_template.loc[:, 'Product Category'] = 'Unsecured'
 
-cursor.close()
-conn.close()
-
 df_template['FULL_NAME']=full_names
 df_template['FIRST_NAME']=first_names
 df_template['MIDDLE_NAME']=middle_names
@@ -734,13 +733,85 @@ df_template_pmt.loc[:,'Payment Detail Status'] = 'Received'
 df_template_pmt.loc[:,'Payment Detail OTS / NON OTS / EMI Payment'] = 'EMI Payment'
 df_template_pmt.loc[:,'Payment Detail Financial Institution Name(ORG)'] = Bank
 
+def insert_template(name, template_type, bank_name, portfolio, count, base64code):
+    try:
+        current_date = now.strftime('%Y-%m-%d')
+        current_time = now.strftime('%H:%M')
+
+        if conn.is_connected():
+            cursor = conn.cursor()
+
+            # Prepare the insert query (Id will auto-increment)
+            sql_insert_query = """
+                INSERT INTO crm_template_logging_table
+                (Name, Template_type, Date, Time, Bank_name, Portfolio, Count, Base64Code)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """
+
+            # Data tuple
+            data_tuple = (name, template_type, current_date, current_time, bank_name, portfolio, count, base64code)
+
+            cursor.execute(sql_insert_query, data_tuple)
+            conn.commit()
+
+            print(f"Inserted record with Name = {name}")
+
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
+
+
 if Separate == 'yes':
     df_template.to_excel(fr"C:\Users\kpras\Desktop\CRM_Borrower_py_{Bank}_{Portfolio.upper()}_{Count}_{timestamp_str}.xlsx", index=False)
     print(f"Borrower file exported to C:/Users/kpras/Desktop/CRM_Borrower_py_{Bank}_{Portfolio.upper()}_{Count}_{timestamp_str}.xlsx")
     df_template_pmt.to_excel(fr"C:\Users\kpras\Desktop\CRM_Payment_py_{Bank}_{Portfolio.upper()}_{Count}_{timestamp_str}.xlsx", index=False)
     print(f"Payment file exported to C:/Users/kpras/Desktop/CRM_Payment_py_{Bank}_{Portfolio.upper()}_{Count}_{timestamp_str}.xlsx")
+
+    with open(fr"C:\Users\kpras\Desktop\CRM_Borrower_py_{Bank}_{Portfolio.upper()}_{Count}_{timestamp_str}.xlsx",'rb') as file:
+        excel_data_borrower = file.read()
+        base64_encoded_borrower = base64.b64encode(excel_data_borrower).decode('utf-8')
+
+    with open(fr"C:\Users\kpras\Desktop\CRM_Payment_py_{Bank}_{Portfolio.upper()}_{Count}_{timestamp_str}.xlsx",'rb') as file:
+        excel_data_payment = file.read()
+        base64_encoded_payment = base64.b64encode(excel_data_payment).decode('utf-8')
+
+    insert_template(
+        name=f"CRM_Borrower_{Bank}_{Portfolio.upper()}_{Count}_{timestamp_str}",
+        template_type='Borrower',
+        bank_name=Bank,
+        portfolio=Portfolio.upper(),
+        count=Count,
+        base64code=base64_encoded_borrower
+    )
+
+    insert_template(
+        name=f"CRM_Payment_{Bank}_{Portfolio.upper()}_{Count}_{timestamp_str}",
+        template_type='Payment',
+        bank_name=Bank,
+        portfolio=Portfolio.upper(),
+        count=Count,
+        base64code=base64_encoded_payment
+    )
+
+    cursor.close()
+    conn.close()
+
 else:
     with pd.ExcelWriter(fr"C:\Users\kpras\Desktop\CRM_Borrower+Payment_py_{Bank}_{Portfolio.upper()}_{Count}_{timestamp_str}.xlsx") as writer:
         df_template.to_excel(writer, sheet_name='Borrower', index=False)
         df_template_pmt.to_excel(writer, sheet_name='Payment', index=False)
         print(f"Borrower file exported to C:/Users/kpras/Desktop/CRM_Borrower+Payment_py_{Bank}_{Portfolio.upper()}_{Count}_{timestamp_str}.xlsx")
+
+    with open(fr"C:\Users\kpras\Desktop\CRM_Borrower+Payment_py_{Bank}_{Portfolio.upper()}_{Count}_{timestamp_str}.xlsx",'rb') as file:
+        excel_data_combined = file.read()
+        base64_encoded_combined = base64.b64encode(excel_data_combined).decode('utf-8')
+
+    insert_template(
+        name=f"CRM_Borrower+Payment_{Bank}_{Portfolio.upper()}_{Count}_{timestamp_str}",
+        template_type='Borrower+Payment',
+        bank_name=Bank,
+        portfolio=Portfolio.upper(),
+        count=Count,
+        base64code=base64_encoded_combined
+    )
+    cursor.close()
+    conn.close()
