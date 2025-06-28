@@ -18,10 +18,9 @@ conn = mysql.connector.connect(
 )
 
 cursor = conn.cursor()
-cursor.execute("SELECT AGREEMENTID, `AWS CODE` FROM allocation_retail")
+cursor.execute("SELECT AGREEMENTID, AWS_CODE FROM allocation_retail")
 allocation_retail = cursor.fetchall()
-cursor.close()
-conn.close()
+print(allocation_retail)
 
 cursor = conn.cursor()
 cursor.execute("SELECT MAILINGZIPCODE, AWS_CODE, FOS_NAME FROM pai_emp_pincode_mapper")
@@ -86,7 +85,7 @@ for idx, row in table_a.iterrows():
         'Rule_Engine_Status': 'Assigned'
     })
 
-mapped_df = pd.DataFrame(result).set_index('index').sort_index().reset_index(drop=True)
-print(mapped_df)
-mapped_df.to_excel(r"C:\Users\kpras\Desktop\mapped_df.xlsx", index=False)
-print("Exported to excel")
+# mapped_df = pd.DataFrame(result).set_index('index').sort_index().reset_index(drop=True)
+# print(mapped_df)
+# mapped_df.to_excel(r"C:\Users\kpras\Desktop\mapped_df.xlsx", index=False)
+# print("Exported to excel")
