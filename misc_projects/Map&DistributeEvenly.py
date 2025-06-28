@@ -18,6 +18,12 @@ conn = mysql.connector.connect(
 )
 
 cursor = conn.cursor()
+cursor.execute("SELECT AGREEMENTID, `AWS CODE` FROM allocation_retail")
+allocation_retail = cursor.fetchall()
+cursor.close()
+conn.close()
+
+cursor = conn.cursor()
 cursor.execute("SELECT MAILINGZIPCODE, AWS_CODE, FOS_NAME FROM pai_emp_pincode_mapper")
 rows = cursor.fetchall()
 columns = [desc[0] for desc in cursor.description]
