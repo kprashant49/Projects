@@ -2,7 +2,7 @@ import openai
 import pandas as pd
 import requests
 
-filepath = r"C:\Users\kpras\Desktop\pincodes_nf.xlsx"
+filepath = r"C:\Users\kpras\Desktop\Test_data\pincodes_nf.xlsx"
 df = pd.read_excel(filepath,sheet_name='Sheet1', engine = 'openpyxl')
 
 with open('gmaps_api_key.txt', 'r') as file:
