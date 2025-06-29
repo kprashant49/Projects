@@ -3,6 +3,7 @@ from collections import defaultdict
 import mysql.connector
 import json
 
+# Importing current month's allocation
 filepath_input = r"C:\Users\kpras\Desktop\Allocation.xlsx"
 df = pd.read_excel(filepath_input,sheet_name='Sheet1', engine = 'openpyxl')
 table_a = df[['AGREEMENTID','MAILINGZIPCODE']]
@@ -17,11 +18,19 @@ conn = mysql.connector.connect(
     database=config["database"]
 )
 
+# Importing previous month's allocation
 cursor = conn.cursor()
-cursor.execute("SELECT AGREEMENTID, AWS_CODE FROM allocation_retail")
-allocation_retail = cursor.fetchall()
-print(allocation_retail)
+cursor.execute("SELECT AGREEMENTID, AWS_CODE FROM allocation_retail where MAILINGZIPCODE  = '411021'")
+rows = cursor.fetchall()
+columns = [col[0] for col in cursor.description]
+df_allocation = pd.DataFrame(rows, columns=columns)
 
+table_a['AGREEMENTID'] = table_a['AGREEMENTID'].astype(str)
+df_allocation['AGREEMENTID'] = df_allocation['AGREEMENTID'].astype(str)
+merged_df1 = pd.merge(table_a, df_allocation, how='left', on='AGREEMENTID')
+merged_df1.to_excel(r"C:\Users\kpras\Desktop\mapped_df1.xlsx", index=False)
+
+# Preparing for agent mapping
 cursor = conn.cursor()
 cursor.execute("SELECT MAILINGZIPCODE, AWS_CODE, FOS_NAME FROM pai_emp_pincode_mapper")
 rows = cursor.fetchall()
@@ -42,7 +51,6 @@ existing_counts = {
 
 # Safe default to 0 if key not present
 assignment_counter = defaultdict(int, existing_counts)
-
 result = []
 
 # Assign A rows to least-loaded B rows for each common_key
@@ -58,14 +66,14 @@ for idx, row in table_a.iterrows():
             'index': idx,
             'AGREEMENTID': row['AGREEMENTID'],
             'MAILINGZIPCODE': key,
-            'AWS_CODE': None,
+            'AWS_CODE_1': None,
             'FOS_mapping_count': None,
             'Rule_Engine_Status': 'OGL'
         })
         continue
 
     # Find least-loaded B based on current + existing
-    # min_b = min(b_group, key=lambda b: assignment_counter[b])
+    # min_b = min(b_group, key=lambda b: assignment_counter[b]) - Another method
     min_count = None
     min_b = None
     for b in b_group:
@@ -80,12 +88,11 @@ for idx, row in table_a.iterrows():
         'index': idx,
         'AGREEMENTID': row['AGREEMENTID'],
         'MAILINGZIPCODE': key,
-        'AWS_CODE': min_b,
+        'AWS_CODE_1': min_b,
         'FOS_mapping_count': assignment_counter[min_b],
         'Rule_Engine_Status': 'Assigned'
     })
 
-# mapped_df = pd.DataFrame(result).set_index('index').sort_index().reset_index(drop=True)
-# print(mapped_df)
-# mapped_df.to_excel(r"C:\Users\kpras\Desktop\mapped_df.xlsx", index=False)
-# print("Exported to excel")
+mapped_df2 = pd.DataFrame(result).set_index('index').sort_index().reset_index(drop=True)
+mapped_df2.to_excel(r"C:\Users\kpras\Desktop\mapped_df2.xlsx", index=False)
+print("Exported to excel")
