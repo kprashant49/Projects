@@ -13,7 +13,7 @@ now = datetime.now()
 timestamp_str = now.strftime("%Y%m%d_%H%M")
 alphabets = list(string.ascii_uppercase)
 
-# filepath = r"C:\Users\kpras\Desktop\AutomatedBorrowerUploadTemplate.xlsx"
+# filepath = r"C:\Users\kpras\Desktop\Test_data\AutomatedBorrowerUploadTemplate.xlsx"
 # df = pd.read_excel(filepath,sheet_name='Sheet1', engine = 'openpyxl')
 # headers = df.columns.tolist()
 

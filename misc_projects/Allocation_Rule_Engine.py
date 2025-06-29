@@ -3,7 +3,7 @@ import mysql.connector
 import string
 import json
 
-filepath_input = r"C:\Users\kpras\Desktop\Allocation.xlsx"
+filepath_input = r"C:\Users\kpras\Desktop\Test_data\Allocation.xlsx"
 df = pd.read_excel(filepath_input,sheet_name='Sheet1', engine = 'openpyxl')
 
 assign = df['MAILINGZIPCODE']
@@ -42,8 +42,8 @@ conn.close()
 result_df = pd.DataFrame(data = all_results, columns = new_columns)
 result_df = result_df.drop_duplicates()
 merged_df = pd.merge(df, result_df, how='left', on='MAILINGZIPCODE')
-merged_df['FOS NAME_rule_engine'] = merged_df['FOS NAME_rule_engine'].fillna('OGL')
-merged_df['AWS CODE_rule_engine'] = merged_df['AWS CODE_rule_engine'].fillna('OGL')
+merged_df['FOS_NAME_rule_engine'] = merged_df['FOS_NAME_rule_engine'].fillna('OGL')
+merged_df['AWS_CODE_rule_engine'] = merged_df['AWS_CODE_rule_engine'].fillna('OGL')
 
 filepath_output = r"C:\Users\kpras\Desktop\Allocation_output.xlsx"
 merged_df.to_excel(filepath_output, sheet_name='Sheet1', index=False)
