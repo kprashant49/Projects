@@ -8,7 +8,6 @@ df = pd.read_excel(filepath,sheet_name='Sheet1', engine = 'openpyxl')
 with open('gmaps_api_key.txt', 'r') as file:
     GOOGLE_API_KEY = file.read().strip()
 
-print(GOOGLE_API_KEY)
 openai.api_key = "lm-studio"
 openai.api_base = "http://localhost:1234/v1"
 
