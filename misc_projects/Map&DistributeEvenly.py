@@ -1,12 +1,14 @@
+from operator import index
+
 import pandas as pd
 from collections import defaultdict
 import mysql.connector
 import json
 
 # Importing current month's allocation
-filepath_input = r"C:\Users\kpras\Desktop\Allocation.xlsx"
+filepath_input = r"C:\Users\kpras\Desktop\Test_data\Allocation.xlsx"
 df = pd.read_excel(filepath_input,sheet_name='Sheet1', engine = 'openpyxl')
-table_a = df[['AGREEMENTID','MAILINGZIPCODE']]
+table_a = df[['AGREEMENTID', 'MAILINGZIPCODE']]
 
 with open('db_config.json') as f:
     config = json.load(f)
@@ -27,8 +29,14 @@ df_allocation = pd.DataFrame(rows, columns=columns)
 
 table_a['AGREEMENTID'] = table_a['AGREEMENTID'].astype(str)
 df_allocation['AGREEMENTID'] = df_allocation['AGREEMENTID'].astype(str)
-merged_df1 = pd.merge(table_a, df_allocation, how='left', on='AGREEMENTID')
-merged_df1.to_excel(r"C:\Users\kpras\Desktop\mapped_df1.xlsx", index=False)
+merged_df1 = pd.merge(table_a, df_allocation, how='left', on='AGREEMENTID', indicator=True)
+merged_df2 = merged_df1[merged_df1['_merge'] == 'both']
+merged_df2['_merge'] = 'Assigned basis old allocation'
+merged_df2.rename(columns={'_merge': 'Allocation_Status'}, inplace=True)
+merged_df2['MAILINGZIPCODE'] = merged_df2['MAILINGZIPCODE'].astype(str)
+
+exclusive_A = merged_df1[merged_df1['_merge'] == 'left_only']
+exclusive_A = exclusive_A[table_a.columns]
 
 # Preparing for agent mapping
 cursor = conn.cursor()
@@ -40,21 +48,21 @@ conn.close()
 table_b = pd.DataFrame(rows, columns=columns)
 
 # Convert ZIP codes to string and strip any leading/trailing spaces
-table_a = df[['AGREEMENTID', 'MAILINGZIPCODE']].copy()
-table_a['MAILINGZIPCODE'] = table_a['MAILINGZIPCODE'].astype(str).str.strip()
+exclusive_A = exclusive_A[['AGREEMENTID', 'MAILINGZIPCODE']].copy()
+exclusive_A['MAILINGZIPCODE'] = exclusive_A['MAILINGZIPCODE'].astype(str).str.strip()
 table_b['MAILINGZIPCODE'] = table_b['MAILINGZIPCODE'].astype(str).str.strip()
 
 # Pre-existing mapping counts (can be empty!)
-existing_counts = {
-    '431': 30,
-}
+# existing_counts = {'431': 30}
+merged_df2['AWS_CODE'].value_counts()
+existing_counts = merged_df2['AWS_CODE'].value_counts().to_dict()
 
 # Safe default to 0 if key not present
 assignment_counter = defaultdict(int, existing_counts)
 result = []
 
 # Assign A rows to least-loaded B rows for each common_key
-for idx, row in table_a.iterrows():
+for idx, row in exclusive_A.iterrows():
     key = row['MAILINGZIPCODE']
 
     # Get all matching B rows for this key
@@ -66,9 +74,9 @@ for idx, row in table_a.iterrows():
             'index': idx,
             'AGREEMENTID': row['AGREEMENTID'],
             'MAILINGZIPCODE': key,
-            'AWS_CODE_1': None,
-            'FOS_mapping_count': None,
-            'Rule_Engine_Status': 'OGL'
+            'AWS_CODE': None,
+            'Allocation_Status': 'OGL',
+            'FOS_mapping_count': None
         })
         continue
 
@@ -88,11 +96,17 @@ for idx, row in table_a.iterrows():
         'index': idx,
         'AGREEMENTID': row['AGREEMENTID'],
         'MAILINGZIPCODE': key,
-        'AWS_CODE_1': min_b,
-        'FOS_mapping_count': assignment_counter[min_b],
-        'Rule_Engine_Status': 'Assigned'
+        'AWS_CODE': min_b,
+        'Allocation_Status': 'Assigned by rule_engine',
+        'FOS_mapping_count': assignment_counter[min_b]
     })
 
 mapped_df2 = pd.DataFrame(result).set_index('index').sort_index().reset_index(drop=True)
-mapped_df2.to_excel(r"C:\Users\kpras\Desktop\mapped_df2.xlsx", index=False)
-print("Exported to excel")
+mapped_df3 = pd.concat([merged_df2, mapped_df2], ignore_index=True)
+mapped_df3['AGREEMENTID'] = mapped_df3['AGREEMENTID'].astype(str)
+table_a['AGREEMENTID'] = table_a['AGREEMENTID'].astype(str)
+mapped_df3['AGREEMENTID'] = pd.Categorical(mapped_df3['AGREEMENTID'], categories=table_a['AGREEMENTID'], ordered=True)
+df2_sorted = mapped_df3.sort_values('AGREEMENTID')
+df2_sorted.drop('FOS_mapping_count', axis=1, inplace=True)
+df2_sorted.to_excel(r"C:\Users\kpras\Desktop\Auto_allocation.xlsx", index=False)
+print("Exported the output to an excel file named 'Auto_allocation.xlsx'")
