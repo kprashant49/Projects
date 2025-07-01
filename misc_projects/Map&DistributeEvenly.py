@@ -1,5 +1,3 @@
-from operator import index
-
 import pandas as pd
 from collections import defaultdict
 import mysql.connector
@@ -33,7 +31,10 @@ merged_df1 = pd.merge(table_a, df_allocation, how='left', on='AGREEMENTID', indi
 merged_df2 = merged_df1[merged_df1['_merge'] == 'both']
 merged_df2['_merge'] = 'Assigned basis old allocation'
 merged_df2.rename(columns={'_merge': 'Allocation_Status'}, inplace=True)
+# Create a counter column that increments per AWS_CODE
+merged_df2['FOS_mapping_count'] = merged_df1.groupby('AWS_CODE').cumcount() + 1
 merged_df2['MAILINGZIPCODE'] = merged_df2['MAILINGZIPCODE'].astype(str)
+merged_df2 = merged_df2.dropna()
 
 exclusive_A = merged_df1[merged_df1['_merge'] == 'left_only']
 exclusive_A = exclusive_A[table_a.columns]
@@ -107,6 +108,6 @@ mapped_df3['AGREEMENTID'] = mapped_df3['AGREEMENTID'].astype(str)
 table_a['AGREEMENTID'] = table_a['AGREEMENTID'].astype(str)
 mapped_df3['AGREEMENTID'] = pd.Categorical(mapped_df3['AGREEMENTID'], categories=table_a['AGREEMENTID'], ordered=True)
 df2_sorted = mapped_df3.sort_values('AGREEMENTID')
-df2_sorted.drop('FOS_mapping_count', axis=1, inplace=True)
+# df2_sorted.drop('FOS_mapping_count', axis=1, inplace=True)
 df2_sorted.to_excel(r"C:\Users\kpras\Desktop\Auto_allocation.xlsx", index=False)
 print("Exported the output to an excel file named 'Auto_allocation.xlsx'")
