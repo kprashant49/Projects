@@ -75,7 +75,7 @@ for idx, row in df_non_map_priority1.iterrows():
             'index': idx,
             'AGREEMENTID': row['AGREEMENTID'],
             'MAILINGZIPCODE': key,
-            'AWS_CODE': None,
+            'AWS_CODE': 'No FOS',
             'Allocation_Status': 'OGL',
             'FOS_mapping_count': None
         })
