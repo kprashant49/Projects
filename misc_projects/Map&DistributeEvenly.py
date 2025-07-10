@@ -81,7 +81,7 @@ for idx, row in df_non_map_priority1.iterrows():
         })
         continue
 
-    # Find least-loaded FOS based on current + existing mapping
+    # Find least-loaded FOS based on current and existing mapping
     # min_fos = min(fos_group, key=lambda x: assignment_counter[x]) - Another method
     min_count = None
     min_fos = None
