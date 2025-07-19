@@ -1,0 +1,25 @@
+Change directory in CMD (Admin Mode)
+cd /d D:\Projects\Service
+
+python my_service.py install
+python my_service.py start
+python my_service.py stop
+python my_service.py remove
+
+
+NSSM
+
+nssm start MyPythonService
+"C:\Tools\nssm\nssm.exe" stop MyPythonService
+"C:\Tools\nssm\nssm.exe" remove MyPythonService confirm
+"C:\Tools\nssm\nssm.exe" install MyPythonService
+
+| Field                 | Value                                                       |
+| --------------------- | ----------------------------------------------------------- |
+| **Path**              | `C:\Python311\python.exe` (or wherever Python is installed) |
+| **Arguments**         | `D:\Projects\Service\my_script.py`                          |
+| **Startup directory** | `D:\Projects\Service`                                       |
+
+"C:\Tools\nssm\nssm.exe" start MyPythonService
+
+

@@ -1,0 +1,48 @@
+[2025-07-19 20:44:01] Service is starting...
+[2025-07-19 20:44:01] Welcome
+[2025-07-19 20:44:11] Welcome
+[2025-07-19 20:44:21] Welcome
+[2025-07-19 20:44:31] Welcome
+[2025-07-19 20:44:41] Welcome
+[2025-07-19 20:44:51] Welcome
+[2025-07-19 20:45:01] Welcome
+[2025-07-19 20:45:11] Welcome
+[2025-07-19 20:45:21] Welcome
+[2025-07-19 20:45:31] Welcome
+[2025-07-19 20:45:41] Welcome
+[2025-07-19 20:45:51] Welcome
+[2025-07-19 20:46:01] Welcome
+[2025-07-19 20:46:11] Welcome
+[2025-07-19 20:46:21] Welcome
+[2025-07-19 20:46:31] Welcome
+[2025-07-19 20:46:32] Service is stopping...
+[2025-07-19 20:46:43] Service is starting...
+[2025-07-19 20:46:43] Current Time: 2025-07-19 20:46:43
+[2025-07-19 20:46:53] Current Time: 2025-07-19 20:46:53
+[2025-07-19 20:47:03] Current Time: 2025-07-19 20:47:03
+[2025-07-19 20:47:13] Current Time: 2025-07-19 20:47:13
+[2025-07-19 20:47:23] Current Time: 2025-07-19 20:47:23
+[2025-07-19 20:47:33] Current Time: 2025-07-19 20:47:33
+[2025-07-19 20:47:43] Current Time: 2025-07-19 20:47:43
+[2025-07-19 20:47:53] Current Time: 2025-07-19 20:47:53
+[2025-07-19 20:47:56] Service is stopping...
+Welcome - Current Time: 2025-07-19 21:13:30
+Welcome - Current Time: 2025-07-19 21:13:40
+Welcome - Current Time: 2025-07-19 21:13:50
+Welcome - Current Time: 2025-07-19 21:14:00
+Welcome - Current Time: 2025-07-19 21:14:10
+Welcome - Current Time: 2025-07-19 21:14:20
+Welcome - Current Time: 2025-07-19 21:14:30
+Welcome - Current Time: 2025-07-19 21:14:40
+Welcome - Current Time: 2025-07-19 21:14:50
+Welcome - Current Time: 2025-07-19 21:15:00
+Welcome - Current Time: 2025-07-19 21:19:00
+Welcome - Current Time: 2025-07-19 21:19:10
+Welcome - Current Time: 2025-07-19 21:19:20
+Welcome - Current Time: 2025-07-19 21:19:30
+Welcome - Current Time: 2025-07-19 21:19:40
+Welcome - Current Time: 2025-07-19 21:19:50
+Welcome - Current Time: 2025-07-19 21:20:00
+Welcome - Current Time: 2025-07-19 21:20:10
+Welcome - Current Time: 2025-07-19 21:20:20
+Welcome - Current Time: 2025-07-19 21:20:30
