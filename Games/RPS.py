@@ -12,13 +12,14 @@ else:
 
 player1_count = 0
 player2_count = 0
+ties = 0
 
 # for games in range(Matches):
 while player1_count < Winner and player2_count < Winner:
 	if players == 1:
-		print(f"Player 1: {player1_count} Computer: {player2_count}")
+		print(f"Player 1: {player1_count} Computer: {player2_count} Ties: {ties}")
 	else:
-		print(f"Player 1: {player1_count} Player 2: {player2_count}")
+		print(f"Player 1: {player1_count} Player 2: {player2_count} Ties: {ties}")
 
 	player1 = input("Player 1, make your move: ")
 	if player1 == 'quit':
@@ -34,8 +35,12 @@ while player1_count < Winner and player2_count < Winner:
 		player2 = choice(["rock", "paper", "scissors"])
 		print(f"Computer moved {player2}")
 
+	player1 = player1.lower()
+	player2 = player2.lower()
+
 	if player1 == player2:
 		print("It's a tie!")
+		ties += 1
 	elif player1 == "rock" and player2 == "scissors":
 		print("Player 1 wins!")
 		player1_count += 1
@@ -52,11 +57,10 @@ while player1_count < Winner and player2_count < Winner:
 		print("Player 2 wins!")
 		player2_count += 1
 
-
 if players == 1:
-	print(f"Player 1: {player1_count} Computer: {player2_count}")
+	print(f"Player 1: {player1_count} Computer: {player2_count} Ties: {ties}")
 else:
-	print(f"Player 1: {player1_count} Player 2: {player2_count}")
+	print(f"Player 1: {player1_count} Player 2: {player2_count} Ties: {ties}")
 
 if player1_count > player2_count:
 	print("Player 1 is the winner!")
