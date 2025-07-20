@@ -5,7 +5,10 @@ while players not in [1,2]:
 	players = int(input("Please enter numer of players: "))
 
 Matches = int(input("Please enter number of matches: "))
-Winner = round((Matches/2),0)
+if Matches%2 == 0:
+	Winner = round((Matches/2),0)+1
+else:
+	Winner = round((Matches+1)/2,0)
 
 player1_count = 0
 player2_count = 0
@@ -18,6 +21,8 @@ while player1_count < Winner and player2_count < Winner:
 		print(f"Player 1: {player1_count} Player 2: {player2_count}")
 
 	player1 = input("Player 1, make your move: ")
+	if player1 == 'quit':
+		break
 	while player1.lower() not in ["rock","paper","scissors"]:
 		player1 = input("Player 1, make your move: ")
 
