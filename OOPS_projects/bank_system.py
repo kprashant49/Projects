@@ -15,6 +15,10 @@ class BankAccount:
             self.balance -= amount
             return amount
 
+    def __str__(self):
+        return f"Account[{self.account_number}] - {self.account_holder}: ₹{self.balance}"
+
+
 class Banking:
 
     def __init__(self):
@@ -39,6 +43,12 @@ if __name__ == "__main__":
     account_2 = BankAccount(2, "Unnati", 20000)
 
     bank = Banking()
+
+    # Creating an object of the Banking class. It calls the __init__ method of the Banking class and initializes the accounts attribute as an empty dictionary.
+    # self.accounts = {}, which initializes an empty dictionary to store bank accounts.
+    # Assigns the newly created Banking object to the variable bank to use bank.add_account(...), bank.get_total_assets() methods.
+    # It’s like saying: “Give me a new banking system where I can store accounts.” and bank becomes your handle to interact with that system.
+
     bank.add_account(account_1)
     bank.add_account(account_2)
 
@@ -48,3 +58,7 @@ if __name__ == "__main__":
     account_2.withdraw(1000)
 
     print(f"Total assets after transaction: {bank.get_total_assets()}")
+
+    for acc in bank.accounts.values():
+        print(acc)
+
