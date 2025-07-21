@@ -6,12 +6,18 @@ class Vehicle:
         self.vehicle_make = make
         self.vehicle_colour = colour
     def drive(self):
-        print("This is a Car!")
+        print(f"Driving new car: {self.vehicle_make} {self.vehicle_body}!")
 class Truck(Vehicle):
     def drive(self):
-        print("This is a Truck!")
+        print(f"Driving new truck: {self.vehicle_make} {self.vehicle_body}!")
 
 Car1 = Vehicle('Jeep','Toyota','Black')
+Car2 = Vehicle('Sedan','Honda','White')
 Truck1 = Truck('Pickup_Truck','Chevy','Red')
 Car1.drive()
 Truck1.drive()
+print(Car2.vehicle_body)
+print(Car2.vehicle_make)
+print(Car2.Manufactured_in)
+print(Car2.vehicle_colour)
+Car2.drive()

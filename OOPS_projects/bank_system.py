@@ -15,7 +15,6 @@ class BankAccount:
             self.balance -= amount
             return amount
 
-
 class Bank:
 
     def __init__(self):
@@ -36,16 +35,16 @@ class Bank:
 
 
 if __name__ == "__main__":
-    acc1 = BankAccount(1, "Alice", 1000)
-    acc2 = BankAccount(2, "Bob", 2000)
+    account_1 = BankAccount(1, "Prashant", 10000)
+    account_2 = BankAccount(2, "Unnati", 20000)
 
     bank = Bank()
-    bank.add_account(acc1)
-    bank.add_account(acc2)
+    bank.add_account(account_1)
+    bank.add_account(account_2)
 
     print(f"Total assets before transaction: {bank.get_total_assets()}")
 
-    acc1.deposit(500)
-    acc2.withdraw(1000)
+    account_1.deposit(500)
+    account_2.withdraw(1000)
 
     print(f"Total assets after transaction: {bank.get_total_assets()}")
