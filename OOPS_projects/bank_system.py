@@ -15,7 +15,7 @@ class BankAccount:
             self.balance -= amount
             return amount
 
-class Bank:
+class Banking:
 
     def __init__(self):
         self.accounts = {}
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     account_1 = BankAccount(1, "Prashant", 10000)
     account_2 = BankAccount(2, "Unnati", 20000)
 
-    bank = Bank()
+    bank = Banking()
     bank.add_account(account_1)
     bank.add_account(account_2)
 
