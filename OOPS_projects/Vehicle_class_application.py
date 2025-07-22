@@ -1,7 +1,14 @@
-from Vehicle_class import Vehicle
+from Vehicle_class import Vehicle, Truck
 car1 = Vehicle("Jeep","Toyota","Black")
+truck1 = Vehicle("Pick-up","Chevy","White")
 print(car1.vehicle_make)
 print(car1.vehicle_body)
 print(car1.vehicle_colour)
 print(car1.Manufactured_in)
 car1.drive()
+print(truck1.vehicle_make)
+print(truck1.vehicle_body)
+print(truck1.vehicle_colour)
+print(truck1.Manufactured_in)
+truck1.drive()
+print(truck1.get_vehicle_count())

@@ -14,6 +14,7 @@ class Vehicle:
     def get_vehicle_count(self):
         return Vehicle.vehicle_counter
 
+# inheritance (Sub_class)
 class Truck(Vehicle):
     def drive(self):
         print(f"Driving new truck: {self.vehicle_make} {self.vehicle_body}!")
