@@ -1,0 +1,27 @@
+2025-07-22 17:57:21,805 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-07-22 17:57:21,805 - INFO - Scheduler started.
+2025-07-22 17:57:21,808 - INFO - Added job "say_hello" to job store "default"
+2025-07-22 17:57:21,808 - INFO - Scheduler started
+2025-07-22 17:58:00,016 - INFO - Running job "say_hello (trigger: cron[minute='*'], next run at: 2025-07-22 17:58:00 IST)" (scheduled at 2025-07-22 17:58:00+05:30)
+2025-07-22 17:58:00,018 - INFO - Job "say_hello (trigger: cron[minute='*'], next run at: 2025-07-22 17:59:00 IST)" executed successfully
+2025-07-22 17:59:00,012 - INFO - Running job "say_hello (trigger: cron[minute='*'], next run at: 2025-07-22 18:00:00 IST)" (scheduled at 2025-07-22 17:59:00+05:30)
+2025-07-22 17:59:00,014 - INFO - Job "say_hello (trigger: cron[minute='*'], next run at: 2025-07-22 18:00:00 IST)" executed successfully
+2025-07-22 18:00:00,002 - INFO - Running job "say_hello (trigger: cron[minute='*'], next run at: 2025-07-22 18:01:00 IST)" (scheduled at 2025-07-22 18:00:00+05:30)
+2025-07-22 18:00:00,003 - INFO - Job "say_hello (trigger: cron[minute='*'], next run at: 2025-07-22 18:01:00 IST)" executed successfully
+2025-07-22 18:06:48,715 - INFO - Scheduler starting.
+2025-07-22 18:06:48,722 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-07-22 18:06:48,723 - INFO - Added job "logged_say_hello" to job store "default"
+2025-07-22 18:06:48,724 - INFO - Scheduler started
+2025-07-22 18:07:18,738 - INFO - Running job "logged_say_hello (trigger: interval[0:00:30], next run at: 2025-07-22 18:07:18 IST)" (scheduled at 2025-07-22 18:07:18.722422+05:30)
+2025-07-22 18:07:18,739 - INFO - say_hello() function executed.
+2025-07-22 18:07:18,739 - INFO - Job "logged_say_hello (trigger: interval[0:00:30], next run at: 2025-07-22 18:07:48 IST)" executed successfully
+2025-07-22 18:07:48,732 - INFO - Running job "logged_say_hello (trigger: interval[0:00:30], next run at: 2025-07-22 18:08:18 IST)" (scheduled at 2025-07-22 18:07:48.722422+05:30)
+2025-07-22 18:07:48,732 - INFO - say_hello() function executed.
+2025-07-22 18:07:48,733 - INFO - Job "logged_say_hello (trigger: interval[0:00:30], next run at: 2025-07-22 18:08:18 IST)" executed successfully
+2025-07-22 18:08:18,729 - INFO - Running job "logged_say_hello (trigger: interval[0:00:30], next run at: 2025-07-22 18:08:48 IST)" (scheduled at 2025-07-22 18:08:18.722422+05:30)
+2025-07-22 18:08:18,730 - INFO - say_hello() function executed.
+2025-07-22 18:08:18,730 - INFO - Job "logged_say_hello (trigger: interval[0:00:30], next run at: 2025-07-22 18:08:48 IST)" executed successfully
+2025-07-22 18:08:48,732 - INFO - Running job "logged_say_hello (trigger: interval[0:00:30], next run at: 2025-07-22 18:09:18 IST)" (scheduled at 2025-07-22 18:08:48.722422+05:30)
+2025-07-22 18:08:48,733 - INFO - say_hello() function executed.
+2025-07-22 18:08:48,733 - INFO - Job "logged_say_hello (trigger: interval[0:00:30], next run at: 2025-07-22 18:09:18 IST)" executed successfully
+2025-07-22 18:09:18,724 - INFO - Scheduler stopped.
