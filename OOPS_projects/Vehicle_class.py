@@ -16,8 +16,13 @@ class Vehicle:
 
 # inheritance (Sub_class)
 class Truck(Vehicle):
+    # Overriding the constructor
     def drive(self):
         print(f"Driving new truck: {self.vehicle_make} {self.vehicle_body}!")
+
+class Motorcycle(Vehicle):
+    def drive(self):
+        print(f"Riding new motorbike: {self.vehicle_make} {self.vehicle_body}!")
 
 Car1 = Vehicle('Jeep','Toyota','Black')
 Car1.engine = '4-cylinder'  # we can assign a variable out of a class specific to an instance

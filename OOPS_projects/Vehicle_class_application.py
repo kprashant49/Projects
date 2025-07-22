@@ -1,6 +1,6 @@
-from Vehicle_class import Vehicle, Truck
+from Vehicle_class import Vehicle, Truck, Motorcycle
 car1 = Vehicle("Jeep","Toyota","Black")
-truck1 = Vehicle("Pick-up","Chevy","White")
+truck1 = Truck("Pick-up","Chevy","White")
 print(car1.vehicle_make)
 print(car1.vehicle_body)
 print(car1.vehicle_colour)
@@ -12,3 +12,9 @@ print(truck1.vehicle_colour)
 print(truck1.Manufactured_in)
 truck1.drive()
 print(truck1.get_vehicle_count())
+motorcycle1 = Motorcycle("250cc","Honda","Black")
+print(motorcycle1.vehicle_make)
+print(motorcycle1.vehicle_body)
+print(motorcycle1.vehicle_colour)
+print(motorcycle1.Manufactured_in)
+motorcycle1.drive()
