@@ -16,7 +16,7 @@ class BankAccount:
             return amount
 
     def __str__(self):
-        return f"Account[{self.account_number}] - {self.account_holder}: ₹{self.balance}"
+        return f"Account {self.account_number} - {self.account_holder}: ₹{self.balance}"
 
 
 class Banking:
@@ -39,8 +39,8 @@ class Banking:
 
 
 if __name__ == "__main__":
-    account_1 = BankAccount(1, "Prashant", 10000)
-    account_2 = BankAccount(2, "Unnati", 20000)
+    account_1 = BankAccount(9820, "Prashant", 10000)
+    account_2 = BankAccount(9819, "Unnati", 20000)
 
     bank = Banking()
 
@@ -59,6 +59,10 @@ if __name__ == "__main__":
 
     print(f"Total assets after transaction: {bank.get_total_assets()}")
 
-    for acc in bank.accounts.values():
+    for acc in bank.accounts.keys():
         print(acc)
 
+    for bal in bank.accounts.values():
+        print(bal)
+
+    print(bank.accounts)

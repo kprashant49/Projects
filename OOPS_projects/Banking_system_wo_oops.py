@@ -1,24 +1,22 @@
-class BankAccount:
-    def __init__(self, account_number, account_holder, balance = 0):
-        self.account_number = account_number
-        self.account_holder = account_holder
-        self.balance = balance
-
-
 accounts = {}
 
-# Input loop for adding/removing accounts
+# Loop for user actions
 while True:
     action = input("Enter 'add' to add account, 'remove' to remove account, or 'done' to finish: ").strip().lower()
 
     if action == 'add':
-        acc_num = int(input("Enter account number: "))
+        acc_num = input("Enter account number: ")
         holder = input("Enter account holder name: ")
         balance = float(input("Enter initial balance: "))
-        accounts[acc_num] = BankAccount(acc_num, holder, balance)
+
+        # Create a dictionary for account and add it to accounts
+        accounts[acc_num] = {
+            "account_holder": holder,
+            "balance": balance
+        }
 
     elif action == 'remove':
-        acc_num = int(input("Enter account number to remove: "))
+        acc_num = input("Enter account number to remove: ")
         if acc_num in accounts:
             del accounts[acc_num]
             print("Account removed.")
@@ -31,9 +29,10 @@ while True:
     else:
         print("Invalid input. Please enter 'add', 'remove', or 'done'.")
 
-# Total asset calculation
+# Calculate total assets
 total_assets = 0
 for acc in accounts.values():
-    total_assets += acc.balance
+    total_assets += acc["balance"]
 
 print(f"\nTotal assets in all accounts: {total_assets}")
+print(accounts)
