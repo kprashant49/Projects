@@ -23,13 +23,16 @@ class Banking:
 
     def __init__(self):
         self.accounts = {}
+        # This is a dictionary that maps account numbers to BankAccount objects
 
     def add_account(self, account):
         self.accounts[account.account_number] = account
+        # This is Key based addition and addition of account number itself as a key in account dictionary
 
     def remove_account(self, account_number):
         if account_number in self.accounts:
             del self.accounts[account_number]
+            # This is Key based deletion
 
     def get_total_assets(self):
         total_assets = 0
