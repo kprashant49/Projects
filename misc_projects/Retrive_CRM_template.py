@@ -2,41 +2,46 @@ import mysql.connector
 import json
 import base64
 
-while True:
-    try:
-        TemplateId = int(input("Enter the TemplateId: "))
-        if TemplateId > 0:
-            break
-        else:
-            print("TemplateId must be greater than 0!")
-    except ValueError:
-        print("Please enter a valid TemplateId!")
+def Retrive_CRM_template():
 
-with open('db_config.json') as f:
-    config = json.load(f)
+    while True:
+        try:
+            TemplateId = int(input("Enter the TemplateId: "))
+            if TemplateId > 0:
+                break
+            else:
+                print("TemplateId must be greater than 0!")
+        except ValueError:
+            print("Please enter a valid TemplateId!")
 
-conn = mysql.connector.connect(
-    host=config["host"],
-    user=config["user"],
-    password=config["password"],
-    database=config["database"]
-)
+    with open('db_config.json') as f:
+        config = json.load(f)
 
-cursor = conn.cursor()
-query = "SELECT Base64Code, Name FROM crm_template_logging_table WHERE templateId = %s"
-cursor.execute(query, (TemplateId,))
-row = cursor.fetchone()
-cursor.close()
-conn.close()
+    conn = mysql.connector.connect(
+        host=config["host"],
+        user=config["user"],
+        password=config["password"],
+        database=config["database"]
+    )
 
-if row:
-    base64_code, name = row
-    print("Base64Code:", base64_code)
-    print("Name:", name)
+    cursor = conn.cursor()
+    query = "SELECT Base64Code, Name FROM crm_template_logging_table WHERE templateId = %s"
+    cursor.execute(query, (TemplateId,))
+    row = cursor.fetchone()
+    cursor.close()
+    conn.close()
 
-else:
-    print("No data found for the given TemplateId")
+    if row:
+        base64_code, name = row
+        print("Base64Code:", base64_code)
+        print("Name:", name)
 
-decoded_data = base64.b64decode(base64_code)
-with open(fr"C:\Users\kpras\Desktop\{name}.xlsx", 'wb') as file:
-    file.write(decoded_data)
+    else:
+        print("No data found for the given TemplateId")
+
+    decoded_data = base64.b64decode(base64_code)
+    with open(fr"C:\Users\kpras\Desktop\{name}.xlsx", 'wb') as file:
+        file.write(decoded_data)
+
+if __name__ == "__main__":
+    Retrive_CRM_template()

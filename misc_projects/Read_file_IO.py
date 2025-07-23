@@ -1,10 +1,10 @@
 # import pandas as pd
-# file_path = r"C:\Users\PrashantKumar\OneDrive - Pepper India Resolution Private Limited\Desktop\Final_Allocation.xlsx"
+# file_path = r"C:\Users\kpras\Desktop\Test_data\Allocation.xlsx"
 # df = pd.read_excel(file_path, engine="openpyxl")
 # print(df.head())
 # print(df.values)
 
-filepath2 = r"C:\Users\PrashantKumar\OneDrive - Pepper India Resolution Private Limited\Desktop\Addresses3.txt"
+filepath2 = r"C:\Users\kpras\Desktop\Test_data\test_file.txt"
 # myfile = open(filepath2)
 # content = myfile.read()
 # print(content)
@@ -12,6 +12,7 @@ filepath2 = r"C:\Users\PrashantKumar\OneDrive - Pepper India Resolution Private 
 # content_list = myfile.readlines()
 # print(content_list)
 # myfile.close()
+
 try:
     with open(filepath2, mode = 'r') as my_file:
         print(my_file.read())
