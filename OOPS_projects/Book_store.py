@@ -1,6 +1,3 @@
-from matplotlib.style.core import library
-
-
 class BooksInventory:
 
     def __init__(self, book_name, author_name, quantity=0):
