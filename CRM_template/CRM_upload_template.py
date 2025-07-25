@@ -405,7 +405,7 @@ def CRM_upload_template():
     else:
         df_template.loc[:,'SMA/Bucket'] = "3"
 
-    with open('db_config.json') as f:
+    with open('../CRM_template/db_config.json') as f:
         config = json.load(f)
 
     conn = mysql.connector.connect(

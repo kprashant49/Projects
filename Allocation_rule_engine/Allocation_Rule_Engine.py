@@ -9,7 +9,7 @@ df = pd.read_excel(filepath_input,sheet_name='Sheet1', engine = 'openpyxl')
 assign = df['MAILINGZIPCODE']
 df['MAILINGZIPCODE'] = df['MAILINGZIPCODE'].astype(str)
 
-with open('db_config.json') as f:
+with open('../Allocation_rule_engine/db_config.json') as f:
     config = json.load(f)
 
 conn = mysql.connector.connect(

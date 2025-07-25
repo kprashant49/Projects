@@ -7,7 +7,7 @@ filepath_input = r"C:\Users\kpras\Desktop\Allocation.xlsx"
 df = pd.read_excel(filepath_input,sheet_name='Sheet1', engine = 'openpyxl')
 table_a_1 = df[['AGREEMENTID','MAILINGZIPCODE']]
 
-with open('db_config.json') as f:
+with open('../Allocation_rule_engine/db_config.json') as f:
     config = json.load(f)
 
 conn = mysql.connector.connect(

@@ -10,7 +10,7 @@ def Allocation_Rule_Engine():
     allocation_new = pd.read_excel(filepath_input,sheet_name='Sheet1', engine = 'openpyxl')
     df_allocation_new = allocation_new[['AGREEMENTID', 'MAILINGZIPCODE']]
 
-    with open('db_config.json') as f:
+    with open('../Allocation_rule_engine/db_config.json') as f:
         config = json.load(f)
 
     conn = mysql.connector.connect(
