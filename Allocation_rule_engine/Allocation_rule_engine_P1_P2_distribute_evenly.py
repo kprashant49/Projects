@@ -3,6 +3,7 @@ from collections import defaultdict
 import mysql.connector
 import json
 
+
 def Allocation_Rule_Engine():
 
     # Importing current month's allocation
