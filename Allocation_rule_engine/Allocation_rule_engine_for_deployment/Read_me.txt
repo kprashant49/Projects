@@ -1,9 +1,6 @@
-Deployed with NSSM--->AllocationRuleEngineScheduler
-Edit with--->nssm edit AllocationRuleEngineScheduler
-Restart with--->nssm restart AllocationRuleEngineScheduler
-Stop with--->nssm stop AllocationRuleEngineScheduler
-Remove with--->nssm remove AllocationRuleEngineScheduler confirm
+Deployed with NSSM--->AllocationScheduler
+Edit with--->nssm edit AllocationScheduler
+Restart with--->nssm restart AllocationScheduler
+Stop with--->nssm stop AllocationScheduler
+Remove with--->nssm remove AllocationScheduler confirm
 Install with--->"C:\Tools\nssm\nssm.exe" install AllocationScheduler
-
-
-
