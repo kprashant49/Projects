@@ -5,9 +5,9 @@ import json
 from collections import defaultdict
 
 # ---- File Paths ----
-INPUT_FILE = r"C:\\Users\\kpras\\Desktop\\Test_data\\Allocation.xlsx"
-OUTPUT_FILE = r"C:\\Users\\kpras\\Desktop\\Auto_allocation.xlsx"
-CONFIG_FILE = r"D:\\Projects\\Allocation_rule_engine\\Allocation_rule_engine_for_deployment\\db_config.json"
+INPUT_FILE = r"C:\Users\kpras\Desktop\Test_data\Allocation.xlsx"
+OUTPUT_FILE = r"C:\Users\kpras\\Desktop\Auto_allocation.xlsx"
+CONFIG_FILE = r"D:\Projects\Allocation_rule_engine\Allocation_rule_engine_for_deployment\db_config.json"
 # ----------------------
 
 def setup_logging():
