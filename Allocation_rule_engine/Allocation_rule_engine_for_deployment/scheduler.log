@@ -1,0 +1,9 @@
+2025-07-28 01:08:19,946 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-07-28 01:08:19,947 - INFO - Scheduler started.
+2025-07-28 01:08:19,950 - INFO - Added job "run_allocation_job" to job store "default"
+2025-07-28 01:08:19,950 - INFO - Scheduler started
+2025-07-28 01:39:34,699 - INFO - Service started at 2025-07-28 01:39:34.699246
+2025-07-28 01:39:34,724 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-07-28 01:39:34,726 - INFO - Added job "run_job" to job store "default"
+2025-07-28 01:39:34,727 - INFO - Scheduler started
+2025-07-28 01:39:34,728 - INFO - Scheduler started and job scheduled.
