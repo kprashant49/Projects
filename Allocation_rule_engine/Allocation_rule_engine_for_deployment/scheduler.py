@@ -14,6 +14,8 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
+logging.info("Scheduler started at " + str(datetime.now()))
+
 def run_job():
     try:
         logging.info("Running Allocation Rule Engine job")
@@ -24,8 +26,19 @@ def run_job():
 
 def schedule_job():
     scheduler = BackgroundScheduler()
-    # scheduler.add_job(run_job, 'cron', hour=9, minute=20)
-    scheduler.add_job(run_job, 'cron', minute=10)
+    scheduler.add_job(run_job, 'cron', minute=30)
+    # scheduler.add_job(run_job, 'cron', hour=9, minute=00)
+    # scheduler.add_job(run_job, 'cron', hour=10, minute=00)
+    # scheduler.add_job(run_job, 'cron', hour=11, minute=00)
+    # scheduler.add_job(run_job, 'cron', hour=12, minute=00)
+    # scheduler.add_job(run_job, 'cron', hour=13, minute=00)
+    # scheduler.add_job(run_job, 'cron', hour=14, minute=00)
+    # scheduler.add_job(run_job, 'cron', hour=15, minute=00)
+    # scheduler.add_job(run_job, 'cron', hour=16, minute=00)
+    # scheduler.add_job(run_job, 'cron', hour=17, minute=00)
+    # scheduler.add_job(run_job, 'cron', hour=18, minute=00)
+    # scheduler.add_job(run_job, 'cron', hour=19, minute=00)
+
     scheduler.start()
     logging.info("Scheduler started and job scheduled.")
 
