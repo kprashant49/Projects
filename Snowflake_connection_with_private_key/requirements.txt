@@ -1,0 +1,4 @@
+cryptography
+python-dotenv
+apscheduler
+snowflake-connector
