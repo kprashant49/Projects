@@ -1,4 +1,6 @@
 cryptography
 python-dotenv
 apscheduler
-snowflake-connector
+snowflake-connector-python
+sqlalchemy
+cryptography

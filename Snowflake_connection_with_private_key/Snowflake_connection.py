@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 PRIVATE_KEY_PATH = r"D:\Projects\Snowflake_connection_with_private_key\rsa_key_snowflake.pem"
+
 with open(PRIVATE_KEY_PATH, "rb") as key_file:
     private_key = serialization.load_pem_private_key(
         key_file.read(),
@@ -31,6 +32,10 @@ def get_snowflake_connection():
         private_key=private_key_bytes  # Using private key authentication
     )
 
+def get_cursor():
+    conn = get_snowflake_connection()
+    return conn, conn.cursor()
+
 def run_query(query):
     conn = get_snowflake_connection()
     try:
@@ -42,7 +47,6 @@ def run_query(query):
         cursor.close()
         conn.close()
 
-# Example usage:
-query = "select * from raw.mis_data.transaction_pai"
+query = "select * from prd.analytics.marts_retail"
 result = run_query(query)
 print(result)
