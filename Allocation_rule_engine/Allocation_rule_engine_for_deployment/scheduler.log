@@ -19,3 +19,16 @@
 2025-07-28 02:11:45,514 - INFO - Exported results to C:\Users\kpras\\Desktop\Auto_allocation.xlsx
 2025-07-28 02:11:45,520 - INFO - Job completed successfully
 2025-07-28 02:11:45,521 - INFO - Job "run_job (trigger: cron[minute='10'], next run at: 2025-07-28 03:10:00 IST)" executed successfully
+2025-07-28 13:16:23,229 - INFO - Scheduler stopped.
+2025-07-28 13:19:02,440 - INFO - Scheduler started at 2025-07-28 13:19:02.440924
+2025-07-28 13:19:02,441 - INFO - Service started at 2025-07-28 13:19:02.441169
+2025-07-28 13:19:02,455 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-07-28 13:19:02,457 - INFO - Added job "run_job" to job store "default"
+2025-07-28 13:19:02,457 - INFO - Scheduler started
+2025-07-28 13:19:02,458 - INFO - Scheduler started and job scheduled.
+2025-07-28 13:30:00,046 - INFO - Running job "run_job (trigger: cron[minute='30'], next run at: 2025-07-28 13:30:00 IST)" (scheduled at 2025-07-28 13:30:00+05:30)
+2025-07-28 13:30:00,047 - INFO - Running Allocation Rule Engine job
+2025-07-28 13:30:00,048 - INFO - Starting Allocation Rule Engine
+2025-07-28 13:31:44,772 - INFO - Exported results to C:\Users\kpras\\Desktop\Auto_allocation.xlsx
+2025-07-28 13:31:44,778 - INFO - Job completed successfully
+2025-07-28 13:31:44,778 - INFO - Job "run_job (trigger: cron[minute='30'], next run at: 2025-07-28 14:30:00 IST)" executed successfully
