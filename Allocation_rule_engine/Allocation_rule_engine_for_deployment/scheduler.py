@@ -1,7 +1,7 @@
 import logging
 import os
 from apscheduler.schedulers.background import BackgroundScheduler
-from allocation_engine import Allocation_Rule_Engine
+from allocation_engine_snowflake import Allocation_Rule_Engine
 from datetime import datetime
 import time
 
