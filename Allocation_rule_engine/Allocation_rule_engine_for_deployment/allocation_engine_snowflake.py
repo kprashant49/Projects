@@ -1,12 +1,13 @@
 import pandas as pd
 import logging
+import configparser
 from collections import defaultdict
-from Snowflake_connection import get_snowflake_connection
+from Snowflake_connection import get_snowflake_connection, load_config
 from snowflake.connector.pandas_tools import write_pandas
 
 # ---- Snowflake Table Names ----
-INPUT_TABLE = "prd.analytics.marts_retail"
-OLD_ALLOCATION_TABLE = "prd.analytics.allocation_retail"
+INPUT_TABLE = "prd.analytics.marts_retail_idfc"
+OLD_ALLOCATION_TABLE = "prd.analytics.marts_retail_idfc"
 FOS_MAPPER_TABLE = "prd.analytics.pai_emp_pincode_mapper"
 OUTPUT_TABLE = "prd.analytics.auto_allocation_result"
 # -------------------------------
@@ -15,24 +16,24 @@ def setup_logging():
     logging.basicConfig(filename='allocation_engine.log', level=logging.INFO,
                         format='%(asctime)s - %(levelname)s - %(message)s')
 
-def query_to_df(query):
-    conn = get_snowflake_connection()
+def query_to_df(query, config):
+    conn = get_snowflake_connection(config)
     try:
         return pd.read_sql(query, conn)
     finally:
         conn.close()
 
-def get_input_data():
+def get_input_data(config):
     query = f"SELECT AGREEMENTID, MAILINGZIPCODE FROM {INPUT_TABLE}"
-    return query_to_df(query)
+    return query_to_df(query,config)
 
-def get_previous_allocation():
-    query = f"SELECT AGREEMENTID, AWS_CODE FROM {OLD_ALLOCATION_TABLE} WHERE MAILINGZIPCODE = '411021'"
-    return query_to_df(query)
+def get_previous_allocation(config):
+    query = f"SELECT AGREEMENTID, AWS_CODE FROM {OLD_ALLOCATION_TABLE}"
+    return query_to_df(query,config)
 
-def get_fos_mapper():
+def get_fos_mapper(config):
     query = f"SELECT MAILINGZIPCODE, AWS_CODE, FOS_NAME FROM {FOS_MAPPER_TABLE}"
-    return query_to_df(query)
+    return query_to_df(query,config)
 
 def create_output_table_if_not_exists(conn):
     create_sql = f"""
@@ -49,8 +50,8 @@ def create_output_table_if_not_exists(conn):
     cursor.close()
     logging.info("Verified or created output table.")
 
-def write_df_to_snowflake(df, table_name):
-    conn = get_snowflake_connection()
+def write_df_to_snowflake(df, table_name, config):
+    conn = get_snowflake_connection(config)
     try:
         create_output_table_if_not_exists(conn)
         success, nchunks, nrows, _ = write_pandas(conn, df, table_name.split('.')[-1], schema=table_name.split('.')[1])
@@ -110,10 +111,11 @@ def map_priority2(df_unmapped, fos_map, existing_counts):
 def Allocation_Rule_Engine():
     setup_logging()
     logging.info("Starting Allocation Rule Engine (Snowflake mode)")
+    config = load_config('config.ini')
 
-    df_new = get_input_data()
-    df_old = get_previous_allocation()
-    fos_mapper = get_fos_mapper()
+    df_new = get_input_data(config)
+    df_old = get_previous_allocation(config)
+    fos_mapper = get_fos_mapper(config)
 
     df_priority1, df_unmapped = map_priority1(df_new, df_old)
     existing_counts = df_priority1['AWS_CODE'].value_counts().to_dict()
@@ -123,7 +125,7 @@ def Allocation_Rule_Engine():
     combined['AGREEMENTID'] = pd.Categorical(combined['AGREEMENTID'], categories=df_new['AGREEMENTID'], ordered=True)
     result = combined.sort_values('AGREEMENTID')
 
-    write_df_to_snowflake(result, OUTPUT_TABLE)
+    write_df_to_snowflake(result, OUTPUT_TABLE, config)
     logging.info("Exported results to Snowflake successfully.")
 
 if __name__ == "__main__":

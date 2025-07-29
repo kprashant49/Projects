@@ -43,3 +43,6 @@
 2025-07-29 20:30:00,012 - INFO - Running job "run_job (trigger: cron[minute='30'], next run at: 2025-07-29 21:30:00 IST)" (scheduled at 2025-07-29 20:30:00+05:30)
 2025-07-29 20:30:00,014 - INFO - Running Allocation Rule Engine job
 2025-07-29 20:30:00,015 - INFO - Starting Allocation Rule Engine
+2025-07-29 20:31:41,992 - INFO - Exported results to C:\Users\kpras\\Desktop\Auto_allocation.xlsx
+2025-07-29 20:31:42,000 - INFO - Job completed successfully
+2025-07-29 20:31:42,000 - INFO - Job "run_job (trigger: cron[minute='30'], next run at: 2025-07-29 21:30:00 IST)" executed successfully
