@@ -6,10 +6,10 @@ from Snowflake_connection import get_snowflake_connection, load_config
 from snowflake.connector.pandas_tools import write_pandas
 
 # ---- Snowflake Table Names ----
-INPUT_TABLE = "prd.analytics.marts_retail_idfc"
-OLD_ALLOCATION_TABLE = "prd.analytics.marts_retail_idfc"
-FOS_MAPPER_TABLE = "prd.analytics.pai_emp_pincode_mapper"
-OUTPUT_TABLE = "prd.analytics.auto_allocation_result"
+INPUT_TABLE = "PRD.ANALYTICS.MARTS_RETAIL_IDFC"
+OLD_ALLOCATION_TABLE = "RAW.MIS_DATA.IDFC_RETAIL_ALLOCATION_JUNE"
+FOS_MAPPER_TABLE = "RAW.MIS_DATA.EMP_PINCODE_MAPPER"
+OUTPUT_TABLE = "RAW.MIS_DATA.AUTO_ALLOCATION_OUTPUT"
 # -------------------------------
 
 def setup_logging():
@@ -41,8 +41,8 @@ def create_output_table_if_not_exists(conn):
         AGREEMENTID STRING,
         MAILINGZIPCODE STRING,
         AWS_CODE STRING,
-        Allocation_Status STRING,
-        FOS_mapping_count NUMBER
+        ALLOCATION_STATUS STRING,
+        FOS_MAPPING_COUNT NUMBER
     );
     """
     cursor = conn.cursor()
@@ -68,8 +68,8 @@ def map_priority1(df_new, df_old):
     df_map = pd.merge(df_new, df_old, how='left', on='AGREEMENTID', indicator=True)
     df_priority1 = df_map[df_map['_merge'] == 'both'].copy()
     df_priority1['_merge'] = 'Assigned basis old allocation'
-    df_priority1.rename(columns={'_merge': 'Allocation_Status'}, inplace=True)
-    df_priority1['FOS_mapping_count'] = df_map.groupby('AWS_CODE').cumcount() + 1
+    df_priority1.rename(columns={'_merge': 'ALLOCATION_STATUS'}, inplace=True)
+    df_priority1['FOS_MAPPING_COUNT'] = df_map.groupby('AWS_CODE').cumcount() + 1
     df_priority1['MAILINGZIPCODE'] = df_priority1['MAILINGZIPCODE'].astype(str)
     return df_priority1.dropna(), df_map[df_map['_merge'] == 'left_only'][df_new.columns]
 
@@ -89,8 +89,8 @@ def map_priority2(df_unmapped, fos_map, existing_counts):
                 'AGREEMENTID': row['AGREEMENTID'],
                 'MAILINGZIPCODE': key,
                 'AWS_CODE': 'No FOS',
-                'Allocation_Status': 'OGL',
-                'FOS_mapping_count': None
+                'ALLOCATION_STATUS': 'OGL',
+                'FOS_MAPPING_COUNT': None
             })
             continue
 
@@ -102,8 +102,8 @@ def map_priority2(df_unmapped, fos_map, existing_counts):
             'AGREEMENTID': row['AGREEMENTID'],
             'MAILINGZIPCODE': key,
             'AWS_CODE': min_fos,
-            'Allocation_Status': 'Assigned by rule_engine',
-            'FOS_mapping_count': assignment_counter[min_fos]
+            'ALLOCATION_STATUS': 'Assigned by rule_engine',
+            'FOS_MAPPING_COUNT': assignment_counter[min_fos]
         })
 
     return pd.DataFrame(result).set_index('index').sort_index().reset_index(drop=True)
