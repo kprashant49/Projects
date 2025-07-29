@@ -47,6 +47,6 @@ def run_query(query):
         cursor.close()
         conn.close()
 
-query = "select * from prd.analytics.marts_retail"
+query = "select * from prd.analytics.marts_retail_idfc"
 result = run_query(query)
 print(result)
