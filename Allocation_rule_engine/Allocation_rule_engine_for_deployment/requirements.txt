@@ -1,3 +1,6 @@
 pandas
-openpyxl
-mysql-connector-python
+configparser
+apscheduler
+snowflake-connector-python
+sqlalchemy
+cryptography
