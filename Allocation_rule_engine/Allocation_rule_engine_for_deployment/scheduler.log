@@ -32,3 +32,31 @@
 2025-07-30 00:30:23,104 - INFO - Exported results to Snowflake successfully.
 2025-07-30 00:30:23,108 - INFO - Job completed successfully
 2025-07-30 00:30:23,108 - INFO - Job "run_job (trigger: cron[minute='30'], next run at: 2025-07-30 01:30:00 IST)" executed successfully
+2025-07-30 01:30:00,010 - INFO - Running job "run_job (trigger: cron[minute='30'], next run at: 2025-07-30 02:30:00 IST)" (scheduled at 2025-07-30 01:30:00+05:30)
+2025-07-30 01:30:00,012 - INFO - Running Allocation Rule Engine job
+2025-07-30 01:30:00,013 - INFO - Starting Allocation Rule Engine (Snowflake mode)
+2025-07-30 01:30:00,298 - INFO - Snowflake Connector for Python Version: 3.13.2, Python Version: 3.13.2, Platform: Windows-11-10.0.26100-SP0
+2025-07-30 01:30:00,300 - INFO - Connecting to GLOBAL Snowflake domain
+2025-07-30 01:30:00,301 - INFO - This connection is in OCSP Fail Open Mode. TLS Certificates would be checked for validity and revocation status. Any other Certificate Revocation related exceptions or OCSP Responder failures would be disregarded in favor of connectivity.
+2025-07-30 01:30:01,890 - INFO - closed
+2025-07-30 01:30:01,922 - INFO - No async queries seem to be running, deleting session
+2025-07-30 01:30:02,158 - INFO - Snowflake Connector for Python Version: 3.13.2, Python Version: 3.13.2, Platform: Windows-11-10.0.26100-SP0
+2025-07-30 01:30:02,159 - INFO - Connecting to GLOBAL Snowflake domain
+2025-07-30 01:30:02,159 - INFO - This connection is in OCSP Fail Open Mode. TLS Certificates would be checked for validity and revocation status. Any other Certificate Revocation related exceptions or OCSP Responder failures would be disregarded in favor of connectivity.
+2025-07-30 01:30:03,245 - INFO - closed
+2025-07-30 01:30:03,273 - INFO - No async queries seem to be running, deleting session
+2025-07-30 01:30:03,588 - INFO - Snowflake Connector for Python Version: 3.13.2, Python Version: 3.13.2, Platform: Windows-11-10.0.26100-SP0
+2025-07-30 01:30:03,589 - INFO - Connecting to GLOBAL Snowflake domain
+2025-07-30 01:30:03,589 - INFO - This connection is in OCSP Fail Open Mode. TLS Certificates would be checked for validity and revocation status. Any other Certificate Revocation related exceptions or OCSP Responder failures would be disregarded in favor of connectivity.
+2025-07-30 01:30:04,484 - INFO - closed
+2025-07-30 01:30:04,510 - INFO - No async queries seem to be running, deleting session
+2025-07-30 01:30:16,710 - INFO - Snowflake Connector for Python Version: 3.13.2, Python Version: 3.13.2, Platform: Windows-11-10.0.26100-SP0
+2025-07-30 01:30:16,711 - INFO - Connecting to GLOBAL Snowflake domain
+2025-07-30 01:30:16,711 - INFO - This connection is in OCSP Fail Open Mode. TLS Certificates would be checked for validity and revocation status. Any other Certificate Revocation related exceptions or OCSP Responder failures would be disregarded in favor of connectivity.
+2025-07-30 01:30:17,543 - INFO - Verified or created output table.
+2025-07-30 01:30:20,124 - INFO - Data written to RAW.MIS_DATA.AUTO_ALLOCATION_OUTPUT: 16874 rows
+2025-07-30 01:30:20,124 - INFO - closed
+2025-07-30 01:30:20,171 - INFO - No async queries seem to be running, deleting session
+2025-07-30 01:30:20,246 - INFO - Exported results to Snowflake successfully.
+2025-07-30 01:30:20,251 - INFO - Job completed successfully
+2025-07-30 01:30:20,251 - INFO - Job "run_job (trigger: cron[minute='30'], next run at: 2025-07-30 02:30:00 IST)" executed successfully
