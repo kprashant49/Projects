@@ -5,7 +5,7 @@ import pandas as pd
 import json
 
 # Database connection details
-with open('db_config.json') as f:
+with open('../Database_interaction_projects/db_config.json') as f:
     config = json.load(f)
 
 host=config["host"]

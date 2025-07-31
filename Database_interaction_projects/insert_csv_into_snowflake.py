@@ -67,4 +67,4 @@ def insert_data_from_csv(csv_file):
 
 if __name__ == "__main__":
     create_table()
-    insert_data_from_csv("D:\\Projects\\my_new_project\\rto_data.csv")
+    insert_data_from_csv("/Database_interaction_projects/rto_data.csv")
