@@ -14,7 +14,7 @@ def Retrive_CRM_template():
         except ValueError:
             print("Please enter a valid TemplateId!")
 
-    with open('../CRM_template/db_config.json') as f:
+    with open('db_config.json') as f:
         config = json.load(f)
 
     conn = mysql.connector.connect(
