@@ -60,3 +60,4 @@
 2025-07-30 01:30:20,246 - INFO - Exported results to Snowflake successfully.
 2025-07-30 01:30:20,251 - INFO - Job completed successfully
 2025-07-30 01:30:20,251 - INFO - Job "run_job (trigger: cron[minute='30'], next run at: 2025-07-30 02:30:00 IST)" executed successfully
+2025-07-31 22:28:37,208 - INFO - Scheduler stopped.
