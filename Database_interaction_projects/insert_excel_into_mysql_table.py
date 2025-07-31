@@ -38,7 +38,7 @@ tracker_table = Table(
 metadata.create_all(engine)
 
 # Load Excel file into Pandas
-file_path = "D:\\Projects\\my_new_project\\tracker_data.xlsx"  # Update this path
+file_path = "D:\\Projects\\Database_interaction_projects\\tracker_data.xlsx"  # Update this path
 df = pd.read_excel(file_path, engine='openpyxl', dtype=str)
 
 # Fix column names (replace special characters)
