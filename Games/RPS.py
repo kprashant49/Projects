@@ -24,16 +24,18 @@ while player1_count < Winner and player2_count < Winner:
 	player1 = input("Player 1, make your move: ")
 	if player1 == 'quit':
 		break
-	while player1.lower() not in ["rock","paper","scissors"]:
+	while player1.lower() not in ["r","p","s"]:
 		player1 = input("Player 1, make your move: ")
 
 	if players == 2:
 		player2 = input("Player 2, make your move: ")
-		while player2.lower() not in ["rock","paper","scissors"]:
+		while player2.lower() not in ["r","p","s"]:
 			player2 = input("Player 2, make your move: ")
 	else:
-		player2 = choice(["rock", "paper", "scissors"])
-		print(f"Computer moved {player2}")
+		player2 = choice(["r", "p", "s"])
+		moves = {"r": "rock", "p": "paper", "s": "scissors"}
+		move_full = moves[player2]
+		print(f"Computer moved {move_full}")
 
 	player1 = player1.lower()
 	player2 = player2.lower()
@@ -41,13 +43,13 @@ while player1_count < Winner and player2_count < Winner:
 	if player1 == player2:
 		print("It's a tie!")
 		ties += 1
-	elif player1 == "rock" and player2 == "scissors":
+	elif player1 == "r" and player2 == "s":
 		print("Player 1 wins!")
 		player1_count += 1
-	elif player1 == "paper" and player2 == "rock":
+	elif player1 == "p" and player2 == "r":
 		print("Player 1 wins!")
 		player1_count += 1
-	elif player1 == "scissors" and player2 == "paper":
+	elif player1 == "s" and player2 == "p":
 		print("Player 1 wins!")
 		player1_count += 1
 	elif players == 1:
