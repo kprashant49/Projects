@@ -258,6 +258,22 @@ async def calculate_all_rfv(params: dict, res):
         print("Error in calculate_all_rfv:", e)
         return res(Errorapiresponse("012"))
 
+# --- PF Type Validation ---
+def validate_pf_type(pf_type):
+    pf_type_clean = str(pf_type).strip().lower()
+    if pf_type_clean in ["flat", "rate", "hybrid"]:
+        return pf_type_clean
+    return "flat"  # Default fallback
+
+# --- Safe Dictionary Lookup Example ---
+def safe_pf_lookup(pf_type):
+    PF_TYPE_MAP = {
+        "flat": 0,
+        "rate": 0.02,
+        "hybrid": 0.025
+    }
+    print("DEBUG:: Looking up PF_TYPE_MAP for:", pf_type)
+    return PF_TYPE_MAP.get(pf_type, PF_TYPE_MAP["flat"])
 
 # --- Calculate EMI Endpoint ---
 @router.post("/calculate-emi")
@@ -279,6 +295,15 @@ async def calculate_emi_endpoint(payload: dict):
                                  float(payload.get("DCM", 0)) + \
                                  float(payload.get("NACH", 0)) + \
                                  float(payload.get("otherscharges", 0)) + 32  # Fixed charge
+
+        # Validate PF_Type
+        pf_type = validate_pf_type(payload.get("PF_Type"))
+        payload["PF_Type"] = pf_type
+        print("DEBUG:: PF_Type =", pf_type)
+
+        # Example use of safe_pf_lookup (optional)
+        pf_value = safe_pf_lookup(pf_type)
+        print("DEBUG:: PF Value =", pf_value)
 
         if product == "RFV":
             result = await calculate_all_rfv(payload, res_handler)
