@@ -1,7 +1,10 @@
 # emi_calculator.py
 import os
 import requests
+from fastapi import APIRouter
 from utils import Errorapiresponse
+
+router = APIRouter()
 
 # --- Flat EMI Calculation ---
 def flat_emi(p, r, t):
@@ -240,3 +243,35 @@ async def calculate_all_rfv(params: dict, res):
     except Exception as e:
         print("Error in calculate_all_rfv:", e)
         return res(Errorapiresponse("012"))
+
+# --- Calculate EMI Endpoint ---
+@router.post("/calculate-emi")
+async def calculate_emi_endpoint(payload: dict):
+    try:
+        product_id = int(payload.get("Product_Id", 0))
+        product = "RFV" if product_id == 5000462 else "NewTW"
+
+        res_handler = lambda err: err  # Simple passthrough
+
+        stamp_duty_result = await get_stamp_duty(
+            float(payload["onroadprice"]), payload["statecode"], res_handler
+        )
+
+        if not stamp_duty_result or not isinstance(stamp_duty_result, list):
+            return Errorapiresponse("005")
+
+        payload["stampduty"] = stamp_duty_result[0]["stumpdutyamount"] + \
+                                 float(payload.get("DCM", 0)) + \
+                                 float(payload.get("NACH", 0)) + \
+                                 float(payload.get("otherscharges", 0)) + 32  # Fixed charge
+
+        if product == "RFV":
+            result = await calculate_all_rfv(payload, res_handler)
+        else:
+            result = await calculate_all(payload, res_handler)
+
+        return {"Success": True, "Result": result}
+
+    except Exception as e:
+        print("API error:", e)
+        return Errorapiresponse("012")
