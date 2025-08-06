@@ -26,7 +26,7 @@ async def calculate_hybrid_pf(slabid, nfa, res):
 
         data = response.json()
         if str(data.get("Success")).lower() == "true":
-            return data["Message"]["Processing_Fees"]
+            return data["Message"].get("Processing_Fees")
         return res(Errorapiresponse("006"))
     except Exception as e:
         print("U2W PF API Error:", e)
@@ -70,7 +70,10 @@ async def calculate_all(params: dict, res):
         onroadprice = float(params["onroadprice"])
         advanceemi = float(params["advanceemi"])
         stampduty = float(params["stampduty"])
-        rate = float(params["rate"])
+        rate = float(params.get("rate", params.get("ROI", 0)))
+        if rate <= 0:
+            raise ValueError("Missing or invalid rate/ROI")
+
         tenure = int(params["tenure"])
         processingfee = float(params["processingfee"])
         downpayment = float(params["downpayment"])
@@ -138,7 +141,7 @@ async def calculate_all(params: dict, res):
                 if i > 0:
                     firstemi = localflatemi
                 localdeductionreceiveable = (
-                    stampduty + newpf + round(localflatemi) * advanceemi
+                    stampduty + newpf + round(localflatemi) * advanceemi + totaldeductionreceiveable
                 )
                 if rate and tenure:
                     nfa = onroadprice + localdeductionreceiveable - downpayment + totaldeductiondecutible
@@ -171,7 +174,10 @@ async def calculate_all_rfv(params: dict, res):
         onroadprice = float(params["onroadprice"])
         advanceemi = float(params["advanceemi"])
         stampduty = float(params["stampduty"])
-        rate = float(params["rate"])
+        rate = float(params.get("rate", params.get("ROI", 0)))
+        if rate <= 0:
+            raise ValueError("Missing or invalid rate/ROI")
+
         tenure = int(params["tenure"])
         processingfee = float(params["processingfee"])
         emitype = params["emitype"]
@@ -304,6 +310,10 @@ async def calculate_emi_endpoint(payload: dict):
         # Example use of safe_pf_lookup (optional)
         pf_value = safe_pf_lookup(pf_type)
         print("DEBUG:: PF Value =", pf_value)
+
+        # Default total deduction values to 0 if not present
+        payload["totaldeductiondecutible"] = float(payload.get("totaldeductiondecutible", 0))
+        payload["totaldeductionreceiveable"] = 0  # Calculated internally
 
         if product == "RFV":
             result = await calculate_all_rfv(payload, res_handler)
