@@ -297,10 +297,14 @@ async def calculate_emi_endpoint(payload: dict):
         if not stamp_duty_result or not isinstance(stamp_duty_result, list):
             return Errorapiresponse("005")
 
-        payload["stampduty"] = stamp_duty_result[0]["stumpdutyamount"] + \
+        stamp_duty = stamp_duty_result[0]["stumpdutyamount"]
+        stamp_duty_service_charge = 32
+
+        payload["stampduty"] = stamp_duty + \
                                  float(payload.get("DCM", 0)) + \
                                  float(payload.get("NACH", 0)) + \
-                                 float(payload.get("otherscharges", 0)) + 32  # Fixed charge
+                                 float(payload.get("otherscharges", 0)) + \
+                                 stamp_duty_service_charge
 
         # Validate PF_Type
         pf_type = validate_pf_type(payload.get("PF_Type"))
@@ -320,7 +324,28 @@ async def calculate_emi_endpoint(payload: dict):
         else:
             result = await calculate_all(payload, res_handler)
 
-        return {"Success": True, "Result": result}
+        # Build full response object
+        response = {
+            "Success": True,
+            "Message": {
+                "flatemi": result["localflatemi"],
+                "Net_Finance_amount": result["nfa"],
+                "deduction": result["localdeductionreceiveable"],
+                "stampduty": round(stamp_duty),
+                "stampdutyservicecharge": stamp_duty_service_charge,
+                "processingfee": result["newpf"],
+                "Margin_Money": round(float(payload["onroadprice"]) - result["nfa"]),
+                "disbursementamount": round(result["nfa"] - result["newpf"]),
+                "Premium": 0,  # Optional calculation
+                "PAAmount": 0,  # Optional calculation
+                "LTV": round((result["nfa"] / float(payload["SEORP"])) * 100, 2),
+                "SELTV": round((result["nfa"] / float(payload["SEORP"])) * 100, 2),
+                "irr": 21.46,  # Placeholder
+                "irrwithoutcharges": 25.13  # Placeholder
+            }
+        }
+
+        return response
 
     except Exception as e:
         print("API error:", e)
