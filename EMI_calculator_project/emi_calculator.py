@@ -20,12 +20,16 @@ async def calculate_hybrid_pf(slabid, nfa, res):
         url = os.environ.get("u2w_process_fees")
         headers = {"Authorization": os.environ.get("API_TOKEN")}
         response = requests.post(url, json=payload, headers=headers)
+
+        # 🔍 Debug print
+        print("U2W PF API Response:", response.status_code, response.text)
+
         data = response.json()
-        if data.get("Success"):
+        if str(data.get("Success")).lower() == "true":
             return data["Message"]["Processing_Fees"]
         return res(Errorapiresponse("006"))
     except Exception as e:
-        print(e)
+        print("U2W PF API Error:", e)
         return res(Errorapiresponse("012"))
 
 # --- Stamp Duty Calculation ---
@@ -40,12 +44,18 @@ async def get_stamp_duty(nfa, statecode, res):
         response = requests.post(url, json=payload, headers=headers)
         data = response.json()
 
-        if data.get("Success") and data["Message"].get("stamp_duty_charge"):
-            return [{"stumpdutyamount": data["Message"]["stamp_duty_charge"]}]
+        # 🔍 Debug print
+        print("DEBUG:: stamp duty response =>", data)
+
+        success = str(data.get("Success")).lower() == "true"
+        duty = data.get("Message", {}).get("stamp_duty_charge")
+
+        if success and duty is not None:
+            return [{"stumpdutyamount": duty}]
         else:
-            return res(Errorapiresponse("011"))
+            return res(Errorapiresponse("005"))
     except Exception as e:
-        print("error", e)
+        print("Stamp Duty API Error:", e)
         return res(Errorapiresponse("011"))
 
 # --- Calculate for NewTW/UsedTW ---
