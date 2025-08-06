@@ -48,7 +48,11 @@ async def get_stamp_duty(nfa, statecode, res):
         print("DEBUG:: stamp duty response =>", data)
 
         success = str(data.get("Success")).lower() == "true"
-        duty = data.get("Message", {}).get("stamp_duty_charge")
+        message = data.get("Message", {})
+        if isinstance(message, dict):
+            duty = message.get("stamp_duty_charge")
+        else:
+            duty = None
 
         if success and duty is not None:
             return [{"stumpdutyamount": duty}]
@@ -253,6 +257,7 @@ async def calculate_all_rfv(params: dict, res):
     except Exception as e:
         print("Error in calculate_all_rfv:", e)
         return res(Errorapiresponse("012"))
+
 
 # --- Calculate EMI Endpoint ---
 @router.post("/calculate-emi")
