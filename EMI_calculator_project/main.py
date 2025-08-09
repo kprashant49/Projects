@@ -4,7 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from emi_calculator_recursive import router as emi_router
+from emi_calculator_recursive_updated import router as emi_router
 
 # Load environment variables
 load_dotenv()
