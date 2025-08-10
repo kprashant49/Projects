@@ -20,7 +20,6 @@ router = APIRouter()
 def flatemi(p, r, t):
     return (p + (p * (r / 100) * t) / 12) / t
 
-
 # -------------------------------------------------------------------
 # getpremium function
 # input:{
@@ -46,7 +45,6 @@ def getpremium(tenure, nfa):
         print("getpremium error:", e)
         return 0
 
-
 # -------------------------------------------------------------------
 # get_pa_amount function
 # -------------------------------------------------------------------
@@ -59,7 +57,6 @@ def get_pa_amount(tenure):
         return 399
     else:
         return 0
-
 
 # -------------------------------------------------------------------
 # calculateage function
@@ -76,7 +73,6 @@ def calculateage(dob):
     age = diff_days / 365
     return int(str(age).split(".")[0])
 
-
 # -------------------------------------------------------------------
 # isnumberfun function
 # -------------------------------------------------------------------
@@ -88,7 +84,6 @@ def isnumberfun(arr):
         except:
             errorstring += f" {k},"
     return errorstring[:-1]
-
 
 # -------------------------------------------------------------------
 # calculatehybridpf function (async) - calls the PF API
@@ -108,7 +103,6 @@ async def calculatehybridpf(slabid, nfa, res):
     except Exception as e:
         print("calculatehybridpf error:", e)
         return res(Errorapiresponse("012"))
-
 
 # -------------------------------------------------------------------
 # getstumpduty function (async) - calls stamp duty API once per request
@@ -131,7 +125,6 @@ async def getstumpduty(nfa, statecode, res):
     except Exception as e:
         print("getstumpduty error:", e)
         return res(Errorapiresponse("011"))
-
 
 # -------------------------------------------------------------------
 # calculateall function (NewTW/UsedTW) - exact Node.js port
@@ -263,7 +256,6 @@ async def calculateall(onroadprice, advanceemi, stampduty, rate, tenure,
         print("calculateall error:", e)
         return res(Errorapiresponse("012"))
 
-
 # -------------------------------------------------------------------
 # calculateallRFV function (RFV product) - exact Node.js port
 # -------------------------------------------------------------------
@@ -368,7 +360,6 @@ async def calculateallRFV(onroadprice, advanceemi, stampduty, rate, tenure,
         print("calculateallRFV error:", e)
         return res(Errorapiresponse("012"))
 
-
 # -------------------------------------------------------------------
 # calculate-emi endpoint - full flow including LI/PA stabilization loop
 # -------------------------------------------------------------------
@@ -460,9 +451,9 @@ async def calculate_emi_endpoint(payload: dict):
         if not result or not result.get("newpf"):
             return Errorapiresponse("006")
 
-        # ----------------------------
+        # -------------------------------------------------------------------
         # LI / PA Stabilization Loop (match Node.js behavior)
-        # ----------------------------
+        # -------------------------------------------------------------------
         if insurance == "Y" or PA == "Y":
             age = calculateage(dob) if dob else 0
             if 18 <= age <= 60:
@@ -539,48 +530,3 @@ async def calculate_emi_endpoint(payload: dict):
     except Exception as e:
         print("API error:", e)
         return Errorapiresponse("012")
-
-
-# -------------------------------------------------------------------
-# Standalone test harness (run file directly to test)
-# -------------------------------------------------------------------
-if __name__ == "__main__":
-    import asyncio
-
-    async def test():
-        payload = {
-            "statecode": 1,
-            "onroadprice": 50000,
-            "loanservicingcharge": 1000,
-            "processingfee": 2,
-            "ROI": 10,
-            "advanceemi": 1,
-            "tenure": 12,
-            "downpayment": 5000,
-            "PF_Type": "rate",
-            "managerincentive": 0,
-            "subventioncharge": 0,
-            "documentationcharge": 0,
-            "vechicleinsurancebywemi": 0,
-            "rtobywemi": 0,
-            "DCC": 0,
-            "CPA_RTO_Penalty": 0,
-            "NACH": 0,
-            "otherscharges": 0,
-            "SEORP": 50000,
-            "permisiibleLTV": 80,
-            "slabid": 0,
-            "holdfornoc": 0,
-            "holdfordrc": 0,
-            "fcamount": 0,
-            "riskpoolcharge": 0,
-            "dob": "01/01/1990",
-            "LI_insurance": "N",
-            "PA": "N",
-            "Product_Id": 5000383
-        }
-        print("Running standalone test (no real APIs will work unless env URLs set)...")
-        result = await calculate_emi_endpoint(payload)
-        print("Result:", result)
-
-    asyncio.run(test())
