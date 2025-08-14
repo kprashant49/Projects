@@ -4,7 +4,7 @@ Error = {
     "001": "Date of Birth is required for insurance or PA calculations.",
     "002": "Invalid Product_Id. Must be 5000462, 5000382 or 5000383.",
     "003": "RFV product cannot have downpayment.",
-    "004": "Invalid finance amount. Must be greater than 0.",
+    "004": "Invalid On road price. Must be greater than 0.",
     "005": "Stamp duty API failed to return valid results.",
     "006": "Processing fee calculation failed.",
     "007": "Downpayment is less than deductible charges.",

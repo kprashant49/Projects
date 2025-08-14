@@ -114,7 +114,6 @@ async def getstumpduty(nfa, statecode, res):
         async with httpx.AsyncClient(timeout=15) as client:
             resstump = await client.post(url, json=payload)
         data = resstump.json()
-        print("resstump", data)
         if data.get("Success"):
             if data["Message"].get("stamp_duty_charge") is not None:
                 return [{"stumpdutyamount": data["Message"]["stamp_duty_charge"]}]
