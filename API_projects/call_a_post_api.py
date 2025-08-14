@@ -2,7 +2,7 @@ import requests
 import json
 
 # Define the API endpoint
-url = "https://dajb7mg2pc.execute-api.ap-south-1.amazonaws.com/prashant/api/v1/calculateEMI"
+url = "https://037ygv9w4m.execute-api.ap-south-1.amazonaws.com/prashantdev/api/v1/calculateEMI"
 
 # Define the payload (data to send)
 payload = {
