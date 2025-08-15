@@ -4,6 +4,9 @@ def add(a, b):
 def subtract(a, b):
     return a - b
 
+def exponent(a, b):
+    return a ** b
+
 def math(a, b, fn=add):
     return fn(a, b)
 
@@ -18,7 +21,7 @@ if __name__ == "__main__":
 
     if len(parts) == 3:
         op = parts[2].lower()
-        fn = {"add": add, "sub": subtract}.get(op)
+        fn = {"add": add, "sub": subtract, "exp": exponent}.get(op)
         if fn is None:
             print("Invalid operation")
             exit()
