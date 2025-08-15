@@ -15,6 +15,20 @@ def divide(a, b=1):
 def exponent(a, b):
     return a ** b
 
+def max(a, b):
+    if a > b:
+        return a
+    elif a == b:
+        return "Equal"
+    return b
+
+def min(a, b):
+    if a < b:
+        return a
+    elif a == b:
+        return "Equal"
+    return b
+
 def math(a, b, fn=add):
     return fn(a, b)
 
@@ -29,7 +43,7 @@ if __name__ == "__main__":
 
     if len(parts) == 3:
         op = parts[2].lower()
-        fn = {"add": add, "sub": subtract, "exp": exponent, "prod": product, "div": divide}.get(op)
+        fn = {"add": add, "sub": subtract, "exp": exponent, "prod": product, "div": divide, "max": max, "min": min}.get(op)
         if fn is None:
             print("Invalid operation")
             exit()
