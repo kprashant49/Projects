@@ -4,6 +4,14 @@ def add(a, b):
 def subtract(a, b):
     return a - b
 
+def product(a, b):
+    return a * b
+
+def divide(a, b=1):
+    if b == 0:
+        return "Cannot divide by zero"
+    return a / b
+
 def exponent(a, b):
     return a ** b
 
@@ -21,7 +29,7 @@ if __name__ == "__main__":
 
     if len(parts) == 3:
         op = parts[2].lower()
-        fn = {"add": add, "sub": subtract, "exp": exponent}.get(op)
+        fn = {"add": add, "sub": subtract, "exp": exponent, "prod": product, "div": divide}.get(op)
         if fn is None:
             print("Invalid operation")
             exit()
