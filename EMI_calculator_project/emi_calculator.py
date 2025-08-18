@@ -4,6 +4,7 @@ import math
 import httpx
 from fastapi import APIRouter
 from utils import Errorapiresponse
+from stampdutydata import get_stamp_duty
 
 router = APIRouter()
 
@@ -124,6 +125,20 @@ async def getstumpduty(nfa, statecode, res):
     except Exception as e:
         print("getstumpduty error:", e)
         return res(Errorapiresponse("011"))
+
+# -------------------------------------------------------------------
+# getstampduty function - now local lookup, no API
+# -------------------------------------------------------------------
+# async def getstampduty(nfa, statecode, res):
+#     try:
+#         duty = get_stamp_duty(statecode, nfa)
+#         if duty is not None:
+#             return [{"stampdutyamount": duty}]
+#         else:
+#             return res(Errorapiresponse("011"))
+#     except Exception as e:
+#         print("getstampduty error:", e)
+#         return res(Errorapiresponse("011"))
 
 # -------------------------------------------------------------------
 # calculateall function (NewTW/UsedTW) - exact Node.js port
