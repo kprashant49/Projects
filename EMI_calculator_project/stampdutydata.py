@@ -1,8 +1,5 @@
-"""Local stamp duty dataset for Indian states/UTs.
-
-Auto-generated from the uploaded stumpdutydata.js with the following fixes:
-- Renamed variable to "stampdutydata" (from "stumpdutydata").
-- Renamed key "stumpdutyamount" -> "stampdutyamount".
+"""
+Local stamp duty dataset for Indian states/UTs.
 This module is intended to replace external API calls.
 """
 # flake8: noqa
