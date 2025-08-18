@@ -126,10 +126,9 @@ async def calculatehybridpf(slabid, nfa, res):
 #         print("getstumpduty error:", e)
 #         return res(Errorapiresponse("011"))
 
--------------------------------------------------------------------
+# -------------------------------------------------------------------
 # getstampduty function - now local lookup, no API
--------------------------------------------------------------------
-
+# -------------------------------------------------------------------
 def getstampduty(nfa: float, statecode: str, res):
     """
     Get stamp duty amount from local dataset instead of API.
