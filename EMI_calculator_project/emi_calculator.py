@@ -108,37 +108,49 @@ async def calculatehybridpf(slabid, nfa, res):
 # -------------------------------------------------------------------
 # getstumpduty function (async) - calls stamp duty API once per request
 # -------------------------------------------------------------------
-async def getstumpduty(nfa, statecode, res):
-    try:
-        url = os.environ.get("stamp_duty_charge_api")
-        payload = {"Amount_Finacne": nfa, "State_Code": statecode}
-        async with httpx.AsyncClient(timeout=15) as client:
-            resstump = await client.post(url, json=payload)
-        data = resstump.json()
-        if data.get("Success"):
-            if data["Message"].get("stamp_duty_charge") is not None:
-                return [{"stumpdutyamount": data["Message"]["stamp_duty_charge"]}]
-            else:
-                return res(Errorapiresponse("011"))
-        else:
-            return res(Errorapiresponse("011"))
-    except Exception as e:
-        print("getstumpduty error:", e)
-        return res(Errorapiresponse("011"))
-
-# -------------------------------------------------------------------
-# getstampduty function - now local lookup, no API
-# -------------------------------------------------------------------
-# async def getstampduty(nfa, statecode, res):
+# async def getstumpduty(nfa, statecode, res):
 #     try:
-#         duty = get_stamp_duty(statecode, nfa)
-#         if duty is not None:
-#             return [{"stampdutyamount": duty}]
+#         url = os.environ.get("stamp_duty_charge_api")
+#         payload = {"Amount_Finacne": nfa, "State_Code": statecode}
+#         async with httpx.AsyncClient(timeout=15) as client:
+#             resstump = await client.post(url, json=payload)
+#         data = resstump.json()
+#         if data.get("Success"):
+#             if data["Message"].get("stamp_duty_charge") is not None:
+#                 return [{"stumpdutyamount": data["Message"]["stamp_duty_charge"]}]
+#             else:
+#                 return res(Errorapiresponse("011"))
 #         else:
 #             return res(Errorapiresponse("011"))
 #     except Exception as e:
-#         print("getstampduty error:", e)
+#         print("getstumpduty error:", e)
 #         return res(Errorapiresponse("011"))
+
+-------------------------------------------------------------------
+# getstampduty function - now local lookup, no API
+-------------------------------------------------------------------
+
+def getstampduty(nfa: float, statecode: str, res):
+    """
+    Get stamp duty amount from local dataset instead of API.
+
+    Args:
+        nfa (float): Net finance amount.
+        statecode (str): Two-letter state code (e.g., "MH").
+        res (Callable): Error response function.
+
+    Returns:
+        list[dict] | Any: [{"stampdutyamount": duty}] on success,
+                         error response otherwise.
+    """
+    try:
+        duty = get_stamp_duty(statecode, nfa)
+        if duty is not None:
+            return [{"stampdutyamount": duty}]
+        return res(Errorapiresponse("011"))
+    except Exception as e:
+        print("getstampduty error:", e)
+        return res(Errorapiresponse("011"))
 
 # -------------------------------------------------------------------
 # calculateall function (NewTW/UsedTW) - exact Node.js port
@@ -438,11 +450,18 @@ async def calculate_emi_endpoint(payload: dict):
             return Errorapiresponse("004")
 
         # Call stamp duty API once
-        filterstump = await getstumpduty(localAmountFinancewithoutdeductions, statecode, res_handler)
-        if not filterstump or not isinstance(filterstump, list):
+        # filterstump = await getstumpduty(localAmountFinancewithoutdeductions, statecode, res_handler)
+        # if not filterstump or not isinstance(filterstump, list):
+        #     return Errorapiresponse("005")
+        #
+        # stampduty = filterstump[0]["stumpdutyamount"] + totalcharge + 32
+
+        # Get stamp duty locally (no API call)
+        filterstamp = getstampduty(localAmountFinancewithoutdeductions, statecode, res_handler)
+        if not filterstamp or not isinstance(filterstamp, list):
             return Errorapiresponse("005")
 
-        stampduty = filterstump[0]["stumpdutyamount"] + totalcharge + 32
+        stampduty = filterstamp[0]["stampdutyamount"] + totalcharge + 32
 
         # total deduction deductible
         totaldeductiondecutible = loanservicingcharge + vechicleinsurancebywemi + rtobywemi
@@ -531,7 +550,8 @@ async def calculate_emi_endpoint(payload: dict):
                 "flatemi": round(result["localflatemi"]),
                 "Net_Finance_amount": round(result["nfa"]),
                 "deduction": round(result["localdeductionreceiveable"]),
-                "stampduty": filterstump[0]["stumpdutyamount"],
+                # "stampduty": filterstump[0]["stumpdutyamount"],
+                "stampduty": filterstamp[0]["stampdutyamount"],
                 "stampdutyservicecharge": 32,
                 "processingfee": round(result["newpf"]),
                 "Premium": result.get("Premium", 0),
