@@ -456,7 +456,8 @@ def calculateallRFV(onroadprice, advanceemi, stampduty, rate, tenure,
 # calculate-emi endpoint - full flow including LI/PA stabilization loop
 # -------------------------------------------------------------------
 @router.post("/calculate-emi")
-async def calculate_emi_endpoint(payload: dict):
+# async def calculate_emi_endpoint(payload: dict):
+def calculate_emi_endpoint(payload: dict):
     try:
         res_handler = lambda err: err  # returns whatever Errorapiresponse gives
 
