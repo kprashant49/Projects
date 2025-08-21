@@ -1,0 +1,2 @@
+Start api server in cmd with command: python api_server.py
+Use get method to query the db, URL: http://localhost:8000/query?q=in pincode_master table get me all the records for pincode 411021
