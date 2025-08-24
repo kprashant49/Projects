@@ -1,20 +1,17 @@
 # emi_calculator.py
-import os
 import math
-import httpx
 from fastapi import APIRouter
 from utils import Errorapiresponse
 from stampdutydata import get_stamp_duty
 from hybridpfdata import get_hybrid_pf
-
 router = APIRouter()
 
 # -------------------------------------------------------------------
 # flatemi function
 # input:{
 # p=>principal
-#      r=> annualised rate of interest ROI()
-#      t=> tenure in month}
+# r=> annualised rate of interest ROI()
+# t=> tenure in month}
 # output{
 # localflatemi=>emi
 # }
@@ -25,8 +22,8 @@ def flatemi(p, r, t):
 # -------------------------------------------------------------------
 # getpremium function
 # input:{
-#      tenure=> months
-#      nfa => net finance amount
+# tenure=> months
+# nfa => net finance amount
 # output{
 # premiumamount=>premium Amount
 # }
@@ -88,26 +85,7 @@ def isnumberfun(arr):
     return errorstring[:-1]
 
 # -------------------------------------------------------------------
-# calculatehybridpf function (async) - calls the PF API
-# -------------------------------------------------------------------
-# async def calculatehybridpf(slabid, nfa, res):
-#     try:
-#         payload = {"Slab_Id": int(slabid), "Amount_Finacne": nfa}
-#         url = os.environ.get("u2w_process_fees")
-#         async with httpx.AsyncClient(timeout=15) as client:
-#             slabres = await client.post(url, json=payload)
-#         data = slabres.json()
-#         print("hybridres", data)
-#         if data.get("Success"):
-#             return data["Message"]["Processing_Fees"]
-#         else:
-#             return res(Errorapiresponse("006"))
-#     except Exception as e:
-#         print("calculatehybridpf error:", e)
-#         return res(Errorapiresponse("012"))
-
-# -------------------------------------------------------------------
-# calculatehybridpf (now local lookup, not API)
+# calculatehybridpf (local lookup)
 # -------------------------------------------------------------------
 def calculatehybridpf(slabid: int, nfa: float, res):
     try:
@@ -120,42 +98,20 @@ def calculatehybridpf(slabid: int, nfa: float, res):
         return res(Errorapiresponse("012"))
 
 # -------------------------------------------------------------------
-# getstumpduty function (async) - calls stamp duty API once per request
-# -------------------------------------------------------------------
-# async def getstumpduty(nfa, statecode, res):
-#     try:
-#         url = os.environ.get("stamp_duty_charge_api")
-#         payload = {"Amount_Finacne": nfa, "State_Code": statecode}
-#         async with httpx.AsyncClient(timeout=15) as client:
-#             resstump = await client.post(url, json=payload)
-#         data = resstump.json()
-#         if data.get("Success"):
-#             if data["Message"].get("stamp_duty_charge") is not None:
-#                 return [{"stumpdutyamount": data["Message"]["stamp_duty_charge"]}]
-#             else:
-#                 return res(Errorapiresponse("011"))
-#         else:
-#             return res(Errorapiresponse("011"))
-#     except Exception as e:
-#         print("getstumpduty error:", e)
-#         return res(Errorapiresponse("011"))
-
-# -------------------------------------------------------------------
-# getstampduty function - now local lookup, no API
+# getstampduty function (now local lookup)
 # -------------------------------------------------------------------
 def getstampduty(nfa: float, statecode: str, res):
     """
-    Get stamp duty amount from local dataset instead of API.
-
+    Get stamp duty amount from local dataset.
     Args:
         nfa (float): Net finance amount.
         statecode (str): Two-letter state code (e.g., "MH").
         res (Callable): Error response function.
-
     Returns:
         list[dict] | Any: [{"stampdutyamount": duty}] on success,
                          error response otherwise.
     """
+
     try:
         duty = get_stamp_duty(statecode, nfa)
         if duty is not None:
@@ -166,13 +122,8 @@ def getstampduty(nfa: float, statecode: str, res):
         return res(Errorapiresponse("011"))
 
 # -------------------------------------------------------------------
-# calculateall function (NewTW/UsedTW) - exact Node.js port
+# calculateall function (NewTW/UsedTW)
 # -------------------------------------------------------------------
-# async def calculateall(onroadprice, advanceemi, stampduty, rate, tenure,
-#                         processingfee, downpayment, emitype,
-#                         totaldeductiondecutible, totaldeductionreceiveable,
-#                         slabid, res):
-
 def calculateall(onroadprice, advanceemi, stampduty, rate, tenure,
                            processingfee, downpayment, emitype,
                            totaldeductiondecutible, totaldeductionreceiveable,
@@ -210,7 +161,7 @@ def calculateall(onroadprice, advanceemi, stampduty, rate, tenure,
                 nfa = nfa + cdp - downpayment + totaldeductiondecutible
                 newpf = (nfa * processingfee) / 100
 
-                # match JS: break when Math.round(firstcdp) == Math.round(cdp)
+                # break when Math.round(firstcdp) == Math.round(cdp)
                 if round(firstcdp) == round(cdp) and i > 0:
                     break
                 i += 1
@@ -219,26 +170,6 @@ def calculateall(onroadprice, advanceemi, stampduty, rate, tenure,
         elif emitype == "flat":
             newpf = processingfee
             nfa = onroadprice - downpayment + totaldeductiondecutible + stampduty + processingfee
-
-        # ------------------ emitype == "hybrid" branch ------------------
-        # elif emitype == "hybrid":
-        #     nfa = onroadprice - downpayment + totaldeductiondecutible + stampduty
-        #     if slabid != 0:
-        #         newpf = await calculatehybridpf(slabid, nfa, res)
-        #         # PF stabilization loop (call PF API until it stabilizes)
-        #         i = 0
-        #         newpf1 = await calculatehybridpf(slabid, nfa + newpf, res)
-        #         while True:
-        #             if i > 0:
-        #                 newpf = newpf1
-        #             newpf1 = await calculatehybridpf(slabid, nfa + newpf, res)
-        #             print("iteration==>", i, "pf==>", newpf)
-        #             if round(newpf) == round(newpf1):
-        #                 break
-        #             i += 1
-        #         nfa = nfa + newpf
-        # else:
-        #     return res(Errorapiresponse("009"))
 
         # ------------------ emitype == "hybrid" branch ------------------
         elif emitype == "hybrid":
@@ -274,7 +205,6 @@ def calculateall(onroadprice, advanceemi, stampduty, rate, tenure,
             localflatemi = flatemi(nfa, rate, tenure)
 
             if emitype == "hybrid":
-                # firstpf = await calculatehybridpf(slabid, nfa, res)
                 firstpf = calculatehybridpf(slabid, nfa, res)
             elif emitype == "rate":
                 newpf = (nfa * processingfee) / 100
@@ -299,20 +229,17 @@ def calculateall(onroadprice, advanceemi, stampduty, rate, tenure,
                            downpayment + totaldeductiondecutible)
 
                     if emitype == "hybrid":
-                        # newpf = await calculatehybridpf(slabid, nfa, res)
                         newpf = calculatehybridpf(slabid, nfa, res)
-
                     elif emitype == "rate":
                         newpf = (nfa * processingfee) / 100
                     elif emitype == "flat":
                         newpf = processingfee
-
                     localflatemi = flatemi(nfa, rate, tenure)
 
                     print("iteration=>", i, "emi=", localflatemi,
                           "nfa=", nfa, "pf", newpf)
 
-                    # match JS: break when Math.round(localflatemi) == Math.round(firstemi)
+                    # break when Math.round(localflatemi) == Math.round(firstemi)
                     if round(localflatemi) == round(firstemi):
                         break
                     i += 1
@@ -329,10 +256,6 @@ def calculateall(onroadprice, advanceemi, stampduty, rate, tenure,
 # -------------------------------------------------------------------
 # calculateallRFV function (RFV product) - exact Node.js port
 # -------------------------------------------------------------------
-# async def calculateallRFV(onroadprice, advanceemi, stampduty, rate, tenure,
-#                            processingfee, emitype, totaldeductiondecutible,
-#                            totaldeductionreceiveable, slabid, res):
-
 def calculateallRFV(onroadprice, advanceemi, stampduty, rate, tenure,
                               processingfee, emitype, totaldeductiondecutible,
                               totaldeductionreceiveable, slabid, res):
@@ -356,6 +279,7 @@ def calculateallRFV(onroadprice, advanceemi, stampduty, rate, tenure,
                 nfa = onroadprice + totaldeductiondecutible + (llemi * advanceemi)
                 newpf = round((nfa * processingfee) / 100)
                 print("iteration", i, "nfa===>", nfa)
+
                 # break when Math.round(nfa) == Math.round(cnfa)
                 if round(nfa) == round(cnfa):
                     break
@@ -365,23 +289,6 @@ def calculateallRFV(onroadprice, advanceemi, stampduty, rate, tenure,
         elif emitype == "flat":
             newpf = processingfee
             nfa = onroadprice + totaldeductiondecutible
-
-        # ------------------ emitype == "hybrid" branch ------------------
-        # elif emitype == "hybrid":
-        #     nfa = onroadprice + totaldeductiondecutible
-        #     if slabid != 0:
-        #         newpf = await calculatehybridpf(slabid, nfa, res)
-        #         i = 0
-        #         while True:
-        #             newpf1 = await calculatehybridpf(slabid, nfa + newpf, res)
-        #             print("iteration==>", i, newpf1, newpf)
-        #             if round(newpf) == round(newpf1):
-        #                 break
-        #             newpf = newpf1
-        #             i += 1
-        #
-        # else:
-        #     return res(Errorapiresponse("010"))
 
         # ------------------ emitype == "hybrid" branch ------------------
         elif emitype == "hybrid":
@@ -408,7 +315,6 @@ def calculateallRFV(onroadprice, advanceemi, stampduty, rate, tenure,
         else:
             localflatemi = flatemi(nfa, rate, tenure)
             if emitype == "hybrid":
-                # firstpf = await calculatehybridpf(slabid, nfa, res)
                 firstpf = calculatehybridpf(slabid, nfa, res)
             elif emitype == "rate":
                 newpf = round((nfa * processingfee) / 100)
@@ -431,7 +337,6 @@ def calculateallRFV(onroadprice, advanceemi, stampduty, rate, tenure,
                     nfa = (onroadprice + totaldeductiondecutible +
                            round(localflatemi) * advanceemi)
                     if emitype == "hybrid":
-                        # newpf = await calculatehybridpf(slabid, nfa, res)
                         newpf = calculatehybridpf(slabid, nfa, res)
                     elif emitype == "rate":
                         newpf = round((nfa * processingfee) / 100)
@@ -456,7 +361,6 @@ def calculateallRFV(onroadprice, advanceemi, stampduty, rate, tenure,
 # calculate-emi endpoint - full flow including LI/PA stabilization loop
 # -------------------------------------------------------------------
 @router.post("/calculate-emi")
-# async def calculate_emi_endpoint(payload: dict):
 def calculate_emi_endpoint(payload: dict):
     try:
         res_handler = lambda err: err  # returns whatever Errorapiresponse gives
@@ -516,14 +420,7 @@ def calculate_emi_endpoint(payload: dict):
         if localAmountFinancewithoutdeductions <= 0:
             return Errorapiresponse("004")
 
-        # Call stamp duty API once
-        # filterstump = await getstumpduty(localAmountFinancewithoutdeductions, statecode, res_handler)
-        # if not filterstump or not isinstance(filterstump, list):
-        #     return Errorapiresponse("005")
-        #
-        # stampduty = filterstump[0]["stumpdutyamount"] + totalcharge + 32
-
-        # Get stamp duty locally (no API call)
+        # Get stamp duty
         filterstamp = getstampduty(localAmountFinancewithoutdeductions, statecode, res_handler)
         if not filterstamp or not isinstance(filterstamp, list):
             return Errorapiresponse("005")
@@ -535,14 +432,12 @@ def calculate_emi_endpoint(payload: dict):
 
         # ----------- First EMI calculation (without LI / PA) -----------
         if product == "RFV":
-            # result = await calculateallRFV(
             result = calculateallRFV(
                 onroadprice, advanceemi, stampduty, rate, tenure,
                 processingfee, emitype, totaldeductiondecutible,
                 totaldeductionreceiveable, slabid, res_handler
             )
         else:
-            # result = await calculateall(
             result = calculateall(
                 onroadprice, advanceemi, stampduty, rate, tenure,
                 processingfee, downpayment, emitype,
@@ -566,7 +461,6 @@ def calculate_emi_endpoint(payload: dict):
                         break
 
                     previous_nfa = result["nfa"]
-
                     PAAmount = 0
                     Premium = 0
 
@@ -592,14 +486,12 @@ def calculate_emi_endpoint(payload: dict):
 
                     # Re-run full calculation with updated deductions
                     if product == "RFV":
-                        # result = await calculateallRFV(
                         result = calculateallRFV(
                             onroadprice, advanceemi, stampduty, rate, tenure,
                             processingfee, emitype, totaldeductiondecutible,
                             totaldeductionreceiveable, slabid, res_handler
                         )
                     else:
-                        # result = await calculateall(
                         result = calculateall(
                             onroadprice, advanceemi, stampduty, rate, tenure,
                             processingfee, downpayment, emitype,
