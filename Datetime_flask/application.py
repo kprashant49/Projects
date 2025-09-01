@@ -1,9 +1,9 @@
 from flask import Flask
 from datetime import datetime
 
-app = Flask(__name__)
+application = Flask(__name__)
 
-@app.route("/")
+@application.route("/")
 def home():
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     return f"""
@@ -32,4 +32,4 @@ def home():
     """
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=8080) # 👈 change port here
+    application.run(debug=True, host="0.0.0.0", port=8080) # change port here

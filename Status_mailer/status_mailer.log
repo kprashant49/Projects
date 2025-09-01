@@ -1,0 +1,7 @@
+2025-09-01 17:10:42,186 - INFO - Starting Status Mailer (Snowflake mode)
+2025-09-01 17:10:42,235 - INFO - Snowflake Connector for Python Version: 3.13.2, Python Version: 3.13.7, Platform: Windows-11-10.0.26100-SP0
+2025-09-01 17:10:42,236 - INFO - Connecting to GLOBAL Snowflake domain
+2025-09-01 17:10:42,236 - INFO - This connection is in OCSP Fail Open Mode. TLS Certificates would be checked for validity and revocation status. Any other Certificate Revocation related exceptions or OCSP Responder failures would be disregarded in favor of connectivity.
+2025-09-01 17:10:45,656 - INFO - closed
+2025-09-01 17:10:45,683 - INFO - No async queries seem to be running, deleting session
+2025-09-01 17:10:45,745 - INFO - etched latest transaction dates successfully.
