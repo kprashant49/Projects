@@ -4,3 +4,5 @@ apscheduler
 snowflake-connector-python
 sqlalchemy
 cryptography
+msal
+requests

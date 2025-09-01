@@ -1,7 +1,7 @@
-Deployed with NSSM--->AllocationScheduler
-Start with--->nssm start AllocationScheduler
-Edit with--->nssm edit AllocationScheduler
-Restart with--->nssm restart AllocationScheduler
-Stop with--->nssm stop AllocationScheduler
-Remove with--->nssm remove AllocationScheduler confirm
-Install with--->"C:\Tools\nssm\nssm.exe" install AllocationScheduler
+Deployed with NSSM--->CashflowStatusScheduler
+Start with--->nssm start CashflowStatusScheduler
+Edit with--->nssm edit CashflowStatusScheduler
+Restart with--->nssm restart CashflowStatusScheduler
+Stop with--->nssm stop CashflowStatusScheduler
+Remove with--->nssm remove CashflowStatusScheduler confirm
+Install with--->"C:\Tools\nssm\nssm.exe" install CashflowStatusScheduler
