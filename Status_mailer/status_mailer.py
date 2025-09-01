@@ -6,26 +6,26 @@ import requests
 from Snowflake_connection import get_snowflake_connection, load_config
 
 query = """
-SELECT 'ICICI' AS "Bank Name",
-       MAX(TO_DATE(lot_dt, 'DD-MON-YY')) AS "Max Transaction Date"
+SELECT 'ICICI' AS "Bank's Name",
+       MAX(TO_DATE(lot_dt, 'DD-MON-YY')) AS "Latest Transaction Date"
 FROM GROUP_SHARE_INDIA.FINANCE.MARTS_CASH_FLOW_ICICI
 
 UNION ALL
 
-SELECT 'CITI' AS "Bank Name",
-       MAX(TO_DATE(lot_dt, 'DD-MON-YY')) AS "Max Transaction Date"
+SELECT 'CITI' AS "Bank's Name",
+       MAX(TO_DATE(lot_dt, 'DD-MON-YY')) AS "Latest Transaction Date"
 FROM GROUP_SHARE_INDIA.FINANCE.MARTS_CASH_FLOW_CITI
 
 UNION ALL
 
-SELECT 'HDFC' AS "Bank Name",
-       MAX(TO_DATE(lot_dt, 'DD-MON-YY')) AS "Max Transaction Date"
+SELECT 'HDFC' AS "Bank's Name",
+       MAX(TO_DATE(lot_dt, 'DD-MON-YY')) AS "Latest Transaction Date"
 FROM GROUP_SHARE_INDIA.FINANCE.MARTS_CASH_FLOW_HDFC
 
 UNION ALL
 
-SELECT 'Saraswa' AS "Bank Name",
-       MAX(TO_DATE(lot_dt, 'DD-MON-YY')) AS "Max Transaction Date"
+SELECT 'Saraswa' AS "Bank's Name",
+       MAX(TO_DATE(lot_dt, 'DD-MON-YY')) AS "Latest Transaction Date"
 FROM GROUP_SHARE_INDIA.FINANCE.MARTS_CASH_FLOW_SARAS
 """
 # ---------------- Logging ----------------
