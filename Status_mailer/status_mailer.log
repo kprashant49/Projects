@@ -5,3 +5,13 @@
 2025-09-01 17:10:45,656 - INFO - closed
 2025-09-01 17:10:45,683 - INFO - No async queries seem to be running, deleting session
 2025-09-01 17:10:45,745 - INFO - etched latest transaction dates successfully.
+2025-09-01 18:32:02,522 - INFO - Starting Status Mailer (Snowflake + Outlook)
+2025-09-01 18:32:02,523 - ERROR - Status Mailer failed: 'recipients'
+2025-09-01 18:32:35,626 - INFO - Starting Status Mailer (Snowflake + Outlook)
+2025-09-01 18:32:35,672 - INFO - Snowflake Connector for Python Version: 3.13.2, Python Version: 3.13.7, Platform: Windows-11-10.0.26100-SP0
+2025-09-01 18:32:35,672 - INFO - Connecting to GLOBAL Snowflake domain
+2025-09-01 18:32:35,673 - INFO - This connection is in OCSP Fail Open Mode. TLS Certificates would be checked for validity and revocation status. Any other Certificate Revocation related exceptions or OCSP Responder failures would be disregarded in favor of connectivity.
+2025-09-01 18:32:36,544 - INFO - closed
+2025-09-01 18:32:36,575 - INFO - No async queries seem to be running, deleting session
+2025-09-01 18:32:36,645 - INFO - Fetched latest transaction dates successfully.
+2025-09-01 18:32:37,617 - INFO - Email sent successfully via Outlook.
