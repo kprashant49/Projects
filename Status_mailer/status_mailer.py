@@ -94,7 +94,13 @@ def send_outlook_mail(subject, body_html, outlook_config):
         raise Exception(f"Authentication failed: {token_result.get('error_description')}")
 
     # Build recipient list for Graph API
+
+    # Mandatory recipients
     to_recipients = [{"emailAddress": {"address": r}} for r in outlook_config["recipients"]]
+
+    # Optional cc/bcc
+    cc_recipients = [{"emailAddress": {"address": r}} for r in outlook_config.get("cc", [])]
+    bcc_recipients = [{"emailAddress": {"address": r}} for r in outlook_config.get("bcc", [])]
 
     email_msg = {
         "message": {
@@ -104,6 +110,11 @@ def send_outlook_mail(subject, body_html, outlook_config):
             "toRecipients": to_recipients,
         }
     }
+
+    if cc_recipients:
+        email_msg["message"]["ccRecipients"] = cc_recipients
+    if bcc_recipients:
+        email_msg["message"]["bccRecipients"] = bcc_recipients
 
     response = requests.post(
         f"https://graph.microsoft.com/v1.0/users/{outlook_config['sender']}/sendMail",
