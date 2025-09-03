@@ -74,9 +74,9 @@ def load_outlook_config(path="config.ini"):
         "client_secret": config["OUTLOOK"]["client_secret"],
         "tenant_id": config["OUTLOOK"]["tenant_id"],
         "sender": config["OUTLOOK"]["sender"],
-        "recipients": [
-            r.strip() for r in config["OUTLOOK"]["recipients"].split(",") if r.strip()
-        ],
+        "to": [r.strip() for r in config.get("OUTLOOK", "recipients", fallback="").split(",") if r.strip()],
+        "cc": [r.strip() for r in config.get("OUTLOOK", "cc", fallback="").split(",") if r.strip()],
+        "bcc": [r.strip() for r in config.get("OUTLOOK", "bcc", fallback="").split(",") if r.strip()],
     }
 
 def send_outlook_mail(subject, body_html, outlook_config):
@@ -93,14 +93,10 @@ def send_outlook_mail(subject, body_html, outlook_config):
     if "access_token" not in token_result:
         raise Exception(f"Authentication failed: {token_result.get('error_description')}")
 
-    # Build recipient list for Graph API
-
-    # Mandatory recipients
-    to_recipients = [{"emailAddress": {"address": r}} for r in outlook_config["recipients"]]
-
-    # Optional cc/bcc
-    cc_recipients = [{"emailAddress": {"address": r}} for r in outlook_config.get("cc", [])]
-    bcc_recipients = [{"emailAddress": {"address": r}} for r in outlook_config.get("bcc", [])]
+    # Build recipients list
+    to_recipients = [{"emailAddress": {"address": email}} for email in outlook_config["to"]]
+    cc_recipients = [{"emailAddress": {"address": email}} for email in outlook_config["cc"]]
+    bcc_recipients = [{"emailAddress": {"address": email}} for email in outlook_config["bcc"]]
 
     email_msg = {
         "message": {
@@ -126,6 +122,7 @@ def send_outlook_mail(subject, body_html, outlook_config):
         logging.info("Email sent successfully via Outlook.")
     else:
         logging.error(f"Failed to send email: {response.status_code} {response.text}")
+
 
 # ---------------- Main Status Mailer ----------------
 def status_mailer():

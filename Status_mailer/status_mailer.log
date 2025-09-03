@@ -63,3 +63,67 @@
 2025-09-03 01:02:25,453 - INFO - No async queries seem to be running, deleting session
 2025-09-03 01:02:25,524 - INFO - Fetched latest transaction dates successfully.
 2025-09-03 01:02:26,769 - INFO - Email sent successfully via Outlook.
+2025-09-03 22:02:58,345 - INFO - Starting Status Mailer (Snowflake + Outlook)
+2025-09-03 22:02:58,627 - INFO - Snowflake Connector for Python Version: 3.13.2, Python Version: 3.13.7, Platform: Windows-11-10.0.26100-SP0
+2025-09-03 22:02:58,628 - INFO - Connecting to GLOBAL Snowflake domain
+2025-09-03 22:02:58,628 - INFO - This connection is in OCSP Fail Open Mode. TLS Certificates would be checked for validity and revocation status. Any other Certificate Revocation related exceptions or OCSP Responder failures would be disregarded in favor of connectivity.
+2025-09-03 22:03:05,195 - INFO - closed
+2025-09-03 22:03:05,264 - INFO - No async queries seem to be running, deleting session
+2025-09-03 22:03:05,337 - INFO - Fetched latest transaction dates successfully.
+2025-09-03 22:03:05,855 - ERROR - Status Mailer failed: name 'config' is not defined
+2025-09-03 22:05:26,832 - INFO - Starting Status Mailer (Snowflake + Outlook)
+2025-09-03 22:05:26,887 - INFO - Snowflake Connector for Python Version: 3.13.2, Python Version: 3.13.7, Platform: Windows-11-10.0.26100-SP0
+2025-09-03 22:05:26,888 - INFO - Connecting to GLOBAL Snowflake domain
+2025-09-03 22:05:26,888 - INFO - This connection is in OCSP Fail Open Mode. TLS Certificates would be checked for validity and revocation status. Any other Certificate Revocation related exceptions or OCSP Responder failures would be disregarded in favor of connectivity.
+2025-09-03 22:05:27,829 - INFO - closed
+2025-09-03 22:05:27,900 - INFO - No async queries seem to be running, deleting session
+2025-09-03 22:05:27,978 - INFO - Fetched latest transaction dates successfully.
+2025-09-03 22:05:28,508 - ERROR - Status Mailer failed: No section: 'OUTLOOK'
+2025-09-03 22:06:28,034 - INFO - Starting Status Mailer (Snowflake + Outlook)
+2025-09-03 22:06:28,094 - INFO - Snowflake Connector for Python Version: 3.13.2, Python Version: 3.13.7, Platform: Windows-11-10.0.26100-SP0
+2025-09-03 22:06:28,095 - INFO - Connecting to GLOBAL Snowflake domain
+2025-09-03 22:06:28,095 - INFO - This connection is in OCSP Fail Open Mode. TLS Certificates would be checked for validity and revocation status. Any other Certificate Revocation related exceptions or OCSP Responder failures would be disregarded in favor of connectivity.
+2025-09-03 22:06:29,120 - INFO - closed
+2025-09-03 22:06:29,153 - INFO - No async queries seem to be running, deleting session
+2025-09-03 22:06:29,247 - INFO - Fetched latest transaction dates successfully.
+2025-09-03 22:06:29,869 - ERROR - Failed to send email: 400 {"error":{"code":"BadRequest","message":"Property toRecipients in payload has a value that does not match schema.","innerError":{"date":"2025-09-03T16:36:28","request-id":"8203ae49-71c0-4ba9-b761-8b9d245fd578","client-request-id":"8203ae49-71c0-4ba9-b761-8b9d245fd578"}}}
+2025-09-03 22:11:50,041 - INFO - Starting Status Mailer (Snowflake + Outlook)
+2025-09-03 22:11:50,106 - INFO - Snowflake Connector for Python Version: 3.13.2, Python Version: 3.13.7, Platform: Windows-11-10.0.26100-SP0
+2025-09-03 22:11:50,106 - INFO - Connecting to GLOBAL Snowflake domain
+2025-09-03 22:11:50,106 - INFO - This connection is in OCSP Fail Open Mode. TLS Certificates would be checked for validity and revocation status. Any other Certificate Revocation related exceptions or OCSP Responder failures would be disregarded in favor of connectivity.
+2025-09-03 22:11:51,301 - INFO - closed
+2025-09-03 22:11:51,371 - INFO - No async queries seem to be running, deleting session
+2025-09-03 22:11:51,439 - INFO - Fetched latest transaction dates successfully.
+2025-09-03 22:11:52,914 - INFO - Email sent successfully via Outlook.
+2025-09-03 22:30:21,130 - INFO - Starting Status Mailer (Snowflake + Outlook)
+2025-09-03 22:30:21,189 - INFO - Snowflake Connector for Python Version: 3.13.2, Python Version: 3.13.7, Platform: Windows-11-10.0.26100-SP0
+2025-09-03 22:30:21,189 - INFO - Connecting to GLOBAL Snowflake domain
+2025-09-03 22:30:21,189 - INFO - This connection is in OCSP Fail Open Mode. TLS Certificates would be checked for validity and revocation status. Any other Certificate Revocation related exceptions or OCSP Responder failures would be disregarded in favor of connectivity.
+2025-09-03 22:30:25,009 - INFO - closed
+2025-09-03 22:30:25,129 - INFO - No async queries seem to be running, deleting session
+2025-09-03 22:30:25,254 - INFO - Fetched latest transaction dates successfully.
+2025-09-03 22:30:26,824 - INFO - Email sent successfully via Outlook.
+2025-09-03 22:31:54,344 - INFO - Starting Status Mailer (Snowflake + Outlook)
+2025-09-03 22:31:54,409 - INFO - Snowflake Connector for Python Version: 3.13.2, Python Version: 3.13.7, Platform: Windows-11-10.0.26100-SP0
+2025-09-03 22:31:54,409 - INFO - Connecting to GLOBAL Snowflake domain
+2025-09-03 22:31:54,409 - INFO - This connection is in OCSP Fail Open Mode. TLS Certificates would be checked for validity and revocation status. Any other Certificate Revocation related exceptions or OCSP Responder failures would be disregarded in favor of connectivity.
+2025-09-03 22:31:55,925 - INFO - closed
+2025-09-03 22:31:55,982 - INFO - No async queries seem to be running, deleting session
+2025-09-03 22:31:56,030 - INFO - Fetched latest transaction dates successfully.
+2025-09-03 22:31:56,894 - INFO - Email sent successfully via Outlook.
+2025-09-03 22:33:22,722 - INFO - Starting Status Mailer (Snowflake + Outlook)
+2025-09-03 22:33:22,781 - INFO - Snowflake Connector for Python Version: 3.13.2, Python Version: 3.13.7, Platform: Windows-11-10.0.26100-SP0
+2025-09-03 22:33:22,781 - INFO - Connecting to GLOBAL Snowflake domain
+2025-09-03 22:33:22,781 - INFO - This connection is in OCSP Fail Open Mode. TLS Certificates would be checked for validity and revocation status. Any other Certificate Revocation related exceptions or OCSP Responder failures would be disregarded in favor of connectivity.
+2025-09-03 22:33:24,015 - INFO - closed
+2025-09-03 22:33:24,066 - INFO - No async queries seem to be running, deleting session
+2025-09-03 22:33:24,095 - INFO - Fetched latest transaction dates successfully.
+2025-09-03 22:33:24,782 - INFO - Email sent successfully via Outlook.
+2025-09-03 22:36:23,987 - INFO - Starting Status Mailer (Snowflake + Outlook)
+2025-09-03 22:36:24,048 - INFO - Snowflake Connector for Python Version: 3.13.2, Python Version: 3.13.7, Platform: Windows-11-10.0.26100-SP0
+2025-09-03 22:36:24,049 - INFO - Connecting to GLOBAL Snowflake domain
+2025-09-03 22:36:24,049 - INFO - This connection is in OCSP Fail Open Mode. TLS Certificates would be checked for validity and revocation status. Any other Certificate Revocation related exceptions or OCSP Responder failures would be disregarded in favor of connectivity.
+2025-09-03 22:36:24,926 - INFO - closed
+2025-09-03 22:36:24,951 - INFO - No async queries seem to be running, deleting session
+2025-09-03 22:36:25,031 - INFO - Fetched latest transaction dates successfully.
+2025-09-03 22:36:25,835 - INFO - Email sent successfully via Outlook.
