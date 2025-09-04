@@ -46,8 +46,53 @@ SELECT
     'Rs. '|| (SELECT BALANCE_INR FROM GROUP_SHARE_INDIA.FINANCE.MARTS_CASH_FLOW_SARAS WHERE GLOBAL_RANK = (SELECT max(GLOBAL_RANK) FROM GROUP_SHARE_INDIA.FINANCE.MARTS_CASH_FLOW_SARAS)) AS "Closing Balance",
     TO_VARCHAR(MAX(TO_DATE(lot_dt, 'DD-MON-YY')),'DD/MM/YYYY') AS "Last Data Load Date",
     (SELECT COUNT(NEW_CATEGORY)FROM GROUP_SHARE_INDIA.FINANCE.MARTS_CASH_FLOW_SARAS WHERE NEW_CATEGORY = 'Other') AS "Unmapped Transaction(s)"
-FROM GROUP_SHARE_INDIA.FINANCE.MARTS_CASH_FLOW_SARAS
+FROM GROUP_SHARE_INDIA.FINANCE.MARTS_CASH_FLOW_SARAS;
 """
+
+second_query = """
+SELECT
+    'Pepper' AS "Entity",
+    'Citibank' AS "Bank",
+    TO_VARCHAR(TO_DATE(TO_TIMESTAMP(SPLIT_PART(TRANSACTION_POSTED_DATE, ' ', 1) || ' ' ||SPLIT_PART(TRANSACTION_POSTED_DATE, ' ', 2),'DD/MM/YYYY HH24:MI:SS')),'DD/MM/YYYY') AS "Transaction Date",
+    TRANSACTION_REMARKS AS "Transaction Remarks",
+    TRANSACTION_TYPE AS "Transaction Type"
+    FROM GROUP_SHARE_INDIA.FINANCE.MARTS_CASH_FLOW_CITI
+    WHERE NEW_CATEGORY = 'Other'
+
+UNION ALL
+
+SELECT 
+    'Pepper' AS "Entity",
+    'HDFC Bank' AS "Bank",
+    TO_VARCHAR(TO_DATE(TO_TIMESTAMP(SPLIT_PART(TRANSACTION_POSTED_DATE, ' ', 1) || ' ' ||SPLIT_PART(TRANSACTION_POSTED_DATE, ' ', 2),'DD/MM/YYYY HH24:MI:SS')),'DD/MM/YYYY') AS "Transaction Date",
+    TRANSACTION_REMARKS AS "Transaction Remarks",
+    TRANSACTION_TYPE AS "Transaction Type"
+    FROM GROUP_SHARE_INDIA.FINANCE.MARTS_CASH_FLOW_HDFC
+    WHERE NEW_CATEGORY = 'Other'
+
+UNION ALL
+
+SELECT
+    'Rieom' AS "Entity",
+    'ICICI Bank' AS "Bank",
+    TO_VARCHAR(TO_DATE(TO_TIMESTAMP(SPLIT_PART(TRANSACTION_POSTED_DATE, ' ', 1) || ' ' ||SPLIT_PART(TRANSACTION_POSTED_DATE, ' ', 2),'DD/MM/YYYY HH24:MI:SS')),'DD/MM/YYYY') AS "Transaction Date",
+    TRANSACTION_REMARKS AS "Transaction Remarks",
+    TRANSACTION_TYPE AS "Transaction Type"
+    FROM GROUP_SHARE_INDIA.FINANCE.MARTS_CASH_FLOW_ICICI
+    WHERE NEW_CATEGORY = 'Other'
+
+UNION ALL
+
+SELECT
+    'Rieom' AS "Entity",
+    'Saraswat Bank' AS "Bank",
+    TO_VARCHAR(TO_DATE(TO_TIMESTAMP(SPLIT_PART(TRANSACTION_POSTED_DATE, ' ', 1) || ' ' ||SPLIT_PART(TRANSACTION_POSTED_DATE, ' ', 2),'DD/MM/YYYY HH24:MI:SS')),'DD/MM/YYYY') AS "Transaction Date",
+    TRANSACTION_REMARKS AS "Transaction Remarks",
+    TRANSACTION_TYPE AS "Transaction Type"
+    FROM GROUP_SHARE_INDIA.FINANCE.MARTS_CASH_FLOW_SARAS
+    WHERE NEW_CATEGORY = 'Other'
+"""
+
 # ---------------- Logging ----------------
 def setup_logging():
     logging.basicConfig(
@@ -137,19 +182,32 @@ def status_mailer():
         # Fetch query results
         df = query_to_df(query, sf_config)
         logging.info("Fetched latest transaction dates successfully.")
+        df2 = query_to_df(second_query, sf_config)
+        logging.info("Fetched unmapped records successfully.")
 
         # Convert DataFrame to HTML
         df_html = df.to_html(index=False, border=1, justify="center")
-
-        # Send Outlook email
-        subject = "India Cashbook Latest Transaction Report"
-        # body_html = f"<h3>Latest Transaction Dates per Bank</h3>{df_html}"
         body_html = f"""
                 <p>Dear All,</p>
                 <p>Please find below the latest transaction dates for each bank.</p>
                 {df_html}
-                <p>Regards,<br>D&A Team</p>
                 """
+
+        # Add unmapped section only if df2 has rows
+        if not df2.empty:
+            df2_html = df2.to_html(index=False, border=1, justify="center")
+            body_html += f"""
+                        <p>Please find below the unmapped transaction(s).
+                        <br>Kindly check and share the mapping details with us.</p>
+                        {df2_html}
+                        """
+
+        body_html += """
+                    <p>Regards,<br>D&A Team</p>
+                    """
+        
+        # Send Outlook email
+        subject = "India Cashbook Latest Transaction Report"
         send_outlook_mail(subject, body_html, outlook_config)
 
     except Exception as e:
