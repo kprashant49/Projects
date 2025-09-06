@@ -13,7 +13,8 @@ def divide(a, b=1):
     # return a / b
     try:
         return a/b
-    except ZeroDivisionError:
+    except ZeroDivisionError as err:
+        print(err)
         return "Cannot divide by zero"
 
 def exponent(a, b):
