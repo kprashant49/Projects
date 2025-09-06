@@ -270,3 +270,17 @@ syntax error line 10 at position 0 unexpected 'UNION'.
 2025-09-04 22:49:32,488 - INFO - No async queries seem to be running, deleting session
 2025-09-04 22:49:32,563 - INFO - Fetched unmapped records successfully.
 2025-09-04 22:49:33,277 - INFO - Email sent successfully via Outlook.
+2025-09-06 22:07:53,173 - INFO - Starting Status Mailer (Snowflake + Outlook)
+2025-09-06 22:07:53,217 - INFO - Snowflake Connector for Python Version: 3.13.2, Python Version: 3.13.7, Platform: Windows-11-10.0.26100-SP0
+2025-09-06 22:07:53,217 - INFO - Connecting to GLOBAL Snowflake domain
+2025-09-06 22:07:53,217 - INFO - This connection is in OCSP Fail Open Mode. TLS Certificates would be checked for validity and revocation status. Any other Certificate Revocation related exceptions or OCSP Responder failures would be disregarded in favor of connectivity.
+2025-09-06 22:07:57,866 - INFO - closed
+2025-09-06 22:07:57,896 - INFO - No async queries seem to be running, deleting session
+2025-09-06 22:07:58,396 - INFO - Fetched latest transaction dates successfully.
+2025-09-06 22:07:58,457 - INFO - Snowflake Connector for Python Version: 3.13.2, Python Version: 3.13.7, Platform: Windows-11-10.0.26100-SP0
+2025-09-06 22:07:58,458 - INFO - Connecting to GLOBAL Snowflake domain
+2025-09-06 22:07:58,458 - INFO - This connection is in OCSP Fail Open Mode. TLS Certificates would be checked for validity and revocation status. Any other Certificate Revocation related exceptions or OCSP Responder failures would be disregarded in favor of connectivity.
+2025-09-06 22:07:59,686 - INFO - closed
+2025-09-06 22:07:59,708 - INFO - No async queries seem to be running, deleting session
+2025-09-06 22:07:59,787 - INFO - Fetched unmapped records successfully.
+2025-09-06 22:08:00,808 - INFO - Email sent successfully via Outlook.
