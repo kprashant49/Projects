@@ -8,9 +8,13 @@ def product(a, b):
     return a * b
 
 def divide(a, b=1):
-    if b == 0:
+    # if b == 0:
+    #     return "Cannot divide by zero"
+    # return a / b
+    try:
+        return a/b
+    except ZeroDivisionError:
         return "Cannot divide by zero"
-    return a / b
 
 def exponent(a, b):
     return a ** b
