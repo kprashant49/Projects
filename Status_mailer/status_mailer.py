@@ -228,7 +228,7 @@ def status_mailer():
         # Convert DataFrame to HTML
         # df_html = df.to_html(index=False, border=1, justify="center")
         df_html = highlight_last_load_date(df)
-
+        subject = "India Cashbook Latest Transaction Report"
         body_html = f"""
                 <p>Dear All,</p>
                 <p>Please find below the latest transaction dates for each bank.</p>
@@ -237,6 +237,7 @@ def status_mailer():
 
         # Add unmapped section only if df2 has rows
         if not df2.empty:
+            subject = "India Cashbook Latest Transaction Report - Mapping details required"
             df2_html = df2.to_html(index=False, border=1, justify="center")
             body_html += f"""
                         <p>Please find below the unmapped transaction(s).
@@ -249,7 +250,7 @@ def status_mailer():
                     """
         
         # Send Outlook email
-        subject = "India Cashbook Latest Transaction Report"
+        # subject = "India Cashbook Latest Transaction Report"
         send_outlook_mail(subject, body_html, outlook_config)
 
     except Exception as e:
