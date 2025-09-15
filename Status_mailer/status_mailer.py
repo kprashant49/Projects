@@ -4,6 +4,7 @@ import configparser
 import msal
 import requests
 from Snowflake_connection import get_snowflake_connection, load_config
+from datetime import datetime, timedelta
 
 query = """
 SELECT 
@@ -168,6 +169,45 @@ def send_outlook_mail(subject, body_html, outlook_config):
     else:
         logging.error(f"Failed to send email: {response.status_code} {response.text}")
 
+# ---------------- Highlighting ----------------
+def highlight_last_load_date(df: pd.DataFrame) -> str:
+    """
+    Returns HTML table with:
+    - 'Last Data Load Date' formatted as DD/MM/YYYY
+    - Colour scheme:
+        * Today or yesterday → no colour
+        * Older than yesterday but within last 3 days → orange
+        * Older than 3 days → red
+    - Borders and no index column
+    """
+
+    # Convert safely to datetime
+    df = df.copy()
+    df["Last Data Load Date"] = pd.to_datetime(df["Last Data Load Date"], format="%d/%m/%Y", errors="coerce")
+
+    today = datetime.now().date()
+    yesterday = today - timedelta(days=1)
+    fixed_days_ago = today - timedelta(days=5)
+
+    # Apply formatting + inline HTML styles
+    def format_and_colour(val):
+        if pd.isna(val):
+            return '<span style="color:red; font-weight:bold;">Invalid</span>'
+        date_val = val.date()
+        formatted = val.strftime("%d/%m/%Y")
+
+        if date_val in (today, yesterday):
+            return formatted  # no colour
+        elif fixed_days_ago < date_val < yesterday:
+            return f'<span style="color:brown; font-weight:bold;">{formatted}</span>'
+        elif date_val <= fixed_days_ago:
+            return f'<span style="color:red; font-weight:bold;">{formatted}</span>'
+        return formatted
+
+    df["Last Data Load Date"] = df["Last Data Load Date"].apply(format_and_colour)
+
+    # Convert to HTML with borders & no index
+    return df.to_html(escape=False, index=False, border=1, justify="center")
 
 # ---------------- Main Status Mailer ----------------
 def status_mailer():
@@ -186,7 +226,9 @@ def status_mailer():
         logging.info("Fetched unmapped records successfully.")
 
         # Convert DataFrame to HTML
-        df_html = df.to_html(index=False, border=1, justify="center")
+        # df_html = df.to_html(index=False, border=1, justify="center")
+        df_html = highlight_last_load_date(df)
+
         body_html = f"""
                 <p>Dear All,</p>
                 <p>Please find below the latest transaction dates for each bank.</p>
