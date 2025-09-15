@@ -250,7 +250,6 @@ def status_mailer():
                     """
         
         # Send Outlook email
-        # subject = "India Cashbook Latest Transaction Report"
         send_outlook_mail(subject, body_html, outlook_config)
 
     except Exception as e:
