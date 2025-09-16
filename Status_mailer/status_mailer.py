@@ -5,6 +5,7 @@ import msal
 import requests
 from Snowflake_connection import get_snowflake_connection, load_config
 from datetime import datetime, timedelta
+report_date = datetime.today().strftime("%d-%m-%Y")
 
 query = """
 SELECT 
@@ -228,7 +229,7 @@ def status_mailer():
         # Convert DataFrame to HTML
         # df_html = df.to_html(index=False, border=1, justify="center")
         df_html = highlight_last_load_date(df)
-        subject = "India Cashbook Latest Transaction Report"
+        subject = f"India Cashbook Latest Transaction Report {report_date}"
         body_html = f"""
                 <p>Dear All,</p>
                 <p>Please find below the latest transaction dates for each bank.</p>
@@ -237,7 +238,7 @@ def status_mailer():
 
         # Add unmapped section only if df2 has rows
         if not df2.empty:
-            subject = "India Cashbook Latest Transaction Report - Mapping details required"
+            subject = f"India Cashbook Latest Transaction Report {report_date} - Mapping details required"
             df2_html = df2.to_html(index=False, border=1, justify="center")
             body_html += f"""
                         <p>Please find below the unmapped transaction(s).
