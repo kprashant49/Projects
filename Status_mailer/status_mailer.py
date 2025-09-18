@@ -170,8 +170,8 @@ def send_outlook_mail(subject, body_html, outlook_config):
     else:
         logging.error(f"Failed to send email: {response.status_code} {response.text}")
 
-# ---------------- Highlighting ----------------
-def highlight_last_load_date(df: pd.DataFrame) -> str:
+# ---------------- Highlighter ----------------
+def highlighter(df: pd.DataFrame) -> str:
     """
     Returns HTML table with:
     - 'Last Data Load Date' formatted as DD/MM/YYYY
@@ -179,6 +179,7 @@ def highlight_last_load_date(df: pd.DataFrame) -> str:
         * Today or yesterday → no colour
         * Older than yesterday but within last 3 days → orange
         * Older than 3 days → red
+    - 'Unmapped Transaction(s)' highlighted if > 0
     - Borders and no index column
     """
 
@@ -188,24 +189,39 @@ def highlight_last_load_date(df: pd.DataFrame) -> str:
 
     today = datetime.now().date()
     yesterday = today - timedelta(days=1)
+    day_before_yesterday = today - timedelta(days=2)
     fixed_days_ago = today - timedelta(days=5)
 
     # Apply formatting + inline HTML styles
-    def format_and_colour(val):
+    # ---- Date highlighting ----
+    def format_and_colour_date(val):
         if pd.isna(val):
             return '<span style="color:red; font-weight:bold;">Invalid</span>'
         date_val = val.date()
         formatted = val.strftime("%d/%m/%Y")
 
-        if date_val in (today, yesterday):
+        if date_val in (today, yesterday, day_before_yesterday):
             return formatted  # no colour
-        elif fixed_days_ago < date_val < yesterday:
+        elif fixed_days_ago < date_val < day_before_yesterday:
             return f'<span style="color:brown; font-weight:bold;">{formatted}</span>'
         elif date_val <= fixed_days_ago:
             return f'<span style="color:red; font-weight:bold;">{formatted}</span>'
         return formatted
 
-    df["Last Data Load Date"] = df["Last Data Load Date"].apply(format_and_colour)
+    df["Last Data Load Date"] = df["Last Data Load Date"].apply(format_and_colour_date)
+
+    # ---- Unmapped transactions highlighting ----
+    if "Unmapped Transaction(s)" in df.columns:
+        def format_and_colour_unmapped(val):
+            try:
+                num = int(val)
+            except (ValueError, TypeError):
+                return val
+            if num > 0:
+                return f'<span style="color:red; font-weight:bold;">{num}</span>'
+            return str(num)
+
+        df["Unmapped Transaction(s)"] = df["Unmapped Transaction(s)"].apply(format_and_colour_unmapped)
 
     # Convert to HTML with borders & no index
     return df.to_html(escape=False, index=False, border=1, justify="center")
@@ -228,11 +244,11 @@ def status_mailer():
 
         # Convert DataFrame to HTML
         # df_html = df.to_html(index=False, border=1, justify="center")
-        df_html = highlight_last_load_date(df)
+        df_html = highlighter(df)
         subject = f"India Cashbook Latest Transaction Report {report_date}"
         body_html = f"""
                 <p>Dear All,</p>
-                <p>Please find below the latest transaction dates for each bank.</p>
+                <p>Please find below the latest transaction dates for each bank as on {report_date}.</p>
                 {df_html}
                 """
 
@@ -242,7 +258,7 @@ def status_mailer():
             df2_html = df2.to_html(index=False, border=1, justify="center")
             body_html += f"""
                         <p>Please find below the unmapped transaction(s).
-                        <br>Kindly check and share the mapping details with us.</p>
+                        <br>Kindly check the same and share the mapping details with us.</p>
                         {df2_html}
                         """
 
