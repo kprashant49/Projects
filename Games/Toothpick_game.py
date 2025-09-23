@@ -2,13 +2,14 @@ global toothpick_count
 global player1
 global player2
 global current_player
+from termcolor import colored
 toothpick_count = 13
 
 def toothpick_image(toothpick_count):
     image = ("|") * toothpick_count
-    return image
+    return colored(image,'yellow')
 
-print("*****Welcome to the Toothpick Game!*****")
+print(colored("*****Welcome to the Toothpick Game!*****",'cyan'))
 player1 = input("Player 1, please enter your name:")
 player2 = input("Player 2, please enter your name:")
 print(f"Total toothpicks available: {toothpick_image(toothpick_count)}")
@@ -24,7 +25,7 @@ def swap_player(current_player):
 while True:
     pick = int(input(f"How many toothpicks do you wish to choose {current_player}?"))
     while pick not in [1,2,3]:
-        pick = int(input(f"Incorrect input! Please enter between 1-3. How many toothpicks do you wish to choose {current_player}?"))
+        pick = int(input(colored(f"Incorrect input! Please enter between 1-3. How many toothpicks do you wish to choose {current_player}?","red")))
     if toothpick_count >3:
         toothpick_count -= pick
         current_player = swap_player(current_player)
@@ -32,4 +33,4 @@ while True:
     elif toothpick_count <=3:
         print(f"Yay! {current_player} wins!")
         break
-print("*****Game Over!*****")
+print(colored("*****Game Over!*****",'green'))
