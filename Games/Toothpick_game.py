@@ -3,13 +3,14 @@ global player1
 global player2
 global current_player
 from termcolor import colored
+import pyfiglet
 toothpick_count = 13
 
 def toothpick_image(toothpick_count):
     image = ("|") * toothpick_count
     return colored(image,'yellow')
 
-print(colored("*****Welcome to the Toothpick Game!*****",'cyan'))
+print(colored(pyfiglet.figlet_format("Welcome to the Toothpick Game!"),'blue'))
 player1 = input("Player 1, please enter your name:")
 player2 = input("Player 2, please enter your name:")
 print(f"Total toothpicks available: {toothpick_image(toothpick_count)}")
@@ -31,6 +32,6 @@ while True:
         current_player = swap_player(current_player)
         print(toothpick_image(toothpick_count))
     elif toothpick_count <=3:
-        print(f"Yay! {current_player} wins!")
+        print(colored(f"Yay! {current_player} wins!",'magenta'))
         break
 print(colored("*****Game Over!*****",'green'))
