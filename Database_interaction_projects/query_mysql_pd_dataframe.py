@@ -18,7 +18,8 @@ engine = create_engine(f"mysql+pymysql://{user}:{password}@{host}/{database}")
 # query = "Select reverse(upper('Why does my cat looks at me with such hatred?'))"
 # query = "Select replace(title,' ','->') as title from books"
 # query = "Select author_fname as forward, reverse(author_fname) as backwards from books"
-query = "Select upper(concat(author_fname,' ',author_lname)) as FULLNAME from books"
+# query = "Select upper(concat(author_fname,' ',author_lname)) as FULLNAME from books"
+query = "Select * from books order by author_lname desc, released_year asc"
 
 df = pd.read_sql(query, con=engine)  # Pass both the query and the connection
 
