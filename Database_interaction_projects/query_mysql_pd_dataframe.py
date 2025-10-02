@@ -19,7 +19,13 @@ engine = create_engine(f"mysql+pymysql://{user}:{password}@{host}/{database}")
 # query = "Select replace(title,' ','->') as title from books"
 # query = "Select author_fname as forward, reverse(author_fname) as backwards from books"
 # query = "Select upper(concat(author_fname,' ',author_lname)) as FULLNAME from books"
-query = "Select * from books order by author_lname desc, released_year asc"
+# query = "Select * from books order by author_lname desc, released_year asc"
+# query = "Select * from books limit 2,5"
+# query = "Select * from books where author_fname like '_a_'"
+# query = "Select count(distinct released_year) from books"
+# query = "SELECT COUNT(*) FROM books WHERE title LIKE '%the%'"
+
+query = "SELECT author_fname, author_lname, COUNT(*) FROM books GROUP BY author_lname, author_fname;"
 
 df = pd.read_sql(query, con=engine)  # Pass both the query and the connection
 
