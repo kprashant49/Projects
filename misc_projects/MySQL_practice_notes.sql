@@ -84,3 +84,36 @@ Select * from books where released_year not between 2001 and 2004 order by relea
 SELECT * FROM people WHERE birthtime BETWEEN CAST('10:00:00' AS TIME) AND CAST('16:00:00' AS TIME);
 
 SELECT title, released_year FROM books WHERE released_year >= 2000 AND released_year % 2 = 1;
+
+
+SELECT author_fname, author_lname,
+ CASE
+        WHEN COUNT(*) = 1 THEN '1 book'
+        ELSE CONCAT(COUNT(*), ' books')
+ END AS count
+FROM books
+WHERE author_lname IS NOT NULL
+GROUP BY author_fname, author_lname;
+
+
+CREATE TABLE palindromes (
+  word VARCHAR(100) CHECK(REVERSE(word) = word)
+);
+
+CREATE TABLE palindromes (
+  word VARCHAR(100),
+  CONSTRAINT word_is_palindrome CHECK(REVERSE(word) = word)
+);
+
+CREATE TABLE companies (
+    name VARCHAR(255) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    CONSTRAINT name_address UNIQUE (name , address)
+);
+ 
+CREATE TABLE houses (
+  purchase_price INT NOT NULL,
+  sale_price INT NOT NULL,
+  CONSTRAINT sprice_gt_pprice CHECK(sale_price >= purchase_price)
+);
+

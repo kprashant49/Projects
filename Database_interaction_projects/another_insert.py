@@ -19,7 +19,7 @@ with engine.connect() as conn:
     print("Connected to MySQL successfully!")
 
 create_table_query = """
-CREATE TABLE IF NOT EXISTS orders (
+CREATE TABLE IF NOT EXISTS new_orders (
     order_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     user_id BIGINT,
     product_name VARCHAR(100),
