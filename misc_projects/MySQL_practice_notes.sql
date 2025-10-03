@@ -71,6 +71,16 @@ CREATE TABLE captions (
 
 Insert captions(text) values("New_here")
 Select * from captions
-Update captions set text = "Old_now"
+Update captions set text = "Old_now";
 
+SELECT * FROM books WHERE title NOT LIKE '%e%';
 
+SELECT * FROM books WHERE released_year > 2005;
+ 
+SELECT * FROM books WHERE pages > 500;
+
+Select * from books where released_year not between 2001 and 2004 order by released_year;
+
+SELECT * FROM people WHERE birthtime BETWEEN CAST('10:00:00' AS TIME) AND CAST('16:00:00' AS TIME);
+
+SELECT title, released_year FROM books WHERE released_year >= 2000 AND released_year % 2 = 1;
