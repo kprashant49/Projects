@@ -30,3 +30,8 @@ case when round(ifnull(avg(grade),0),2) >= 75 then "Pass"
 else "Fail"
 end as result
 from students left join papers on students.id = papers.student_id group by first_name order by average desc;
+
+Select title, round(avg(rating),2) as avg_rating from series join reviews on series.id = reviews.series_id
+group by title order by 2;
+
+
