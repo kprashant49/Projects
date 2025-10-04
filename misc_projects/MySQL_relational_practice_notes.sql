@@ -34,4 +34,26 @@ from students left join papers on students.id = papers.student_id group by first
 Select title, round(avg(rating),2) as avg_rating from series join reviews on series.id = reviews.series_id
 group by title order by 2;
 
+Select first_name, last_name, rating from reviewers join reviews on reviewers.id = reviews.reviewer_id;
 
+Select title from series left join reviews on series.id = reviews.series_id where rating is null;
+
+Select genre, round(avg(rating),2) as avg_rating from series join reviews on series.id = reviews.series_id
+group by genre order by 1;
+
+Select first_name, last_name, count(rating) as count, ifnull(min(rating),0) as min, ifnull(max(rating),0) as max, ifnull(avg(rating),0) as avg,
+case when count(rating) = 0 then "Inactive" else "Active" end as Status from reviewers left join reviews on reviewers.id = reviews.reviewer_id
+group by first_name, last_name;
+
+Select first_name, last_name, count(rating) as count, ifnull(min(rating),0) as min, ifnull(max(rating),0) as max, ifnull(avg(rating),0) as avg,
+if (count(rating) = 0, "Inactive","Active") as Status from reviewers left join reviews on reviewers.id = reviews.reviewer_id
+group by first_name, last_name;
+
+Select title, rating, concat(first_name,' ' ,last_name) as reviewer from series join reviews on series.id = reviews.series_id
+join reviewers on reviewers.id = reviews.reviewer_id order by 1;
+
+Create view full_reviews as 
+Select title, rating, concat(first_name,' ' ,last_name) as reviewer from series join reviews on series.id = reviews.series_id
+join reviewers on reviewers.id = reviews.reviewer_id order by 1;
+
+Select * from full_reviews
