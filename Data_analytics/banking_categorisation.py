@@ -5,8 +5,11 @@ filepath = r"C:\Users\kpras\Desktop\Test_data.xlsx"
 df = pd.read_excel(filepath,sheet_name='Sheet1', engine = 'openpyxl')
 
 df['Category'] = np.where(df['Narration'].str.contains('Bounce', case=False, na=False), 'Bounce',
-                 np.where(df['Narration'].str.contains('IMPS', case=False, na=False), 'IMPS', 'Other')
-)
+                 np.where(df['Narration'].str.contains('IMPS', case=False, na=False), 'IMPS', 'Other'))
+
+
+# df['Category'] = np.where((df['Narration'].str.contains('Bounce', case=False, na=False)) & (df['Status'] == 'Closed'), 'Bounce',
+#                  np.where((df['Narration'].str.contains('IMPS', case=False, na=False)) | (df['Status'] == 'Open'), 'IMPS','Other'))
 
 # conditions = [
 #     df['Narration'].str.contains('Bounce', case=False, na=False),
@@ -16,6 +19,14 @@ df['Category'] = np.where(df['Narration'].str.contains('Bounce', case=False, na=
 # choices = ['Bounce', 'IMPS', 'RTGS']
 # df['Category'] = np.select(conditions, choices, default='Other')
 
+# conditions = [
+#     (df['Narration'].str.contains('Bounce', case=False, na=False)) & (df['Status'] == 'Closed'),
+#     (df['Narration'].str.contains('IMPS', case=False, na=False)) & (df['Status'] == 'Closed'),
+#     (df['Narration'].str.contains('RTGS', case=False, na=False)) & (df['Status'] == 'Open')
+# ]
+# choices = ['Bounce', 'IMPS', 'RTGS']
+# df['Category'] = np.select(conditions, choices, default='Other')
+
 print(df)
 
-df.to_excel(fr"C:\Users\kpras\Desktop\Output.xlsx", index=False)
+# df.to_excel(fr"C:\Users\kpras\Desktop\Output.xlsx", index=False)
