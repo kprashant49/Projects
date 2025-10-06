@@ -52,8 +52,29 @@ group by first_name, last_name;
 Select title, rating, concat(first_name,' ' ,last_name) as reviewer from series join reviews on series.id = reviews.series_id
 join reviewers on reviewers.id = reviews.reviewer_id order by 1;
 
-Create view full_reviews as 
+Create or replace view full_reviews as 
 Select title, rating, concat(first_name,' ' ,last_name) as reviewer from series join reviews on series.id = reviews.series_id
 join reviewers on reviewers.id = reviews.reviewer_id order by 1;
 
-Select * from full_reviews
+Select * from full_reviews;
+
+Create or replace view full_reviews AS
+SELECT * FROM series ORDER BY released_year desc;
+
+ALTER VIEW full_reviews AS
+SELECT * FROM series ORDER BY released_year;
+
+Drop view full_reviews;
+
+Select title, round(avg(rating),1) as avg_rating from full_reviews
+group by title
+having round(avg(rating),1)>8
+and count(rating) > 4
+order by 2 desc;
+
+Select title, round(avg(rating),1) as avg_rating from full_reviews
+group by title with rollup;
+
+use mynewproject
+Select * from employee;
+
