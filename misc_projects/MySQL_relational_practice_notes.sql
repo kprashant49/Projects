@@ -81,8 +81,8 @@ SELECT
     emp_no, 
     department, 
     salary, 
-    MIN(salary) OVER(),
-    MAX(salary) OVER()
+    MIN(salary) OVER() as min_sal,
+    MAX(salary) OVER() as max_sal
 FROM employees;
         
 SELECT MIN(salary), MAX(salary) FROM employees;
@@ -129,3 +129,11 @@ SELECT
     DENSE_RANK() OVER(ORDER BY salary DESC) as overall_dense_rank,
     ROW_NUMBER() OVER(ORDER BY salary DESC) as overall_num
 FROM employees ORDER BY overall_rank;
+
+SELECT 
+    emp_no, 
+    department, 
+    salary,
+    FIRST_VALUE(emp_no) OVER(PARTITION BY department ORDER BY salary DESC) as highest_paid_dept,
+    FIRST_VALUE(emp_no) OVER(ORDER BY salary DESC) as highest_paid_overall
+FROM employees;
