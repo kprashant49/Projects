@@ -75,6 +75,57 @@ order by 2 desc;
 Select title, round(avg(rating),1) as avg_rating from full_reviews
 group by title with rollup;
 
-use mynewproject
-Select * from employee;
+SELECT emp_no, department, salary, AVG(salary) OVER() FROM employees;
+ 
+SELECT 
+    emp_no, 
+    department, 
+    salary, 
+    MIN(salary) OVER(),
+    MAX(salary) OVER()
+FROM employees;
+        
+SELECT MIN(salary), MAX(salary) FROM employees;
 
+SELECT emp_no, department, salary, 
+round(AVG(salary) OVER(PARTITION BY department)) AS dept_avg,
+count(*) over(PARTITION BY department) AS dept_count,
+round(AVG(salary) OVER()) AS company_avg,
+count(*) over() AS company_count
+FROM employees;
+
+SELECT emp_no, department, salary,
+SUM(salary) OVER(PARTITION BY department) as Total_dept_salary,
+SUM(salary) OVER(PARTITION BY department order by salary desc) as Rolling_dept_salary
+FROM employees;
+
+SELECT emp_no, department, salary,
+MIN(salary) OVER(PARTITION BY department order by salary desc) as min_dept_salary
+FROM employees;
+
+SELECT emp_no, department, salary,
+Rank() OVER(PARTITION BY department order by salary desc),
+Rank() OVER(order by salary desc)
+FROM employees;
+
+SELECT emp_no, department, salary,
+Row_number() OVER(PARTITION BY department order by salary desc),
+Row_number() OVER(order by salary desc),
+Row_number() OVER()
+FROM employees;
+
+SELECT emp_no, department, salary,
+Row_number() OVER(PARTITION BY department order by salary desc),
+Rank() OVER(PARTITION BY department order by salary desc)
+FROM employees;
+
+SELECT 
+    emp_no, 
+    department, 
+    salary,
+    ROW_NUMBER() OVER(PARTITION BY department ORDER BY SALARY DESC) as dept_row_number,
+    RANK() OVER(PARTITION BY department ORDER BY SALARY DESC) as dept_salary_rank,
+    RANK() OVER(ORDER BY salary DESC) as overall_rank,
+    DENSE_RANK() OVER(ORDER BY salary DESC) as overall_dense_rank,
+    ROW_NUMBER() OVER(ORDER BY salary DESC) as overall_num
+FROM employees ORDER BY overall_rank;
