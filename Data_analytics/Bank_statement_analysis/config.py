@@ -1,4 +1,4 @@
-import numpy as np
+import pandas as pd
 
 # ---------------- CONFIGURATION ----------------
 INPUT_DIR = r"C:\Users\kpras\Desktop\Test_data\Banking_Project\Input"
@@ -11,18 +11,47 @@ SHEET_NAME = "Sheet1"  # For Excel input
 def categorize_transactions(df):
     """
     Custom categorization logic.
-    You can edit this function manually to change category rules.
     """
-    if ('TransactionNarration' not in df.columns # or 'Status'
-            not in df.columns):
+    if ('TransactionNarration' not in df.columns # or 'Status'not in df.columns
+        ):
         raise KeyError("Input file must contain 'Narration' columns")
 
-    conditions = [
-        (df['TransactionNarration'].str.contains('Bounce', case=False, na=False)),
-        (df['TransactionNarration'].str.contains('IMPS', case=False, na=False)),
-        (df['TransactionNarration'].str.contains('RTGS', case=False, na=False))
-    ]
-    choices = ['Bounce', 'IMPS', 'RTGS']
+    mapping = {
+        'BBPS': 'Bill Payment',
+        'CSH WDL': 'Cash Withdrawal',
+        'INSTALLMENT': 'EMI',
+        'InsodIntRcvry': 'Interest Recovery',
+        'IWR  CHRG': 'Inward Remittance Charge',
+        'BL-ONLINE DISBURSEMENT': 'Loan',
+        'medicine': 'Medical',
+        'NFT RTN': 'NEFT Return',
+        'NFT/RTN': 'NEFT Return',
+        'RENTAL': 'Rent Payments',
+        'SALARY': 'SALARY',
+        'I nt.Pd': 'Interest',
+        'I nt.Coll': 'Interest',
+        'Petrol': 'Fuel',
+        'CHQ DEP RET': 'CHQ Bounce',
+        'CHQ Issued Bounce': 'CHQ Bounce',
+        'ECS DR RTN': 'CHQ Bounce',
+        'RETURNED': 'CHQ Bounce',
+        'TPT-RETURN': 'CHQ Bounce',
+        'CHQ RET': 'CHQ Bounce',
+        'ACH DEBIT RETURN': 'CHQ Bounce',
+        'EMI RTN': 'CHQ Bounce',
+        'CHQ DEP': 'Cheque Deposit',
+        'REJECT': 'CHQ Bounce',
+        'TO TRANSFER': 'Transfer To'
+    }
 
-    df['Category'] = np.select(conditions, choices, default='Other')
+    def categorize(narration):
+        if pd.isna(narration):
+            return 'Other'
+        for key, category in mapping.items():
+            if key.lower() in narration.lower():
+                return category
+        return 'Other'
+
+    df['Category'] = df['TransactionNarration'].apply(categorize)
+
     return df
