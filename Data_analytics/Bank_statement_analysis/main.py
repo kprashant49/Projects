@@ -12,7 +12,7 @@ from config import INPUT_DIR, categorize_transactions
 
 def main():
     setup_logger()
-    logging.info("===== Starting Incremental File Processor =====")
+    logging.info(">>>>>>>>>> Starting Bank Statement Analysis <<<<<<<<<<")
 
     try:
         all_files = [f for f, _ in get_all_files(INPUT_DIR)]
@@ -36,7 +36,7 @@ def main():
     except Exception as e:
         logging.error(f"Processing failed: {e}")
 
-    logging.info("===== Job Finished =====")
+    logging.info(">>>>>>>>>> Job Finished <<<<<<<<<<")
 
 if __name__ == "__main__":
     main()
