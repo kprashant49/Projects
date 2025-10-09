@@ -1,7 +1,8 @@
+import os
 import logging
 from helpers import (
     setup_logger,
-    get_latest_file,
+    get_all_files,
     get_last_processed,
     update_last_processed,
     read_input,
@@ -14,20 +15,23 @@ def main():
     logging.info("===== Starting Incremental File Processor =====")
 
     try:
-        latest_path = get_latest_file(INPUT_DIR)
-        latest_name = latest_path.split("\\")[-1]
-        last_processed = get_last_processed()
+        all_files = [f for f, _ in get_all_files(INPUT_DIR)]
+        processed_files = get_last_processed()
 
-        if latest_name == last_processed:
-            logging.info(f"No new file to process. Last processed: {latest_name}")
+        files_to_process = [f for f in all_files if f not in processed_files]
+
+        if not files_to_process:
+            logging.info("No new files to process.")
             return
 
-        logging.info(f"New file detected: {latest_name}")
-        df = read_input(latest_path)
-        df = categorize_transactions(df)
-        output = save_output(df, latest_path)
-        update_last_processed(latest_name)
-        logging.info(f"File processed successfully → {output}")
+        for filename in files_to_process:
+            logging.info(f"Processing new file: {filename}")
+            filepath = os.path.join(INPUT_DIR, filename)
+            df = read_input(filepath)
+            df = categorize_transactions(df)
+            output = save_output(df, filepath)
+            update_last_processed(filename)
+            logging.info(f"File processed successfully → {output}")
 
     except Exception as e:
         logging.error(f"Processing failed: {e}")

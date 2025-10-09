@@ -12,7 +12,7 @@ def categorize_transactions(df):
     """
     Custom categorization logic.
     """
-    if ('TransactionNarration' not in df.columns # or 'Status'not in df.columns
+    if ('TransactionNarration' not in df.columns # or 'Status' not in df.columns
         ):
         raise KeyError("Input file must contain 'Narration' columns")
 
@@ -52,6 +52,7 @@ def categorize_transactions(df):
                 return category
         return 'Other'
 
+    df['TransactionNarration'] = df['TransactionNarration'].astype(str)# Apply categorization
     df['Category'] = df['TransactionNarration'].apply(categorize)
 
     return df

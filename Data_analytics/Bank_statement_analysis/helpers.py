@@ -36,37 +36,38 @@ def setup_logger():
     # Root logger setup
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
-    logger.handlers.clear()  # Prevent duplicate logs
+    logger.handlers.clear()
     logger.addHandler(rotating_handler)
     logger.addHandler(console_handler)
 
     logger.info("Logging initialized — using rotating log file.")
 
 # ---------------- FILE UTILITIES ----------------
-def get_latest_file(folder):
-    files = [f for f in os.listdir(folder)
-             if f.lower().endswith(('.csv', '.xls', '.xlsx'))]
-    if not files:
-        raise FileNotFoundError(f"No CSV/Excel files found in: {folder}")
-
-    latest = max(files, key=lambda f: os.path.getmtime(os.path.join(folder, f)))
-    return os.path.join(folder, latest)
-
 def get_last_processed():
     if os.path.exists(LOG_FILE):
         with open(LOG_FILE, "r") as f:
-            return f.read().strip()
-    return None
+            return set(line.strip() for line in f if line.strip())
+    return set()
 
 def update_last_processed(filename):
-    with open(LOG_FILE, "w") as f:
-        f.write(filename)
+    with open(LOG_FILE, "a") as f:
+        f.write(f"{filename}\n")
+
+def get_all_files(folder):
+    files = [f for f in os.listdir(folder)
+             if f.lower().endswith(('.csv', '.xls', '.xlsx'))]
+    files_with_mtime = [
+        (f, os.path.getmtime(os.path.join(folder, f))) for f in files
+    ]
+    return sorted(files_with_mtime, key=lambda x: x[1])
 
 # ---------------- FILE I/O ----------------
 def read_input(filepath):
     ext = os.path.splitext(filepath)[1].lower()
     if ext == ".csv":
         return pd.read_csv(filepath)
+    elif ext == ".xls":
+        return pd.read_excel(filepath, sheet_name=SHEET_NAME, engine="xlrd")
     else:
         return pd.read_excel(filepath, sheet_name=SHEET_NAME, engine="openpyxl")
 
@@ -74,12 +75,8 @@ def save_output(df, input_path):
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
 
-    base, ext = os.path.splitext(os.path.basename(input_path))
-    output_path = os.path.join(OUTPUT_DIR, f"{base}_processed{ext}")
+    base = os.path.splitext(os.path.basename(input_path))[0]
+    output_path = os.path.join(OUTPUT_DIR, f"{base}_processed.xlsx")
 
-    if ext == ".csv":
-        df.to_csv(output_path, index=False)
-    else:
-        df.to_excel(output_path, index=False, engine="openpyxl")
-
+    df.to_excel(output_path, index=False, engine="openpyxl")
     return output_path
