@@ -40,8 +40,6 @@ def setup_logger():
     logger.addHandler(rotating_handler)
     logger.addHandler(console_handler)
 
-    logger.info("Logging initialized — using rotating log file.")
-
 # ---------------- FILE UTILITIES ----------------
 def get_last_processed():
     if os.path.exists(LOG_FILE):
