@@ -53,7 +53,6 @@ def get_fos_mapper(conn):
 def save_fos_mapping_counts(conn, df):
     """
     Saves total number of allocations per AWS_CODE into a summary table.
-    Creates the table if it doesn't exist.
     """
     try:
         cursor = conn.cursor()
@@ -159,7 +158,6 @@ def Allocation_Rule_Engine():
     conn = connect_db(config)
     save_fos_mapping_counts(conn, result)
     conn.close()
-    logging.info("FOS allocation summary updated successfully.")
 
 if __name__ == "__main__":
     Allocation_Rule_Engine()
