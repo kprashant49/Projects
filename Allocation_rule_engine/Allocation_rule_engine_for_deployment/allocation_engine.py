@@ -53,6 +53,7 @@ def get_fos_mapper(conn):
 def save_fos_mapping_counts(conn, df):
     """
     Saves total number of allocations per AWS_CODE into a summary table.
+    Deallocated leads are excluded from counts.
     """
     try:
         cursor = conn.cursor()
@@ -66,7 +67,8 @@ def save_fos_mapping_counts(conn, df):
             )
         """)
 
-        # Calculate counts
+        # Only count active allocations (exclude Deallocated or OGL)
+        active_df = df[~df['Allocation_Status'].isin(['Deallocated', 'OGL'])]
         fos_counts = df['AWS_CODE'].value_counts().reset_index()
         fos_counts.columns = ['AWS_CODE', 'TOTAL_ALLOCATIONS']
 
@@ -79,7 +81,7 @@ def save_fos_mapping_counts(conn, df):
             """, (row['AWS_CODE'], int(row['TOTAL_ALLOCATIONS'])))
 
         conn.commit()
-        logging.info("FOS allocation summary updated successfully.")
+        logging.info("FOS allocation summary updated successfully (after deallocations).")
 
     except Exception as e:
         logging.error("Failed to save FOS allocation summary: %s", e)
@@ -131,7 +133,16 @@ def map_priority2(df_unmapped, fos_map, existing_counts):
 
     return pd.DataFrame(result).set_index('index').sort_index().reset_index(drop=True)
 
-def Allocation_Rule_Engine():
+def get_deallocated_leads(conn):
+    """
+    Fetches the list of AGREEMENTIDs to be deallocated.
+    """
+    cursor = conn.cursor()
+    cursor.execute("SELECT AGREEMENTID FROM deallocated_leads")
+    rows = cursor.fetchall()
+    return [r[0] for r in rows]
+
+def allocation_rule_engine():
     setup_logging()
     logging.info("Starting Allocation Rule Engine")
 
@@ -140,6 +151,7 @@ def Allocation_Rule_Engine():
     conn = connect_db(config)
     df_old = get_previous_allocation(conn)
     fos_mapper = get_fos_mapper(conn)
+    deallocated_ids = get_deallocated_leads(conn)
     conn.close()
 
     df_priority1, df_unmapped = map_priority1(df_new, df_old)
@@ -150,6 +162,10 @@ def Allocation_Rule_Engine():
     combined['AGREEMENTID'] = pd.Categorical(combined['AGREEMENTID'], categories=df_new['AGREEMENTID'], ordered=True)
     result = combined.sort_values('AGREEMENTID')
 
+    # Apply deallocation in reverse order
+    result = apply_deallocation(result, deallocated_ids)
+
+    # Save updated results
     result.to_excel(OUTPUT_FILE, index=False)
     logging.info("Exported results to %s", OUTPUT_FILE)
     print(f"Exported results to {OUTPUT_FILE}")
@@ -159,5 +175,27 @@ def Allocation_Rule_Engine():
     save_fos_mapping_counts(conn, result)
     conn.close()
 
+def apply_deallocation(result_df, deallocated_ids):
+    """
+    Marks specified leads as deallocated in reverse order of allocation.
+    Keeps FOS but marks status as 'Deallocated' and excludes from count.
+    """
+    # Only process if deallocation list exists
+    if not deallocated_ids:
+        logging.info("No leads to deallocate.")
+        return result_df
+
+    # Ensure order of removal = reverse order of allocation
+    dealloc_df = result_df[result_df['AGREEMENTID'].isin(deallocated_ids)].copy()
+    dealloc_df = dealloc_df.iloc[::-1]  # reverse order
+
+    # Mark as deallocated
+    result_df.loc[result_df['AGREEMENTID'].isin(deallocated_ids), 'Allocation_Status'] = 'Deallocated'
+    result_df.loc[result_df['AGREEMENTID'].isin(deallocated_ids), 'FOS_mapping_count'] = None
+
+    logging.info(f"Deallocated {len(deallocated_ids)} leads in reverse order.")
+    return result_df
+
+
 if __name__ == "__main__":
-    Allocation_Rule_Engine()
+    allocation_rule_engine()
