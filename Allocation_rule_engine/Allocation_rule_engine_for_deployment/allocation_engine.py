@@ -50,6 +50,42 @@ def get_fos_mapper(conn):
     columns = [desc[0] for desc in cursor.description]
     return pd.DataFrame(rows, columns=columns)
 
+def save_fos_mapping_counts(conn, df):
+    """
+    Saves total number of allocations per AWS_CODE into a summary table.
+    Creates the table if it doesn't exist.
+    """
+    try:
+        cursor = conn.cursor()
+
+        # Create table if not exists
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS fos_allocation_summary (
+                AWS_CODE VARCHAR(50) PRIMARY KEY,
+                TOTAL_ALLOCATIONS INT,
+                LAST_UPDATED TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )
+        """)
+
+        # Calculate counts
+        fos_counts = df['AWS_CODE'].value_counts().reset_index()
+        fos_counts.columns = ['AWS_CODE', 'TOTAL_ALLOCATIONS']
+
+        # Insert or update
+        for _, row in fos_counts.iterrows():
+            cursor.execute("""
+                INSERT INTO fos_allocation_summary (AWS_CODE, TOTAL_ALLOCATIONS)
+                VALUES (%s, %s)
+                ON DUPLICATE KEY UPDATE TOTAL_ALLOCATIONS = VALUES(TOTAL_ALLOCATIONS)
+            """, (row['AWS_CODE'], int(row['TOTAL_ALLOCATIONS'])))
+
+        conn.commit()
+        logging.info("FOS allocation summary updated successfully.")
+
+    except Exception as e:
+        logging.error("Failed to save FOS allocation summary: %s", e)
+        raise
+
 def map_priority1(df_new, df_old):
     df_new['AGREEMENTID'] = df_new['AGREEMENTID'].astype(str)
     df_old['AGREEMENTID'] = df_old['AGREEMENTID'].astype(str)
@@ -118,6 +154,12 @@ def Allocation_Rule_Engine():
     result.to_excel(OUTPUT_FILE, index=False)
     logging.info("Exported results to %s", OUTPUT_FILE)
     print(f"Exported results to {OUTPUT_FILE}")
+
+    # Update FOS allocation summary
+    conn = connect_db(config)
+    save_fos_mapping_counts(conn, result)
+    conn.close()
+    logging.info("FOS allocation summary updated successfully.")
 
 if __name__ == "__main__":
     Allocation_Rule_Engine()
