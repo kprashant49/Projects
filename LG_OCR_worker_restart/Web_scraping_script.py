@@ -4,7 +4,7 @@ from selenium.webdriver.common.keys import Keys
 import time
 
 # Setup
-driver = webdriver.Edge()  # Or use Firefox, Edge, etc.
+driver = webdriver.Chrome()  # Or use Firefox, Edge, etc.
 driver.get("http://rabbitmq-headless.rabbitmq.svc.cluster.local")  # Replace with your RabbitMQ URL
 
 # Login
