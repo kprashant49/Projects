@@ -11,14 +11,14 @@ time.sleep(5)
 driver.get("https://practicetestautomation.com/practice-test-login/")
 time.sleep(10)
 
-# # Login
-# driver.find_element(By.ID, "username").send_keys("user")
-# driver.find_element(By.ID, "password").send_keys("dh06SWDt1LK8h070")
-# driver.find_element(By.ID, "login").click()
-#
-# # Wait for login and redirect
-# time.sleep(3)
-#
+# Login
+driver.find_element(By.ID, "username").send_keys("student")
+driver.find_element(By.ID, "password").send_keys("Password123")
+driver.find_element(By.ID, "submit").click()
+
+# Wait for login and redirect
+time.sleep(10)
+
 # # Navigate to Queues tab
 # driver.get("http://rabbitmq-headless.rabbitmq.svc.cluster.local/#/queues")
 # time.sleep(5)  # Wait for data to load
