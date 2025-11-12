@@ -8,8 +8,12 @@ import time
 
 print("**************Starting automation**************")
 
-# Setup
-driver = webdriver.Chrome()  # Or use Firefox, Edge, etc.
+# --- Setup Chrome in maximized mode ---
+options = webdriver.ChromeOptions()
+options.add_argument("--start-maximized")  # Launch Chrome in full screen
+
+# Setup driver
+driver = webdriver.Chrome(options=options)
 time.sleep(5)
 
 # --- Load config ---
@@ -82,5 +86,6 @@ actions.move_to_element(icon).perform()
 logout_element = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, "//span[text()='Logout']")))
 logout_element.click()
 time.sleep(5)
+driver.quit()
 
 print("**************Automation run complete**************")
