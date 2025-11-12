@@ -12,7 +12,7 @@ print("**************Starting automation**************")
 options = webdriver.ChromeOptions()
 options.add_argument("--start-maximized")  # Launch Chrome in full screen
 
-# Setup driver
+# Setup browser driver
 driver = webdriver.Chrome(options=options)
 time.sleep(5)
 
