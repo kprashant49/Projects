@@ -5,7 +5,8 @@ from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 import time
-
+import os
+import pandas as pd
 
 def run_automation():
     """
@@ -62,6 +63,10 @@ def run_automation():
     generate_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//input[@type='submit' and @value='Generate Report']")))
     generate_button.click()
     generate_button.click()
+    time.sleep(5)
+    download_dir = r"C:\Users\kpras\Downloads"
+    filename_pattern = "ReOCR_Failed_Karza_Documents_"  # or any part of your downloaded report name
+    count_records_in_download(download_dir, filename_pattern)
     time.sleep(10)
 
     # --- Logout ---
@@ -74,6 +79,33 @@ def run_automation():
     driver.quit()
 
     print("**************Automation run complete**************")
+
+
+def count_records_in_download(download_dir, filename_pattern):
+    """
+    Waits for the Excel report to finish downloading,
+    finds the latest matching file, and counts the records.
+    """
+    # Wait a few seconds to ensure file download completes
+    time.sleep(5)
+
+    # Find the latest downloaded Excel file matching the pattern
+    excel_files = [f for f in os.listdir(download_dir) if f.endswith(('.xlsx', '.xls')) and filename_pattern in f]
+    if not excel_files:
+        raise FileNotFoundError("No Excel file found in the download directory.")
+
+    latest_file = max([os.path.join(download_dir, f) for f in excel_files], key=os.path.getctime)
+
+    # Read Excel into pandas DataFrame
+    df = pd.read_excel(latest_file)
+
+    # Count rows (excluding header)
+    record_count = len(df)
+
+    print(f" File: {os.path.basename(latest_file)}")
+    print(f" Total records found: {record_count}")
+    return record_count
+
 
 if __name__ == "__main__":
      run_automation()
