@@ -4,6 +4,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager #pip install webdriver-manager
 import time
 import os
 import pandas as pd
@@ -20,7 +22,9 @@ def run_automation():
     options.add_argument("--start-maximized")  # Launch Chrome in full screen
 
     # Initialize browser driver
-    driver = webdriver.Chrome(options=options)
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service, options=options)
+    # driver = webdriver.Chrome(options=options)
     time.sleep(5)
 
     # --- Load configuration ---
