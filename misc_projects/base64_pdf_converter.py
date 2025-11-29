@@ -18,6 +18,10 @@ def decode_base64_to_pdf(txt_path):
     print(f"Decoded → {output_pdf}")
 
 def auto_process(input_path):
+    if not os.path.isfile(input_path):
+        print("File not found.")
+        return
+
     ext = os.path.splitext(input_path)[1].lower()
 
     if ext == ".pdf":
@@ -30,5 +34,5 @@ def auto_process(input_path):
         print("Only .pdf or .txt supported.")
 
 if __name__ == "__main__":
-    input_file = r"C:\Users\kpras\Desktop\test.txt"
-    auto_process(input_file)
+    path = input("Enter file path (.pdf or .txt): ").strip()
+    auto_process(path)
