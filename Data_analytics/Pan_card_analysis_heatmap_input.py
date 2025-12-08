@@ -69,8 +69,8 @@ def main():
     print("PAN Analysis Tool")
     file_path = input("Enter full Excel file path: ").strip()
     sheet_name = input("Enter sheet name (default: Sheet1): ").strip() or "Sheet1"
-    Variable_cat = input("Enter numeric column name (e.g., Backdatedyear): ").strip()
-    Variable_distr = input("Enter category column name (e.g., Series_1): ").strip()
+    Variable_cat = input("Enter numeric column name (e.g., IssueDate): ").strip()
+    Variable_distr = input("Enter category column name (e.g., Series): ").strip()
     
     # Output paths
     output_file = file_path.replace(".xlsx", "_stats.xlsx")
