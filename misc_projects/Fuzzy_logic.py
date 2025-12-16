@@ -86,7 +86,7 @@ def decide_match(a: str, b: str, threshold=85):
     return deciding >= threshold, deciding, scores
 
 def main():
-    print("Fuzzy Name Matcher")
+    print("Fuzzy Name Matcher, please provide names to match.")
     a = input("Enter first name: ")
     b = input("Enter second name: ")
 
