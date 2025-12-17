@@ -60,5 +60,7 @@ def auto_process(input_path):
         print("Unsupported file type.")
 
 if __name__ == "__main__":
-    path = input("Enter file path (.pdf, .png, .jpg, .xls, .xlsx, .csv or .txt): ").strip()
+    print(">>>>Welcome to Base64 Encoder/Decoder<<<<")
+    print("Supported files type >>> .pdf,.png,.jpg,.xls,.xlsx,.csv or.txt")
+    path = input("Enter file path: ").strip()
     auto_process(path)
