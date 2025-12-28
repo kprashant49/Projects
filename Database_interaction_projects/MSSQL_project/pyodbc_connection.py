@@ -6,24 +6,24 @@ import os
 with open("config.json", "r", encoding="utf-8") as f:
     config = json.load(f)
 
-db = config["db"]
+DB = config["DB"]
 OUTPUT_PATH = config["OUTPUT_PATH"]
+QUERY = config["QUERY"]
 
 # Build connection string
 conn_str = (
-    f"DRIVER={db['DRIVER']};"
-    f"SERVER={db['SERVER']};"
-    f"DATABASE={db['DATABASE']};"
-    f"UID={db['USER']};"
-    f"PWD={db['PASSWORD']};"
-    f"Encrypt={db['ENCRYPT']};"
-    f"TrustServerCertificate={db['TRUSTSERVERCERTIFICATE']};"
+    f"DRIVER={DB['DRIVER']};"
+    f"SERVER={DB['SERVER']};"
+    f"DATABASE={DB['DATABASE']};"
+    f"UID={DB['USER']};"
+    f"PWD={DB['PASSWORD']};"
+    f"Encrypt={DB['ENCRYPT']};"
+    f"TrustServerCertificate={DB['TRUSTSERVERCERTIFICATE']};"
 )
 
 conn = pyodbc.connect(conn_str)
 cursor = conn.cursor()
-
-cursor.execute("select Distinct ApplicationNo, RequestJson from ReverseAPIResponseLog where Applicationno in ('GFL3806LP0105570','GFL3601LP0106108','GFL3101LP0106299')")
+cursor.execute(QUERY)
 
 # Get column names
 # columns = [column[0] for column in cursor.description]
