@@ -1,8 +1,10 @@
 from logger import setup_logging
 from data_loader import load_data
-from analytics import transform_df_a, transform_df_b
-from emailer import send_email
+from analytics import transform_df_a, transform_df_b, transform_df_c
+from emailer import send_outlook_mail, load_outlook_config
 import logging
+import tempfile
+import os
 
 
 def df_to_html(df, empty_message):
@@ -11,7 +13,6 @@ def df_to_html(df, empty_message):
     """
     if df.empty:
         return f"<p><i>{empty_message}</i></p>"
-
     return df.to_html(index=False, border=1)
 
 
@@ -20,20 +21,14 @@ def main():
     logging.info("Report mailer started")
 
     try:
-        df_a, df_b = load_data()
+        df_a, df_b, df_c = load_data()
 
         df_a = transform_df_a(df_a)
         df_b = transform_df_b(df_b)
+        df_c = transform_df_c(df_c)
 
-        a_html = df_to_html(
-            df_a,
-            "No sales data available for the selected period."
-        )
-
-        b_html = df_to_html(
-            df_b,
-            "No customer data available."
-        )
+        a_html = df_to_html(df_a,"No sales data available for the selected period.")
+        b_html = df_to_html(df_b,"No customer data available.")
 
         html = f"""
         <p>Dear All,</p>
@@ -51,13 +46,24 @@ def main():
         <p>Please Note. This is an automated email, please do not reply to this email.<p>
         """
 
-        send_email(html)
+        # Create Excel attachment
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx")
+        temp_file.close()
+        df_c.to_excel(temp_file.name, index=False)
+
+        outlook = load_outlook_config()
+        send_outlook_mail(
+            outlook["subject"],
+            html,
+            outlook,
+            attachments=[("c_report.xlsx", temp_file.name)]
+        )
+        os.unlink(temp_file.name)
         logging.info("Report mailer completed successfully")
 
     except Exception as e:
         logging.error(f"Pipeline failed: {e}")
         raise
-
 
 if __name__ == "__main__":
     main()

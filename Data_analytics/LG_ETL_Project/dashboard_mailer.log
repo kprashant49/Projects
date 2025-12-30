@@ -24,3 +24,27 @@
 2025-12-31 01:15:43,443 | INFO | Sending Outlook email
 2025-12-31 01:15:44,203 | INFO | Email sent successfully
 2025-12-31 01:15:44,204 | INFO | Report mailer completed successfully
+2025-12-31 01:37:24,908 | INFO | Report mailer started
+2025-12-31 01:37:26,404 | INFO | Sending Outlook email
+2025-12-31 01:37:26,942 | ERROR | Email send failed: name 'base64' is not defined
+2025-12-31 01:37:26,943 | ERROR | Pipeline failed: name 'base64' is not defined
+2025-12-31 01:40:08,469 | INFO | Report mailer started
+2025-12-31 01:40:09,610 | INFO | Sending Outlook email
+2025-12-31 01:40:10,369 | INFO | Email sent successfully
+2025-12-31 01:40:10,370 | ERROR | Pipeline failed: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\kpras\\AppData\\Local\\Temp\\tmpma093oe0.xlsx'
+2025-12-31 01:42:53,672 | INFO | Report mailer started
+2025-12-31 01:42:54,868 | INFO | Sending Outlook email
+2025-12-31 01:42:55,608 | INFO | Email sent successfully
+2025-12-31 01:42:55,610 | INFO | Report mailer completed successfully
+2025-12-31 01:44:50,741 | INFO | Report mailer started
+2025-12-31 01:44:51,928 | INFO | Sending Outlook email
+2025-12-31 01:44:52,448 | INFO | Email sent successfully
+2025-12-31 01:44:52,450 | INFO | Report mailer completed successfully
+2025-12-31 01:45:37,113 | INFO | Report mailer started
+2025-12-31 01:45:38,076 | INFO | Sending Outlook email
+2025-12-31 01:45:38,732 | INFO | Email sent successfully
+2025-12-31 01:45:38,734 | INFO | Report mailer completed successfully
+2025-12-31 01:48:32,455 | INFO | Report mailer started
+2025-12-31 01:48:33,610 | INFO | Sending Outlook email
+2025-12-31 01:48:34,351 | INFO | Email sent successfully
+2025-12-31 01:48:34,353 | INFO | Report mailer completed successfully

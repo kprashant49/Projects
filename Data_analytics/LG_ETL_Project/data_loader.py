@@ -29,9 +29,15 @@ def load_data():
         Select * from ApplicantGender
     """
 
+    # Query C – Audit / Extra report (ATTACHMENT)
+    query_c = """
+        Select * from ApplicantGender       
+    """
+
     df_a = pd.read_sql(query_a, conn)
     df_b = pd.read_sql(query_b, conn)
+    df_c = pd.read_sql(query_c, conn)
 
     conn.close()
 
-    return df_a, df_b
+    return df_a, df_b, df_c
