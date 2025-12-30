@@ -1,0 +1,6 @@
+2025-12-31 00:56:00,983 | INFO | Report mailer started
+2025-12-31 00:56:00,989 | ERROR | Pipeline failed: ('IM012', '[IM012] [Microsoft][ODBC Driver Manager] DRIVER keyword syntax error (0) (SQLDriverConnect)')
+2025-12-31 00:56:43,033 | INFO | Report mailer started
+2025-12-31 00:56:45,061 | INFO | Sending Outlook email
+2025-12-31 00:56:45,862 | INFO | Email sent successfully
+2025-12-31 00:56:45,863 | INFO | Report mailer completed successfully
