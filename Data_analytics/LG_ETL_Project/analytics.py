@@ -1,4 +1,4 @@
-def transform_sales(df):
+def transform_df_a(df):
     """
     Transform sales_table data
     """
@@ -7,7 +7,7 @@ def transform_sales(df):
     return df
 
 
-def transform_customers(df):
+def transform_df_b(df):
     """
     Transform customer_table data
     """

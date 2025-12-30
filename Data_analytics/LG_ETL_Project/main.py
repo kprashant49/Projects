@@ -1,6 +1,6 @@
 from logger import setup_logging
 from data_loader import load_data
-from analytics import transform_sales, transform_customers
+from analytics import transform_df_a, transform_df_b
 from emailer import send_email
 import logging
 
@@ -20,31 +20,35 @@ def main():
     logging.info("Report mailer started")
 
     try:
-        df_sales, df_customers = load_data()
+        df_a, df_b = load_data()
 
-        df_sales = transform_sales(df_sales)
-        df_customers = transform_customers(df_customers)
+        df_a = transform_df_a(df_a)
+        df_b = transform_df_b(df_b)
 
-        sales_html = df_to_html(
-            df_sales,
+        a_html = df_to_html(
+            df_a,
             "No sales data available for the selected period."
         )
 
-        customers_html = df_to_html(
-            df_customers,
+        b_html = df_to_html(
+            df_b,
             "No customer data available."
         )
 
         html = f"""
+        <p>Dear All,</p>
+        <p>Enclosed please find herewith eRCU status along with screening and sampling reports for 30/12/2025</p>
         <html>
         <body style="font-family:Arial;">
-            <h3>Sales Report</h3>
-            {sales_html}
+            <h3>Report A</h3>
+            {a_html}
             <br><br>
-            <h3>Customer Report</h3>
-            {customers_html}
+            <h3>Report B</h3>
+            {b_html}
         </body>
         </html>
+        <p>Regards,<br>Loanguard Team</p>
+        <p>Please Note. This is an automated email, please do not reply to this email.<p>
         """
 
         send_email(html)
