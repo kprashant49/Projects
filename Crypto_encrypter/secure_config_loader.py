@@ -2,6 +2,9 @@ import os
 from cryptography.fernet import Fernet
 import json
 
+# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# CONFIG_PATH = os.path.join(BASE_DIR, "config.enc")
+
 def load_secure_config(path="config.enc"):
     key = os.getenv("CONFIG_KEY")
     if not key:
