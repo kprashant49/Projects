@@ -1,4 +1,3 @@
-from logger import setup_logging
 from data_loader import load_data
 from analytics import transform_df_a, transform_df_b, transform_df_c
 from emailer import send_outlook_mail, load_outlook_config
@@ -17,7 +16,6 @@ def df_to_html(df, empty_message):
 
 
 def main():
-    setup_logging()
     logging.info("Report mailer started")
 
     try:
@@ -59,7 +57,7 @@ def main():
             attachments=[("c_report.xlsx", temp_file.name)]
         )
         os.unlink(temp_file.name)
-        logging.info("Report mailer completed successfully")
+        logging.info("Report mailer completed successfully.")
 
     except Exception as e:
         logging.error(f"Pipeline failed: {e}")

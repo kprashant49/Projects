@@ -71,3 +71,38 @@ def send_outlook_mail(subject, html_body, outlook, attachments=None):
 def send_email(html_body):
     outlook = load_outlook_config()
     send_outlook_mail(outlook["subject"], html_body, outlook)
+
+def load_alert_config(path="config.json"):
+    with open(path) as f:
+        return json.load(f)["alerts"]
+
+def send_failure_alert(subject, error_message):
+    outlook = load_outlook_config()
+    alerts = load_alert_config()
+
+    html = f"""
+    <html>
+    <body style="font-family:Arial;">
+        <h3 style="color:red;">Job Failure Alert</h3>
+        <p>The scheduled analytics job has failed.</p>
+        <p><b>Error Details:</b></p>
+        <pre style="background:#f8f8f8;padding:10px;">
+        {error_message}
+        </pre>
+        <p>Please check <b>dashboard_mailer.log</b> for details.</p>
+    </body>
+    </html>
+    """
+
+    # Override recipients with ADMIN list
+    outlook["to"] = alerts.get("to", [])
+    outlook["cc"] = alerts.get("cc", [])
+    outlook["bcc"] = alerts.get("bcc", [])
+
+    send_outlook_mail(
+        subject=f"FAILURE: {subject}",
+        html_body=html,
+        outlook=outlook
+    )
+
+
