@@ -1,13 +1,8 @@
-import json
 import logging
 import requests
-from graph_auth import get_graph_token
 import base64
-
-
-def load_outlook_config(path="config.json"):
-    with open(path) as f:
-        return json.load(f)["outlook"]
+from graph_auth import get_graph_token
+from secure_config import load_secure_config
 
 
 def send_outlook_mail(subject, html_body, outlook, attachments=None):
@@ -29,26 +24,24 @@ def send_outlook_mail(subject, html_body, outlook, attachments=None):
             "toRecipients": recipients(outlook["to"])
         }
 
-        if outlook["cc"]:
+        if outlook.get("cc"):
             message["ccRecipients"] = recipients(outlook["cc"])
-        if outlook["bcc"]:
+        if outlook.get("bcc"):
             message["bccRecipients"] = recipients(outlook["bcc"])
 
-        # Attachments (Excel)
-        attach_list = []
         if attachments:
+            message["attachments"] = []
+
             for name, path in attachments:
                 with open(path, "rb") as f:
-                    attach_list.append({
-                        "@odata.type": "#microsoft.graph.fileAttachment",
-                        "name": name,
-                        "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                        "contentBytes": base64.b64encode(f.read()).decode("utf-8")
-                    })
+                    content = base64.b64encode(f.read()).decode()
 
-            message["attachments"] = attach_list
-
-        payload = {"message": message, "saveToSentItems": "true"}
+                message["attachments"].append({
+                    "@odata.type": "#microsoft.graph.fileAttachment",
+                    "name": name,
+                    "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    "contentBytes": content
+                })
 
         response = requests.post(
             f"https://graph.microsoft.com/v1.0/users/{outlook['sender']}/sendMail",
@@ -56,7 +49,7 @@ def send_outlook_mail(subject, html_body, outlook, attachments=None):
                 "Authorization": f"Bearer {token}",
                 "Content-Type": "application/json"
             },
-            json=payload
+            json={"message": message, "saveToSentItems": True}
         )
 
         if response.status_code != 202:
@@ -69,40 +62,26 @@ def send_outlook_mail(subject, html_body, outlook, attachments=None):
         raise
 
 def send_email(html_body):
-    outlook = load_outlook_config()
+    config = load_secure_config()
+    outlook = config["outlook"]
     send_outlook_mail(outlook["subject"], html_body, outlook)
 
-def load_alert_config(path="config.json"):
-    with open(path) as f:
-        return json.load(f)["alerts"]
-
 def send_failure_alert(subject, error_message):
-    outlook = load_outlook_config()
-    alerts = load_alert_config()
+    config = load_secure_config()
+    outlook = config["outlook"].copy()
+    alerts = config["alerts"]
 
     html = f"""
     <html>
-    <body style="font-family:Arial;">
+    <body>
         <h3 style="color:red;">Job Failure Alert</h3>
-        <p>The scheduled analytics job has failed.</p>
-        <p><b>Error Details:</b></p>
-        <pre style="background:#f8f8f8;padding:10px;">
-        {error_message}
-        </pre>
-        <p>Please check <b>dashboard_mailer.log</b> for details.</p>
+        <pre>{error_message}</pre>
     </body>
     </html>
     """
 
-    # Override recipients with ADMIN list
-    outlook["to"] = alerts.get("to", [])
+    outlook["to"] = alerts["to"]
     outlook["cc"] = alerts.get("cc", [])
     outlook["bcc"] = alerts.get("bcc", [])
 
-    send_outlook_mail(
-        subject=f"FAILURE: {subject}",
-        html_body=html,
-        outlook=outlook
-    )
-
-
+    send_outlook_mail(f"FAILURE: {subject}", html, outlook)

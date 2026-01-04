@@ -1,6 +1,7 @@
 from data_loader import load_data
 from analytics import transform_df_a, transform_df_b, transform_df_c
-from emailer import send_outlook_mail, load_outlook_config
+from emailer import send_outlook_mail
+from secure_config import load_secure_config
 import logging
 import tempfile
 import os
@@ -49,7 +50,9 @@ def main():
         temp_file.close()
         df_c.to_excel(temp_file.name, index=False)
 
-        outlook = load_outlook_config()
+        config = load_secure_config()
+        outlook = config["outlook"]
+
         send_outlook_mail(
             outlook["subject"],
             html,

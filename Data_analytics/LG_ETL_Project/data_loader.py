@@ -1,11 +1,11 @@
 import pyodbc
 import pandas as pd
-import json
+from secure_config import load_secure_config
 
 
 def load_data():
-    with open("config.json") as f:
-        db = json.load(f)["database"]
+    config = load_secure_config()
+    db = config["database"]
 
     conn_str = (
         f"DRIVER={{{db['driver']}}};"
