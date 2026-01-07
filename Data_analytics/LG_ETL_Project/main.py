@@ -34,11 +34,10 @@ def main():
         <p>Enclosed please find herewith eRCU status along with screening and sampling reports for 30/12/2025</p>
         <html>
         <body style="font-family:Arial;">
-            <h3>Report A</h3>
-            {a_html}
-            <br><br>
-            <h3>Report B</h3>
-            {b_html}
+        <h4>Report A</h4>
+        {a_html}
+        <h4>Report B</h4>
+        {b_html}
         </body>
         </html>
         <p>Regards,<br>Loanguard Team</p>
