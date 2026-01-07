@@ -21,3 +21,11 @@ def transform_df_c(df):
     df = df.copy()
     # df["created_at"] = df["created_at"].astype(str)
     return df
+
+def transform_df_d(df):
+    """
+    Transform d data (for attachment)
+    """
+    df = df.copy()
+    # df["created_at"] = df["created_at"].astype(str)
+    return df
