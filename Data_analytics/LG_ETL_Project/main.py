@@ -5,7 +5,7 @@ from secure_config import load_secure_config
 import logging
 import tempfile
 import os
-
+from datetime import datetime, timedelta
 
 def df_to_html(df, empty_message):
     """
@@ -18,9 +18,13 @@ def df_to_html(df, empty_message):
 
 def main():
     logging.info("Report mailer started")
+    report_date = (datetime.today() - timedelta(days=1)).strftime("%d/%m/%Y")
+    today = datetime.today()
+    from_date = today.replace(day=1).strftime("%Y-%m-%d")
+    to_date = (today - timedelta(days=1)).strftime("%Y-%m-%d")
 
     try:
-        df_a, df_b, df_c, df_d = load_data()
+        df_a, df_b, df_c, df_d = load_data(from_date, to_date)
 
         df_a = transform_df_a(df_a)
         df_b = transform_df_b(df_b)
@@ -33,7 +37,7 @@ def main():
 
         html = f"""
         <p>Dear All,</p>
-        <p>Please find herewith Data Analytics Report for 31/12/2025.</p>
+        <p>Please find herewith Data Analytics Report for {report_date}.</p>
         <html>
         <body style="font-family:Arial;">
         <h4>Counts of cases</h4>
@@ -56,12 +60,15 @@ def main():
         config = load_secure_config()
         outlook = config["outlook"]
 
+        subject = f"{outlook['subject']} - {report_date}"
+
         send_outlook_mail(
-            outlook["subject"],
+            subject,
             html,
             outlook,
             attachments=[("Data.xlsx", temp_file.name)]
         )
+
         os.unlink(temp_file.name)
         logging.info("Report mailer completed successfully.")
 

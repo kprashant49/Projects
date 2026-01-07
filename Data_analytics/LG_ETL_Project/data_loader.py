@@ -3,7 +3,7 @@ import pandas as pd
 from secure_config import load_secure_config
 
 
-def load_data():
+def load_data(from_date, to_date):
     config = load_secure_config()
     db = config["database"]
 
@@ -19,114 +19,103 @@ def load_data():
 
     conn = pyodbc.connect(conn_str)
 
-    # Query A – Table 1
-    query_a = """
-        Select Remarks as "Type of Case", count(Remarks) as "Counts" from (Select *,
-        case when AL_Column = 'Application Create Status' and AL_Old_Val = 0 and AL_New_Val = 1 then 'New_Case'
-        when AL_Column = 'Application Status' and AL_Old_Val = 'Pending' and AL_New_Val = 'Sampled' then 'Processed by LG'
-        when AL_Column = 'Application Status' and AL_Old_Val = 'Pending' and (AL_New_Val = 'Sampled' or AL_New_Val = 'Screened') then 'Processed by LG'
-        when AL_Column = 'Application Status' and (AL_Old_Val = 'Sampled' or AL_Old_Val = 'Screened') and AL_New_Val = 'Pending' then 'Reopen_Case'
-        end AS [Remarks]
-        from (Select * from ApplicationAuditLog where 
-        AL_ClientId = '35'
-        and Year(AL_Datetime) = 2025
-        and Month(AL_Datetime) = 12
-        and Day(Al_Datetime) between 1 and 31
-        union all
-        Select * from DBLoanguardHistory.dbo.ApplicationAuditLog where 
-        AL_ClientId = '35'
-        and Year(AL_Datetime) = 2025
-        and Month(AL_Datetime) = 12
-        and Day(Al_Datetime) between 1 and 31) A) B where Remarks is not null group by Remarks
-        """
+    # =========================
+    # QUERY A
+    # =========================
+    query_a = f"""
+    SELECT Remarks AS [Type of Case], COUNT(*) AS [Counts]
+    FROM (
+        SELECT CASE
+            WHEN AL_Column = 'Application Create Status' AND AL_Old_Val = 0 AND AL_New_Val = 1 THEN 'New_Case'
+            WHEN AL_Column = 'Application Status' AND AL_Old_Val = 'Pending' AND AL_New_Val IN ('Sampled','Screened') THEN 'Processed by LG'
+            WHEN AL_Column = 'Application Status' AND AL_Old_Val IN ('Sampled','Screened') AND AL_New_Val = 'Pending' THEN 'Reopen_Case'
+        END AS Remarks
+        FROM ApplicationAuditLog
+        WHERE AL_ClientId = 35
+          AND AL_Datetime BETWEEN '{from_date}' AND '{to_date}'
 
-    # Query B – Table 2 (NOT related to Query A)
-    query_b = """
-        Select Top 10 [Trigger], Count([Trigger]) as Counts from (select dvm.ApplicationNo [Case Id],dvm.LoanguardId [Lg Id],
-        rdd.DocumentName+'-'+convert(varchar(10),dvm.DocumentIndex) [Document],
-        rm2.Message [Trigger],
-        case when rm1.IsHighRiskRule=1 then 'High' else 'Low' end as [Trigger Severity],
-        rss.RuleStatus [Trigger Status],
-        apn.ModifiedOn [Report Date],aps.StatusDescription [Case Status]
-        from DocumentRuleMessages drm
-        join DocumentValidatingMessages dvm on drm.DocValMessageId=dvm.DocValMessageId
-        join Applications apn on dvm.ApplicationId=apn.ApplicationId
-        join RuleMaster rm1 on drm.RuleId=rm1.RuleId
-        join RuleMessage rm2 on drm.RuleId=rm2.RuleId
-        join RuleStatus rss on drm.RuleStatus=rss.RuleStatusId
-        join ReferenceDocuments rdd on dvm.DocumentId=rdd.DocumentId
-        join ApplicationStatus aps on apn.AppStatus=aps.StatusId
-        where apn.AppStatus in (1,3) and apn.ClientId=35
-        and CONVERT(DATE,apn.ModifiedOn,103)>=CONVERT(DATE,'01/12/2025',103)
-        and CONVERT(DATE,apn.ModifiedOn,103)<=CONVERT(DATE,'31/12/2025',103)
-        
-        union all
-        
-        select dvm.ApplicationNo [Case Id],dvm.LoanguardId [Lg Id],
-        rdd.DocumentName+'-'+convert(varchar(10),dvm.DocumentIndex) [Document],
-        drm.ManualTrigger [Trigger],
-        drm.Severity [Trigger Severity],
-        '' as [Trigger Status],
-        apn.ModifiedOn [Report Date],aps.StatusDescription [Case Status]
-        from DocumentManualTrigger drm
-        join DocumentValidatingMessages dvm on drm.DocValMessageId=dvm.DocValMessageId
-        join Applications apn on dvm.ApplicationId=apn.ApplicationId
-        join ReferenceDocuments rdd on dvm.DocumentId=rdd.DocumentId
-        join ApplicationStatus aps on apn.AppStatus=aps.StatusId
-        where apn.AppStatus in (1,3) and apn.ClientId=35
-        and CONVERT(DATE,apn.ModifiedOn,103)>=CONVERT(DATE,'01/12/2025',103)
-        and CONVERT(DATE,apn.ModifiedOn,103)<=CONVERT(DATE,'31/12/2025',103)) A group by [Trigger] order by 2 desc
-        """
+        UNION ALL
 
-    # Query C – Audit / Extra report (ATTACHMENT)
-    query_c = """
-        select dvm.ApplicationNo [Case Id],dvm.LoanguardId [Lg Id],
-        rdd.DocumentName+'-'+convert(varchar(10),dvm.DocumentIndex) [Document],
-        rm2.Message [Trigger],
-        case when rm1.IsHighRiskRule=1 then 'High' else 'Low' end as [Trigger Severity],
-        rss.RuleStatus [Trigger Status],
-        apn.ModifiedOn [Report Date],aps.StatusDescription [Case Status]
-        from DocumentRuleMessages drm
-        join DocumentValidatingMessages dvm on drm.DocValMessageId=dvm.DocValMessageId
-        join Applications apn on dvm.ApplicationId=apn.ApplicationId
-        join RuleMaster rm1 on drm.RuleId=rm1.RuleId
-        join RuleMessage rm2 on drm.RuleId=rm2.RuleId
-        join RuleStatus rss on drm.RuleStatus=rss.RuleStatusId
-        join ReferenceDocuments rdd on dvm.DocumentId=rdd.DocumentId
-        join ApplicationStatus aps on apn.AppStatus=aps.StatusId
-        where apn.AppStatus in (1,3) and apn.ClientId=35
-        and CONVERT(DATE,apn.ModifiedOn,103)>=CONVERT(DATE,'01/12/2025',103)
-        and CONVERT(DATE,apn.ModifiedOn,103)<=CONVERT(DATE,'31/12/2025',103)
-        
-        union all
-        
-        select dvm.ApplicationNo [Case Id],dvm.LoanguardId [Lg Id],
-        rdd.DocumentName+'-'+convert(varchar(10),dvm.DocumentIndex) [Document],
-        drm.ManualTrigger [Trigger],
-        drm.Severity [Trigger Severity],
-        '' as [Trigger Status],
-        apn.ModifiedOn [Report Date],aps.StatusDescription [Case Status]
-        from DocumentManualTrigger drm
-        join DocumentValidatingMessages dvm on drm.DocValMessageId=dvm.DocValMessageId
-        join Applications apn on dvm.ApplicationId=apn.ApplicationId
-        join ReferenceDocuments rdd on dvm.DocumentId=rdd.DocumentId
-        join ApplicationStatus aps on apn.AppStatus=aps.StatusId
-        where apn.AppStatus in (1,3) and apn.ClientId=35
-        and CONVERT(DATE,apn.ModifiedOn,103)>=CONVERT(DATE,'01/12/2025',103)
-        and CONVERT(DATE,apn.ModifiedOn,103)<=CONVERT(DATE,'31/12/2025',103)
-        """
+        SELECT CASE
+            WHEN AL_Column = 'Application Create Status' AND AL_Old_Val = 0 AND AL_New_Val = 1 THEN 'New_Case'
+            WHEN AL_Column = 'Application Status' AND AL_Old_Val = 'Pending' AND AL_New_Val IN ('Sampled','Screened') THEN 'Processed by LG'
+            WHEN AL_Column = 'Application Status' AND AL_Old_Val IN ('Sampled','Screened') AND AL_New_Val = 'Pending' THEN 'Reopen_Case'
+        END
+        FROM DBLoanguardHistory.dbo.ApplicationAuditLog
+        WHERE AL_ClientId = 35
+          AND AL_Datetime BETWEEN '{from_date}' AND '{to_date}'
+    ) A
+    WHERE Remarks IS NOT NULL
+    GROUP BY Remarks
+    """
 
-    # Query D – Audit / Extra report
-    query_d = """
-        Select TOP 20 DocumentDescription, count(DocumentDescription) as Counts from (Select DVM.ApplicationNo, DVM.LoanguardId, DVM.DocumentID, RD.DocumentDescription from DocumentValidatingMessages DVM 
-        join Applications APN on DVM.ApplicationNo = APN.ApplicationNo
-        join ReferenceDocuments RD on DVM.DocumentId = RD.DocumentId
-        where ClientId = 35 
-        and Year(DVM.CreatedOn) = 2025
-        and Month(DVM.CreatedOn) = 12) A group by DocumentDescription order by 2 desc
-        """
+    # =========================
+    # QUERY B
+    # =========================
+    query_b = f"""
+    SELECT TOP 10 [Trigger], COUNT(*) AS Counts
+    FROM (
+        SELECT rm2.Message AS [Trigger]
+        FROM DocumentRuleMessages drm
+        JOIN DocumentValidatingMessages dvm ON drm.DocValMessageId = dvm.DocValMessageId
+        JOIN Applications apn ON dvm.ApplicationId = apn.ApplicationId
+        JOIN RuleMaster rm1 ON drm.RuleId = rm1.RuleId
+        JOIN RuleMessage rm2 ON drm.RuleId = rm2.RuleId
+        WHERE apn.AppStatus IN (1,3)
+          AND apn.ClientId = 35
+          AND CONVERT(date, apn.ModifiedOn) BETWEEN '{from_date}' AND '{to_date}'
 
+        UNION ALL
 
+        SELECT drm.ManualTrigger
+        FROM DocumentManualTrigger drm
+        JOIN DocumentValidatingMessages dvm ON drm.DocValMessageId = dvm.DocValMessageId
+        JOIN Applications apn ON dvm.ApplicationId = apn.ApplicationId
+        WHERE apn.AppStatus IN (1,3)
+          AND apn.ClientId = 35
+          AND CONVERT(date, apn.ModifiedOn) BETWEEN '{from_date}' AND '{to_date}'
+    ) A
+    GROUP BY [Trigger]
+    ORDER BY Counts DESC
+    """
+
+    # =========================
+    # QUERY C (ATTACHMENT)
+    # =========================
+    query_c = f"""
+    SELECT dvm.ApplicationNo, dvm.LoanguardId,
+           rdd.DocumentName + '-' + CONVERT(varchar(10), dvm.DocumentIndex) AS Document,
+           rm2.Message AS [Trigger],
+           CASE WHEN rm1.IsHighRiskRule = 1 THEN 'High' ELSE 'Low' END AS [Trigger Severity],
+           rss.RuleStatus,
+           apn.ModifiedOn,
+           aps.StatusDescription
+    FROM DocumentRuleMessages drm
+    JOIN DocumentValidatingMessages dvm ON drm.DocValMessageId = dvm.DocValMessageId
+    JOIN Applications apn ON dvm.ApplicationId = apn.ApplicationId
+    JOIN RuleMaster rm1 ON drm.RuleId = rm1.RuleId
+    JOIN RuleMessage rm2 ON drm.RuleId = rm2.RuleId
+    JOIN RuleStatus rss ON drm.RuleStatus = rss.RuleStatusId
+    JOIN ReferenceDocuments rdd ON dvm.DocumentId = rdd.DocumentId
+    JOIN ApplicationStatus aps ON apn.AppStatus = aps.StatusId
+    WHERE apn.AppStatus IN (1,3)
+      AND apn.ClientId = 35
+      AND CONVERT(date, apn.ModifiedOn) BETWEEN '{from_date}' AND '{to_date}'
+    """
+
+    # =========================
+    # QUERY D
+    # =========================
+    query_d = f"""
+    SELECT TOP 20 RD.DocumentDescription, COUNT(*) AS Counts
+    FROM DocumentValidatingMessages DVM
+    JOIN Applications APN ON DVM.ApplicationNo = APN.ApplicationNo
+    JOIN ReferenceDocuments RD ON DVM.DocumentId = RD.DocumentId
+    WHERE APN.ClientId = 35
+      AND CONVERT(date, DVM.CreatedOn) BETWEEN '{from_date}' AND '{to_date}'
+    GROUP BY RD.DocumentDescription
+    ORDER BY Counts DESC
+    """
 
     df_a = pd.read_sql(query_a, conn)
     df_b = pd.read_sql(query_b, conn)
@@ -134,5 +123,4 @@ def load_data():
     df_d = pd.read_sql(query_d, conn)
 
     conn.close()
-
     return df_a, df_b, df_c, df_d
