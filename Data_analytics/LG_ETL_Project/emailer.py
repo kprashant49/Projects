@@ -6,18 +6,37 @@ from secure_config import load_secure_config
 
 
 def send_outlook_mail(subject, html_body, outlook, attachments=None):
+    """
+    Sends an email via Microsoft Graph.
+    outlook = { to, cc, bcc }
+    sender & Graph credentials are loaded globally from secure config.
+    """
     try:
         logging.info("Sending Outlook email")
 
+        config = load_secure_config()
+
+        # -------------------------
+        # Graph authentication (SECRETS)
+        # -------------------------
+        graph = config["outlook"]  # from secrets.enc
         token = get_graph_token(
-            outlook["client_id"],
-            outlook["client_secret"],
-            outlook["tenant_id"]
+            graph["client_id"],
+            graph["client_secret"],
+            graph["tenant_id"]
         )
+
+        # -------------------------
+        # Global sender
+        # -------------------------
+        sender = config["mailer"]["sender"]
 
         def recipients(lst):
             return [{"emailAddress": {"address": e}} for e in lst]
 
+        # -------------------------
+        # Message body
+        # -------------------------
         message = {
             "subject": subject,
             "body": {"contentType": "HTML", "content": html_body},
@@ -29,12 +48,15 @@ def send_outlook_mail(subject, html_body, outlook, attachments=None):
         if outlook.get("bcc"):
             message["bccRecipients"] = recipients(outlook["bcc"])
 
+        # -------------------------
+        # Attachments (optional)
+        # -------------------------
         if attachments:
             message["attachments"] = []
 
             for name, path in attachments:
                 with open(path, "rb") as f:
-                    content = base64.b64encode(f.read()).decode()
+                    content = base64.b64encode(f.read()).decode("utf-8")
 
                 message["attachments"].append({
                     "@odata.type": "#microsoft.graph.fileAttachment",
@@ -43,8 +65,11 @@ def send_outlook_mail(subject, html_body, outlook, attachments=None):
                     "contentBytes": content
                 })
 
+        # -------------------------
+        # Send mail
+        # -------------------------
         response = requests.post(
-            f"https://graph.microsoft.com/v1.0/users/{outlook['sender']}/sendMail",
+            f"https://graph.microsoft.com/v1.0/users/{sender}/sendMail",
             headers={
                 "Authorization": f"Bearer {token}",
                 "Content-Type": "application/json"
@@ -61,14 +86,12 @@ def send_outlook_mail(subject, html_body, outlook, attachments=None):
         logging.error(f"Email send failed: {e}")
         raise
 
-def send_email(html_body):
-    config = load_secure_config()
-    outlook = config["outlook"]
-    send_outlook_mail(outlook["subject"], html_body, outlook)
 
 def send_failure_alert(subject, error_message):
+    """
+    Sends failure alert email to admins
+    """
     config = load_secure_config()
-    outlook = config["outlook"].copy()
     alerts = config["alerts"]
 
     html = f"""
@@ -80,8 +103,14 @@ def send_failure_alert(subject, error_message):
     </html>
     """
 
-    outlook["to"] = alerts["to"]
-    outlook["cc"] = alerts.get("cc", [])
-    outlook["bcc"] = alerts.get("bcc", [])
+    outlook = {
+        "to": alerts["to"],
+        "cc": alerts.get("cc", []),
+        "bcc": alerts.get("bcc", [])
+    }
 
-    send_outlook_mail(f"FAILURE: {subject}", html, outlook)
+    send_outlook_mail(
+        subject=f"FAILURE: {subject}",
+        html_body=html,
+        outlook=outlook
+    )

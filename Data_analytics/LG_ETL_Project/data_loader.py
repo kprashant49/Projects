@@ -3,7 +3,7 @@ import pandas as pd
 from secure_config import load_secure_config
 
 
-def load_data(from_date, to_date):
+def load_data(client_id, from_date, to_date):
     config = load_secure_config()
     db = config["database"]
 
@@ -31,7 +31,7 @@ def load_data(from_date, to_date):
             WHEN AL_Column = 'Application Status' AND AL_Old_Val IN ('Sampled','Screened') AND AL_New_Val = 'Pending' THEN 'Reopen_Case'
         END AS Remarks
         FROM ApplicationAuditLog
-        WHERE AL_ClientId = 35
+        WHERE AL_ClientId = {client_id}
           AND AL_Datetime BETWEEN '{from_date}' AND '{to_date}'
 
         UNION ALL
@@ -62,7 +62,7 @@ def load_data(from_date, to_date):
         JOIN RuleMaster rm1 ON drm.RuleId = rm1.RuleId
         JOIN RuleMessage rm2 ON drm.RuleId = rm2.RuleId
         WHERE apn.AppStatus IN (1,3)
-          AND apn.ClientId = 35
+          AND apn.ClientId = {client_id}
           AND CONVERT(date, apn.ModifiedOn) BETWEEN '{from_date}' AND '{to_date}'
 
         UNION ALL
@@ -72,7 +72,7 @@ def load_data(from_date, to_date):
         JOIN DocumentValidatingMessages dvm ON drm.DocValMessageId = dvm.DocValMessageId
         JOIN Applications apn ON dvm.ApplicationId = apn.ApplicationId
         WHERE apn.AppStatus IN (1,3)
-          AND apn.ClientId = 35
+          AND apn.ClientId = {client_id}
           AND CONVERT(date, apn.ModifiedOn) BETWEEN '{from_date}' AND '{to_date}'
     ) A
     GROUP BY [Trigger]
@@ -99,7 +99,7 @@ def load_data(from_date, to_date):
     JOIN ReferenceDocuments rdd ON dvm.DocumentId = rdd.DocumentId
     JOIN ApplicationStatus aps ON apn.AppStatus = aps.StatusId
     WHERE apn.AppStatus IN (1,3)
-      AND apn.ClientId = 35
+      AND apn.ClientId = {client_id}
       AND CONVERT(date, apn.ModifiedOn) BETWEEN '{from_date}' AND '{to_date}'
     """
 
@@ -111,7 +111,7 @@ def load_data(from_date, to_date):
     FROM DocumentValidatingMessages DVM
     JOIN Applications APN ON DVM.ApplicationNo = APN.ApplicationNo
     JOIN ReferenceDocuments RD ON DVM.DocumentId = RD.DocumentId
-    WHERE APN.ClientId = 35
+    WHERE APN.ClientId = {client_id}
       AND CONVERT(date, DVM.CreatedOn) BETWEEN '{from_date}' AND '{to_date}'
     GROUP BY RD.DocumentDescription
     ORDER BY Counts DESC
