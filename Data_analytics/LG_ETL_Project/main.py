@@ -117,6 +117,15 @@ def main():
 
     logging.info("Report mailer finished for all clients")
 
+from analytics import export_dataframes_to_excel
+
+export_dataframes_to_excel({
+    "Report_A": df_a,
+    "Report_B": df_b,
+    "Report_C": df_c,
+    "Report_D": df_d
+})
+
 
 if __name__ == "__main__":
     main()
