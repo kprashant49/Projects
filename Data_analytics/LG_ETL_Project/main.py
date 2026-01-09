@@ -59,12 +59,15 @@ def main():
             df_d = transform_df_d(df_d)
 
             # -------- Export the dfs --------
-            export_dataframes_to_excel({
-                "Report_A": df_a,
-                "Report_B": df_b,
-                "Report_C": df_c,
-                "Report_D": df_d
-            })
+            export_dataframes_to_excel(
+                {
+                    "Report_A": df_a,
+                    "Report_B": df_b,
+                    "Report_C": df_c,
+                    "Report_D": df_d
+                },
+                client_name=client_name
+            )
 
             # -------- HTML tables --------
             a_html = df_to_html(df_a, "No data available for the selected period.")
