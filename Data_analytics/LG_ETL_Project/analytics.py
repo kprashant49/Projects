@@ -1,3 +1,6 @@
+import os
+from datetime import datetime
+
 def transform_df_a(df):
     """
     Transform a data
@@ -29,9 +32,6 @@ def transform_df_d(df):
     df = df.copy()
     # df["created_at"] = df["created_at"].astype(str)
     return df
-
-import os
-from datetime import datetime
 
 def export_dataframes_to_excel(dfs: dict, filename_prefix="analytics_output"):
     """

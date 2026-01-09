@@ -6,6 +6,7 @@ import logging
 import tempfile
 import os
 from datetime import datetime, timedelta
+from analytics import export_dataframes_to_excel
 
 def df_to_html(df, empty_message):
     """
@@ -56,6 +57,14 @@ def main():
             df_b = transform_df_b(df_b)
             df_c = transform_df_c(df_c)
             df_d = transform_df_d(df_d)
+
+            # -------- Export the dfs --------
+            export_dataframes_to_excel({
+                "Report_A": df_a,
+                "Report_B": df_b,
+                "Report_C": df_c,
+                "Report_D": df_d
+            })
 
             # -------- HTML tables --------
             a_html = df_to_html(df_a, "No data available for the selected period.")
@@ -116,16 +125,6 @@ def main():
             continue
 
     logging.info("Report mailer finished for all clients")
-
-from analytics import export_dataframes_to_excel
-
-export_dataframes_to_excel({
-    "Report_A": df_a,
-    "Report_B": df_b,
-    "Report_C": df_c,
-    "Report_D": df_d
-})
-
 
 if __name__ == "__main__":
     main()
