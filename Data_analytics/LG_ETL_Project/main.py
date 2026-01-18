@@ -72,6 +72,7 @@ def main():
             # -------- HTML tables --------
             a_html = df_to_html(df_a, "No data available for the selected period.")
             b_html = df_to_html(df_b, "No data available for the selected period.")
+            C_html = df_to_html(df_c, "No data available for the selected period.")
             d_html = df_to_html(df_d, "No data available for the selected period.")
 
             # -------- Email body --------
@@ -88,6 +89,9 @@ def main():
                 {b_html}
 
                 <h4>Most Documents Submitted</h4>
+                {C_html}
+
+                <h4>Most Documents Deleted</h4>
                 {d_html}
 
                 <p>Regards,<br>Loanguard Team</p>

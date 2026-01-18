@@ -80,41 +80,45 @@ def load_data(client_id, from_date, to_date):
     """
 
     # =========================
-    # QUERY C (ATTACHMENT)
+    # QUERY C
     # =========================
     query_c = f"""
-    SELECT dvm.ApplicationNo, dvm.LoanguardId,
-           rdd.DocumentName + '-' + CONVERT(varchar(10), dvm.DocumentIndex) AS Document,
-           rm2.Message AS [Trigger],
-           CASE WHEN rm1.IsHighRiskRule = 1 THEN 'High' ELSE 'Low' END AS [Trigger Severity],
-           rss.RuleStatus,
-           apn.ModifiedOn,
-           aps.StatusDescription
-    FROM DocumentRuleMessages drm
-    JOIN DocumentValidatingMessages dvm ON drm.DocValMessageId = dvm.DocValMessageId
-    JOIN Applications apn ON dvm.ApplicationId = apn.ApplicationId
-    JOIN RuleMaster rm1 ON drm.RuleId = rm1.RuleId
-    JOIN RuleMessage rm2 ON drm.RuleId = rm2.RuleId
-    JOIN RuleStatus rss ON drm.RuleStatus = rss.RuleStatusId
-    JOIN ReferenceDocuments rdd ON dvm.DocumentId = rdd.DocumentId
-    JOIN ApplicationStatus aps ON apn.AppStatus = aps.StatusId
-    WHERE apn.AppStatus IN (1,3)
-      AND apn.ClientId = {client_id}
-      AND CONVERT(date, apn.ModifiedOn) BETWEEN '{from_date}' AND '{to_date}'
+    Select A.DocumentDescription [Document_Name], B.Document_Count from ReferenceDocuments A 
+    join (Select DISTINCT  DocumentID,  Count(DocumentId) OVER (PARTITION BY (DocumentID) order by DocumentID) as 'Document_Count' from DocumentValidatingMessages DVM 
+    join Applications APN on DVM.ApplicationNo = APN.ApplicationNo
+    where ClientId = {client_id}
+    AND CONVERT(date, DVM.CreatedOn) BETWEEN '{from_date}' AND '{to_date}') B
+    on A.DocumentID = B.DocumentID
+    and A.DocType in ('A','I','K')
+    order by Document_Count desc
     """
 
     # =========================
     # QUERY D
     # =========================
     query_d = f"""
-    SELECT TOP 20 RD.DocumentDescription, COUNT(*) AS Counts
-    FROM DocumentValidatingMessages DVM
-    JOIN Applications APN ON DVM.ApplicationNo = APN.ApplicationNo
-    JOIN ReferenceDocuments RD ON DVM.DocumentId = RD.DocumentId
-    WHERE APN.ClientId = {client_id}
-      AND CONVERT(date, DVM.CreatedOn) BETWEEN '{from_date}' AND '{to_date}'
-    GROUP BY RD.DocumentDescription
-    ORDER BY Counts DESC
+    Select [Delete Reason], count([Delete Reason]) [Counts] from (select a.ApplicationNo as CaseID,
+    case when a.CreateMode='W' then 'API' else 'SFTP' end as 'Case Mode',
+    am.ApplicantName as 'Applicant Name',
+    apt.TypeDescription 'Applicant Type',
+    CreatedOn as 'Case Initiated Date',
+    CreateStatusOn as 'Mark Complete Date',
+    ModifiedOn as 'Reported Date',
+    aps.StatusDescription as Status,
+    rd.DocumentName+'-'+convert(varchar(10),ddd.DocumentIndex) as 'Delete Document',
+    ddr.DeleteReason as 'Delete Reason',
+    ddd.DeletedOn as 'Delete DateTime',
+    tumm.UserDetails as 'User Name'
+    from Applications a 
+    join ApplicantMaster am on a.ApplicationId=am.ApplicationId
+    join ApplicantType apt on am.TypeId=apt.TypeId
+    join DeletedDocumentDetails ddd on am.LoanguardId=ddd.LoanguardId
+    join ReferenceDocuments rd on ddd.DocumentId=rd.DocumentId
+    join DocDeletedReasons ddr on ddd.DeleteRemark=ddr.Rid
+    join ApplicationStatus aps on a.AppStatus=aps.StatusId
+    join tblUserMst tumm on ddd.UserId=tumm.UserID
+    where a.ClientId = {client_id}
+    AND CONVERT(date, A.CreatedOn) BETWEEN '{from_date}' AND '{to_date}') A group by [Delete Reason] order by 2 Desc
     """
 
     df_a = pd.read_sql(query_a, conn)
