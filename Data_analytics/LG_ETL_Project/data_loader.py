@@ -26,9 +26,9 @@ def load_data(client_id, from_date, to_date):
     SELECT Remarks AS [Type of Case], COUNT(*) AS [Counts]
     FROM (
         SELECT CASE
-            WHEN AL_Column = 'Application Create Status' AND AL_Old_Val = 0 AND AL_New_Val = 1 THEN 'Fresh_Case_Submitted'
-            WHEN AL_Column = 'Application Status' AND AL_Old_Val = 'Pending' AND AL_New_Val IN ('Sampled','Screened') THEN 'Cases_Processed_by_LG'
-            WHEN AL_Column = 'Application Status' AND AL_Old_Val IN ('Sampled','Screened') AND AL_New_Val = 'Pending' THEN 'Reopened_Case'
+            WHEN AL_Column = 'Application Create Status' AND AL_Old_Val = 0 AND AL_New_Val = 1 THEN 'Fresh Cases Submitted'
+            WHEN AL_Column = 'Application Status' AND AL_Old_Val = 'Pending' AND AL_New_Val IN ('Sampled','Screened') THEN 'Cases Processed by LG'
+            WHEN AL_Column = 'Application Status' AND AL_Old_Val IN ('Sampled','Screened') AND AL_New_Val = 'Pending' THEN 'Reopened Cases'
         END AS Remarks
         FROM ApplicationAuditLog
         WHERE AL_ClientId = {client_id}
@@ -37,9 +37,9 @@ def load_data(client_id, from_date, to_date):
         UNION ALL
 
         SELECT CASE
-            WHEN AL_Column = 'Application Create Status' AND AL_Old_Val = 0 AND AL_New_Val = 1 THEN 'Fresh_Case_Submitted'
-            WHEN AL_Column = 'Application Status' AND AL_Old_Val = 'Pending' AND AL_New_Val IN ('Sampled','Screened') THEN 'Cases_Processed_by_LGG'
-            WHEN AL_Column = 'Application Status' AND AL_Old_Val IN ('Sampled','Screened') AND AL_New_Val = 'Pending' THEN 'Reopened_Case'
+            WHEN AL_Column = 'Application Create Status' AND AL_Old_Val = 0 AND AL_New_Val = 1 THEN 'Fresh Cases Submitted'
+            WHEN AL_Column = 'Application Status' AND AL_Old_Val = 'Pending' AND AL_New_Val IN ('Sampled','Screened') THEN 'Cases Processed by LG'
+            WHEN AL_Column = 'Application Status' AND AL_Old_Val IN ('Sampled','Screened') AND AL_New_Val = 'Pending' THEN 'Reopened Cases'
         END
         FROM DBLoanguardHistory.dbo.ApplicationAuditLog
         WHERE AL_ClientId = 35
