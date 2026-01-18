@@ -72,7 +72,7 @@ def main():
             # -------- HTML tables --------
             a_html = df_to_html(df_a, "No data available for the selected period.")
             b_html = df_to_html(df_b, "No data available for the selected period.")
-            C_html = df_to_html(df_c, "No data available for the selected period.")
+            c_html = df_to_html(df_c, "No data available for the selected period.")
             d_html = df_to_html(df_d, "No data available for the selected period.")
 
             # -------- Email body --------
@@ -82,14 +82,14 @@ def main():
                 <p>Dear Team,</p>
                 <p>Please find herewith <b>{client_name}</b> Data Analytics Report for {report_date}.</p>
 
-                <h4>Counts of cases</h4>
+                <h4>Cases Submitted and Processed by Loanguard</h4>
                 {a_html}
 
                 <h4>Most Rules Triggered</h4>
                 {b_html}
 
                 <h4>Most Documents Submitted</h4>
-                {C_html}
+                {c_html}
 
                 <h4>Most Documents Deleted</h4>
                 {d_html}

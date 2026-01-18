@@ -26,9 +26,9 @@ def load_data(client_id, from_date, to_date):
     SELECT Remarks AS [Type of Case], COUNT(*) AS [Counts]
     FROM (
         SELECT CASE
-            WHEN AL_Column = 'Application Create Status' AND AL_Old_Val = 0 AND AL_New_Val = 1 THEN 'New_Case'
-            WHEN AL_Column = 'Application Status' AND AL_Old_Val = 'Pending' AND AL_New_Val IN ('Sampled','Screened') THEN 'Processed by LG'
-            WHEN AL_Column = 'Application Status' AND AL_Old_Val IN ('Sampled','Screened') AND AL_New_Val = 'Pending' THEN 'Reopen_Case'
+            WHEN AL_Column = 'Application Create Status' AND AL_Old_Val = 0 AND AL_New_Val = 1 THEN 'Fresh_Case_Submitted'
+            WHEN AL_Column = 'Application Status' AND AL_Old_Val = 'Pending' AND AL_New_Val IN ('Sampled','Screened') THEN 'Cases_Processed_by_LG'
+            WHEN AL_Column = 'Application Status' AND AL_Old_Val IN ('Sampled','Screened') AND AL_New_Val = 'Pending' THEN 'Reopened_Case'
         END AS Remarks
         FROM ApplicationAuditLog
         WHERE AL_ClientId = {client_id}
@@ -37,9 +37,9 @@ def load_data(client_id, from_date, to_date):
         UNION ALL
 
         SELECT CASE
-            WHEN AL_Column = 'Application Create Status' AND AL_Old_Val = 0 AND AL_New_Val = 1 THEN 'New_Case'
-            WHEN AL_Column = 'Application Status' AND AL_Old_Val = 'Pending' AND AL_New_Val IN ('Sampled','Screened') THEN 'Processed by LG'
-            WHEN AL_Column = 'Application Status' AND AL_Old_Val IN ('Sampled','Screened') AND AL_New_Val = 'Pending' THEN 'Reopen_Case'
+            WHEN AL_Column = 'Application Create Status' AND AL_Old_Val = 0 AND AL_New_Val = 1 THEN 'Fresh_Case_Submitted'
+            WHEN AL_Column = 'Application Status' AND AL_Old_Val = 'Pending' AND AL_New_Val IN ('Sampled','Screened') THEN 'Cases_Processed_by_LGG'
+            WHEN AL_Column = 'Application Status' AND AL_Old_Val IN ('Sampled','Screened') AND AL_New_Val = 'Pending' THEN 'Reopened_Case'
         END
         FROM DBLoanguardHistory.dbo.ApplicationAuditLog
         WHERE AL_ClientId = 35
@@ -83,7 +83,7 @@ def load_data(client_id, from_date, to_date):
     # QUERY C
     # =========================
     query_c = f"""
-    Select A.DocumentDescription [Document_Name], B.Document_Count from ReferenceDocuments A 
+    Select A.DocumentDescription [Document Name], B.Document_Count [Counts] from ReferenceDocuments A 
     join (Select DISTINCT  DocumentID,  Count(DocumentId) OVER (PARTITION BY (DocumentID) order by DocumentID) as 'Document_Count' from DocumentValidatingMessages DVM 
     join Applications APN on DVM.ApplicationNo = APN.ApplicationNo
     where ClientId = {client_id}
