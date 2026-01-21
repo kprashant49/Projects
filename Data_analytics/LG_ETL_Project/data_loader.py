@@ -52,32 +52,32 @@ def load_data(client_id, from_date, to_date):
     # =========================
     # QUERY B
     # =========================
-    query_b = f"""
-    SELECT TOP 10 [Trigger], COUNT(*) AS Counts
-    FROM (
-        SELECT rm2.Message AS [Trigger]
-        FROM DocumentRuleMessages drm
-        JOIN DocumentValidatingMessages dvm ON drm.DocValMessageId = dvm.DocValMessageId
-        JOIN Applications apn ON dvm.ApplicationId = apn.ApplicationId
-        JOIN RuleMaster rm1 ON drm.RuleId = rm1.RuleId
-        JOIN RuleMessage rm2 ON drm.RuleId = rm2.RuleId
-        WHERE apn.AppStatus IN (1,3)
-          AND apn.ClientId = {client_id}
-          AND CONVERT(date, apn.ModifiedOn) BETWEEN '{from_date}' AND '{to_date}'
-
-        UNION ALL
-
-        SELECT drm.ManualTrigger
-        FROM DocumentManualTrigger drm
-        JOIN DocumentValidatingMessages dvm ON drm.DocValMessageId = dvm.DocValMessageId
-        JOIN Applications apn ON dvm.ApplicationId = apn.ApplicationId
-        WHERE apn.AppStatus IN (1,3)
-          AND apn.ClientId = {client_id}
-          AND CONVERT(date, apn.ModifiedOn) BETWEEN '{from_date}' AND '{to_date}'
-    ) A
-    GROUP BY [Trigger]
-    ORDER BY Counts DESC
-    """
+    # query_b = f"""
+    # SELECT TOP 10 [Trigger], COUNT(*) AS Counts
+    # FROM (
+    #     SELECT rm2.Message AS [Trigger]
+    #     FROM DocumentRuleMessages drm
+    #     JOIN DocumentValidatingMessages dvm ON drm.DocValMessageId = dvm.DocValMessageId
+    #     JOIN Applications apn ON dvm.ApplicationId = apn.ApplicationId
+    #     JOIN RuleMaster rm1 ON drm.RuleId = rm1.RuleId
+    #     JOIN RuleMessage rm2 ON drm.RuleId = rm2.RuleId
+    #     WHERE apn.AppStatus IN (1,3)
+    #       AND apn.ClientId = {client_id}
+    #       AND CONVERT(date, apn.ModifiedOn) BETWEEN '{from_date}' AND '{to_date}'
+    #
+    #     UNION ALL
+    #
+    #     SELECT drm.ManualTrigger
+    #     FROM DocumentManualTrigger drm
+    #     JOIN DocumentValidatingMessages dvm ON drm.DocValMessageId = dvm.DocValMessageId
+    #     JOIN Applications apn ON dvm.ApplicationId = apn.ApplicationId
+    #     WHERE apn.AppStatus IN (1,3)
+    #       AND apn.ClientId = {client_id}
+    #       AND CONVERT(date, apn.ModifiedOn) BETWEEN '{from_date}' AND '{to_date}'
+    # ) A
+    # GROUP BY [Trigger]
+    # ORDER BY Counts DESC
+    # """
 
     # =========================
     # QUERY C
@@ -122,9 +122,10 @@ def load_data(client_id, from_date, to_date):
     """
 
     df_a = pd.read_sql(query_a, conn)
-    df_b = pd.read_sql(query_b, conn)
+    # df_b = pd.read_sql(query_b, conn)
     df_c = pd.read_sql(query_c, conn)
     df_d = pd.read_sql(query_d, conn)
-
+    df_b = pd.read_sql_query("EXEC dbo.GetTATAndMarkTATIsApplicableOrNot_ForTMF @FromDate=?, @ToDate=?, @ClientId=?",
+        conn, params=[from_date, to_date, client_id])
     conn.close()
     return df_a, df_b, df_c, df_d

@@ -85,7 +85,7 @@ def main():
                 <h4>Cases Submitted and Processed by Loanguard</h4>
                 {a_html}
 
-                <h4>Most Rules Triggered</h4>
+                <h4>Sampling and TAT Summary</h4>
                 {b_html}
 
                 <h4>Most Documents Submitted</h4>
