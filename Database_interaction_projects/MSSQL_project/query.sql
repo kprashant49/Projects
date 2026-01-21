@@ -16,9 +16,10 @@ FROM
     join LoanProductMaster lpm on APN.ProductId = lpm.ProductId 
     where APN.ClientId = 35 
       and APN.AppStatus in (1,3,5)
-      and year(APN.ModifiedOn) = 2025 
-      and month(APN.ModifiedOn) = 12
- 
+      and year(APN.ModifiedOn) = 2026
+      and month(APN.ModifiedOn) = 01
+      and DAY(APN.ModifiedOn) BETWEEN 1 AND 15
+
     UNION ALL
  
     select 
@@ -36,7 +37,7 @@ FROM
     join LoanProductMaster lpm on APN.ProductId = lpm.ProductId 
     where APN.ClientId = 35 
       and APN.AppStatus in (1,3,5)
-      and year(APN.ModifiedOn) = 2025 
-      and month(APN.ModifiedOn) = 12
+      and year(APN.ModifiedOn) = 2026
+      and DAY(APN.ModifiedOn) BETWEEN 1 AND 15
 ) t
 ORDER BY t.ReportDateTime;
