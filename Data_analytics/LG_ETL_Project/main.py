@@ -54,7 +54,10 @@ def main():
 
             # -------- Transformations --------
             df_a = transform_df_a(df_a)
-            df_b = transform_df_b(df_b)
+            df_raw = df_b.copy()
+            df_b = transform_df_b(df_raw)
+            df_b_1 = transform_df_b_1(df_raw)
+            df_b_2 = transform_df_b_2(df_raw)
             df_c = transform_df_c(df_c)
             df_d = transform_df_d(df_d)
 
@@ -63,6 +66,8 @@ def main():
                 {
                     "Report_A": df_a,
                     "Report_B": df_b,
+                    "Report_B_1": df_b_1,
+                    "Report_B_2": df_b_2,
                     "Report_C": df_c,
                     "Report_D": df_d
                 },
@@ -72,6 +77,8 @@ def main():
             # -------- HTML tables --------
             a_html = df_to_html(df_a, "No data available for the selected period.")
             b_html = df_to_html(df_b, "No data available for the selected period.")
+            b_1_html = df_to_html(df_b_1, "No data available for the selected period.")
+            b_2_html = df_to_html(df_b_2, "No data available for the selected period.")
             c_html = df_to_html(df_c, "No data available for the selected period.")
             d_html = df_to_html(df_d, "No data available for the selected period.")
 
@@ -85,8 +92,14 @@ def main():
                 <h4>Cases Submitted and Processed by Loanguard</h4>
                 {a_html}
 
+                <h4>Distribution of Day-wise Cases received by Loanguard</h4>
+                {b_2_html}
+                
                 <h4>Sampling and TAT Summary</h4>
                 {b_html}
+                
+                <h4>Working Hours vs Process Summary</h4>
+                {b_1_html}
 
                 <h4>Most Documents Submitted</h4>
                 {c_html}

@@ -80,6 +80,87 @@ def transform_df_b(df):
 
     return final_df
 
+def transform_df_b_1(df):
+    """
+    Builds Working Hours vs Process summary with TAT buckets,
+    subtotals, grand total, and row-wise percentages.
+    """
+
+    df = df.copy()
+    df["Process"] = df["Processed By"].str.strip().str.lower()
+    df["Process"] = df["Process"].apply(lambda x: "Auto" if "auto" in x else "Regular")
+
+    df = df.copy()
+    df["WorkingHours"] = df["Working Hours"].str.strip().str.lower()
+    df["WorkingHours"] = df["WorkingHours"].apply(lambda x: "Working Hours" if "9:30" in x else "Non Working Hours")
+
+    df['tat_bucket'] = pd.cut(
+        df['TAT In Minutes'],
+        bins=[-1, 15, 30, float('inf')],
+        labels=['<15 Min', '<30 Min', '>=30 Min']
+    )
+
+    base_pivot = pd.pivot_table(
+        df,
+        index=["WorkingHours", "Process"],
+        columns="tat_bucket",
+        values="TAT In Minutes",
+        aggfunc="count",
+        fill_value=0
+    )
+
+    base_pivot["Grand Total"] = base_pivot.sum(axis=1)
+    subtotals = (base_pivot.groupby(level=0).sum())
+    subtotals.index = [f"{idx} Total" for idx in subtotals.index]
+
+    final_rows = []
+
+    for wh in base_pivot.index.get_level_values(0).unique():
+        final_rows.append(base_pivot.loc[wh])
+        final_rows.append(subtotals.loc[f"{wh} Total"].to_frame().T)
+
+    final_df2 = pd.concat(final_rows)
+
+    grand_total = pd.DataFrame(base_pivot.sum()).T
+    grand_total.index = ["Grand Total"]
+
+    final_df2 = pd.concat([final_df2, grand_total])
+
+    pct_df = (
+        final_df2[["<15 Min", "<30 Min", ">=30 Min"]]
+        .div(final_df2["Grand Total"], axis=0)
+        .mul(100)
+        .round(0)
+    )
+    pct_df = pct_df.astype(int).astype(str) + "%"
+
+    pct_df.columns = ["<15 MIN %", "<30 MIN %", ">=30 MIN %"]
+
+    final_df2 = pd.concat([final_df2, pct_df], axis=1)
+    return final_df2
+
+
+def transform_df_b_2(df):
+    """
+    Builds Working Days counts.
+    """
+
+    df = df.copy()
+    df["Day wise Count of cases"] = df["Day"].apply(
+        lambda x: "Holiday" if x.strip().lower() == "sunday" else "Regular"
+    )
+
+    day_type_counts = (
+        df["Day wise Count of cases"]
+        .value_counts()
+        .reset_index()
+    )
+
+    day_type_counts.columns = ["Day wise Count of cases", "Counts"]
+
+    return day_type_counts
+
+
 def transform_df_c(df):
     """
     Transform c data (for attachment)
