@@ -125,31 +125,9 @@ def main():
             """
 
             # -------- Excel attachment (Single df)--------
-            # temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx")
-            # temp_file.close()
-            # df_c.to_excel(temp_file.name, index=False)
-            #
-            # subject = f"{client_name} - {outlook['subject']} - {report_date}"
-            #
-            # send_outlook_mail(
-            #     subject,
-            #     html,
-            #     outlook,
-            #     attachments=[("Data.xlsx", temp_file.name)]
-            # )
-            #
-            # os.unlink(temp_file.name)
-
-            # -------- Excel attachment (Multiple dfs)--------
-            exported_file_path = export_dataframes_to_excel(
-                {
-                    "Report_A": df_a,
-                    "Report_B": df_b,
-                    "Report_C": df_c,
-                    "Report_D": df_d
-                },
-                client_name=client_name
-            )
+            temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx")
+            temp_file.close()
+            df_raw.to_excel(temp_file.name, index=False)
 
             subject = f"{client_name} - {outlook['subject']} - {report_date}"
 
@@ -157,8 +135,30 @@ def main():
                 subject,
                 html,
                 outlook,
-                attachments=[(os.path.basename(exported_file_path), exported_file_path)]
+                attachments=[("Data.xlsx", temp_file.name)]
             )
+
+            os.unlink(temp_file.name)
+
+            # -------- Excel attachment (Multiple dfs)--------
+            # exported_file_path = export_dataframes_to_excel(
+            #     {
+            #         "Report_A": df_a,
+            #         "Report_B": df_b,
+            #         "Report_C": df_c,
+            #         "Report_D": df_d
+            #     },
+            #     client_name=client_name
+            # )
+            #
+            # subject = f"{client_name} - {outlook['subject']} - {report_date}"
+            #
+            # send_outlook_mail(
+            #     subject,
+            #     html,
+            #     outlook,
+            #     attachments=[(os.path.basename(exported_file_path), exported_file_path)]
+            # )
 
             logging.info(f"Completed client successfully: {client_name} ({client_id})")
 

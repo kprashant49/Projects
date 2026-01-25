@@ -97,7 +97,7 @@ def load_data(client_id, from_date, to_date):
     # QUERY D
     # =========================
     query_d = f"""
-    Select [Delete Reason], count([Delete Reason]) [Counts] from (select a.ApplicationNo as CaseID,
+    Select [Deletion Reason], count([Deletion Reason]) [Counts] from (select a.ApplicationNo as CaseID,
     case when a.CreateMode='W' then 'API' else 'SFTP' end as 'Case Mode',
     am.ApplicantName as 'Applicant Name',
     apt.TypeDescription 'Applicant Type',
@@ -106,7 +106,7 @@ def load_data(client_id, from_date, to_date):
     ModifiedOn as 'Reported Date',
     aps.StatusDescription as Status,
     rd.DocumentName+'-'+convert(varchar(10),ddd.DocumentIndex) as 'Delete Document',
-    ddr.DeleteReason as 'Delete Reason',
+    ddr.DeleteReason as 'Deletion Reason',
     ddd.DeletedOn as 'Delete DateTime',
     tumm.UserDetails as 'User Name'
     from Applications a 
@@ -118,7 +118,7 @@ def load_data(client_id, from_date, to_date):
     join ApplicationStatus aps on a.AppStatus=aps.StatusId
     join tblUserMst tumm on ddd.UserId=tumm.UserID
     where a.ClientId = {client_id}
-    AND CONVERT(date, A.CreatedOn) BETWEEN '{from_date}' AND '{to_date}') A group by [Delete Reason] order by 2 Desc
+    AND CONVERT(date, A.CreatedOn) BETWEEN '{from_date}' AND '{to_date}') A group by [Deletion Reason] order by 2 Desc
     """
 
     df_a = pd.read_sql(query_a, conn)

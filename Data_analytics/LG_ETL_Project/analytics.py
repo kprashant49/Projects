@@ -183,6 +183,13 @@ def transform_df_b_2(df):
 
     day_type_counts.columns = ["Day wise Count of cases", "Counts"]
 
+    grand_total = pd.DataFrame({
+        "Day wise Count of cases": ["Grand Total"],
+        "Counts": [day_type_counts["Counts"].sum()]
+    })
+
+    day_type_counts = pd.concat([day_type_counts, grand_total], ignore_index=True)
+
     return day_type_counts
 
 
