@@ -3,10 +3,8 @@ from analytics import *
 from emailer import send_outlook_mail, send_failure_alert
 from secure_config import load_secure_config
 import logging
-import tempfile
 import os
 from datetime import datetime, timedelta
-from analytics import export_dataframes_to_excel
 
 def df_to_html(df, empty_message):
     """
@@ -124,10 +122,11 @@ def main():
             </html>
             """
 
-            # -------- Excel attachment (Single df)--------
-            temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx")
-            temp_file.close()
-            df_raw.to_excel(temp_file.name, index=False)
+            # -------- Excel attachment (Single df) --------
+            raw_export_path = export_single_dataframe_to_excel(
+                df_raw,
+                client_name=client_name
+            )
 
             subject = f"{client_name} - {outlook['subject']} - {report_date}"
 
@@ -135,10 +134,8 @@ def main():
                 subject,
                 html,
                 outlook,
-                attachments=[("Data.xlsx", temp_file.name)]
+                attachments=[(os.path.basename(raw_export_path), raw_export_path)]
             )
-
-            os.unlink(temp_file.name)
 
             # -------- Excel attachment (Multiple dfs)--------
             # exported_file_path = export_dataframes_to_excel(

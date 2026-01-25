@@ -209,40 +209,50 @@ def transform_df_d(df):
     # df["created_at"] = df["created_at"].astype(str)
     return df
 
-def export_dataframes_to_excel(dfs: dict, client_name: str):
-    """
-    Exports multiple DataFrames to a single Excel file under
-    'Exported Files' folder in the project root.
 
-    dfs: {
-        "SheetName1": df1,
-        "SheetName2": df2,
-        ...
-    }
+def get_export_file_path(client_name: str, prefix: str):
     """
-
-    # -------------------------
-    # Resolve project root
-    # -------------------------
+    Builds export directory and filename.
+    """
     project_root = os.path.dirname(os.path.abspath(__file__))
-
     export_dir = os.path.join(project_root, "Exported Files")
     os.makedirs(export_dir, exist_ok=True)
 
-    # -------------------------
-    # Build filename
-    # -------------------------
     safe_client_name = client_name.replace(" ", "_")
     date_str = datetime.now().strftime("%Y%m%d")
 
-    file_name = f"analytics_output_{safe_client_name}_{date_str}.xlsx"
-    file_path = os.path.join(export_dir, file_name)
+    file_name = f"{prefix}_{safe_client_name}_{date_str}.xlsx"
+    return os.path.join(export_dir, file_name)
 
-    # -------------------------
-    # Write Excel
-    # -------------------------
+
+
+def export_dataframes_to_excel(dfs: dict, client_name: str):
+    """
+    Exports multiple DataFrames to a single Excel file.
+    """
+    file_path = get_export_file_path(
+        client_name=client_name,
+        prefix="analytics_output"
+    )
+
     with pd.ExcelWriter(file_path, engine="xlsxwriter") as writer:
         for sheet_name, df in dfs.items():
             df.to_excel(writer, sheet_name=sheet_name[:31], index=False)
 
     return file_path
+
+
+def export_single_dataframe_to_excel(df, client_name: str):
+    """
+    Export a single DataFrame (raw data) to Excel.
+    """
+    file_path = get_export_file_path(
+        client_name=client_name,
+        prefix="raw_data"
+    )
+
+    with pd.ExcelWriter(file_path, engine="xlsxwriter") as writer:
+        df.to_excel(writer, sheet_name="Raw_Data", index=False)
+
+    return file_path
+
