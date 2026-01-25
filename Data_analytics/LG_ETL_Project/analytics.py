@@ -63,20 +63,42 @@ def transform_df_b(df):
     tat_pct = tat_pivot.div(tat_pivot.drop(columns='Grand Total').sum(axis=1),axis=0).mul(100).round(2)
 
     final_df = (product_sampling.add_prefix('Status_')
-        .join(product_sampling_pct.add_prefix('Status_').add_suffix(' (%)'))
+        .join(product_sampling_pct.add_prefix('Status_').add_suffix(' %'))
         .join(tat_pivot.add_prefix('TAT_'))
-        .join(tat_pct.add_prefix('TAT_').add_suffix(' (%)')))
+        .join(tat_pct.add_prefix('TAT_').add_suffix(' %')))
 
     final_df = final_df.reset_index()
 
     cols_to_drop = [
-        "Status_Grand Total (%)",
-        "TAT_Grand Total (%)"
+        "Status_Grand Total %",
+        "TAT_Grand Total %"
     ]
 
     final_df = final_df.drop(
         columns=[c for c in cols_to_drop if c in final_df.columns]
     )
+
+    # ----------------------------------------
+    # Format TAT % columns as percentage strings
+    # ----------------------------------------
+    tat_pct_cols = [
+        c for c in final_df.columns
+        if c.startswith("TAT_") and c.endswith(" %")
+    ]
+
+    for col in tat_pct_cols:
+        final_df[col] = final_df[col].round(0).astype(int).astype(str) + "%"
+
+    # ----------------------------------------
+    # Format Status % columns as percentage strings
+    # ----------------------------------------
+    status_pct_cols = [
+        c for c in final_df.columns
+        if c.startswith("Status_") and c.endswith(" %")
+    ]
+
+    for col in status_pct_cols:
+        final_df[col] = final_df[col].round(0).astype(int).astype(str) + "%"
 
     return final_df
 
@@ -137,6 +159,9 @@ def transform_df_b_1(df):
     pct_df.columns = ["<15 MIN %", "<30 MIN %", ">=30 MIN %"]
 
     final_df2 = pd.concat([final_df2, pct_df], axis=1)
+    final_df2 = final_df2.reset_index()
+    final_df2 = final_df2.rename(columns={"index": "Process-WorkingHours_TAT"})
+
     return final_df2
 
 
