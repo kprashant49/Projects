@@ -85,30 +85,41 @@ def main():
             # -------- Email body --------
             html = f"""
             <html>
-            <body style="font-family:Arial;">
-                <p>Dear Team,</p>
-                <p>Please find herewith <b>{client_name}</b> Data Analytics Report for {report_date}.</p>
+            <body style="font-family:Arial, Helvetica, sans-serif; font-size:13px; margin:0; padding:0;">
 
-                <h4>Cases Submitted and Processed by Loanguard</h4>
-                {a_html}
+            <p style="margin:8px 0;">Dear Team,</p>
 
-                <h4>Distribution of Day-wise Cases received by Loanguard</h4>
-                {b_2_html}
-                
-                <h4>Sampling and TAT Summary</h4>
-                {b_html}
-                
-                <h4>Working Hours vs Process Summary</h4>
-                {b_1_html}
+            <p style="margin:8px 0;">
+            Please find below the <b>{client_name}</b> Data Analytics Report for <b>{report_date}</b>.
+            </p>
 
-                <h4>Most Documents Submitted</h4>
-                {c_html}
+            <p style="margin:8px 0;font-weight:bold;">Cases Submitted and Processed by Loanguard</p>
+            {a_html}
 
-                <h4>Most Documents Deleted</h4>
-                {d_html}
+            <p style="margin:12px 0;font-weight:bold;">Distribution of Day-wise Cases received by Loanguard</p>
+            {b_2_html}
 
-                <p>Regards,<br>Loanguard Team</p>
-                <p><i>This is an automated email. Please do not reply.</i></p>
+            <p style="margin:12px 0;font-weight:bold;">Sampling and TAT Summary</p>
+            {b_html}
+
+            <p style="margin:12px 0;font-weight:bold;">Working Hours vs Process Summary</p>
+            {b_1_html}
+
+            <p style="margin:12px 0;font-weight:bold;">Most Documents Submitted</p>
+            {c_html}
+
+            <p style="margin:12px 0;font-weight:bold;">Most Documents Deleted</p>
+            {d_html}
+
+            <p style="margin:8px 0;">
+            Regards,<br>
+            <b>Loanguard Team</b>
+            </p>
+
+            <p style="margin:6px 0;font-size:11px;color:#666;">
+            <i>This is an automated email. Please do not reply.</i>
+            </p>
+
             </body>
             </html>
             """
