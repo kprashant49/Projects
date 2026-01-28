@@ -1,11 +1,14 @@
 import pyodbc
 import pandas as pd
 from secure_config import load_secure_config
-
+from datetime import datetime
 
 def load_data(client_id, from_date, to_date):
     config = load_secure_config()
     db = config["database"]
+
+    from_date_sql = datetime.strptime(from_date, "%Y-%m-%d").date()
+    to_date_sql = datetime.strptime(to_date, "%Y-%m-%d").date()
 
     conn_str = (
         f"DRIVER={{{db['driver']}}};"
@@ -127,5 +130,18 @@ def load_data(client_id, from_date, to_date):
     df_d = pd.read_sql(query_d, conn)
     df_b = pd.read_sql_query("EXEC dbo.GetTATAndMarkTATIsApplicableOrNot_ForTMF @FromDate=?, @ToDate=?, @ClientId=?",
         conn, params=[from_date, to_date, client_id])
+    # conn.close()
+
+    cursor = conn.cursor()
+    cursor.execute("""EXEC dbo.GetApplicationsForReport_TMF @StartDate=?, @EndDate=?, @ClientID=?, @AppStatus=?, @ProductId=?, @BranchId=?, @StateId=?, @CityId=? """,
+        [f'{from_date_sql}', f'{to_date_sql}', f'{client_id}', -1, '0', '0', '0', '0'])
+
+    while cursor.description is None:
+        cursor.nextset()
+
+    columns = [col[0] for col in cursor.description]
+    rows = cursor.fetchall()
+    df_e = pd.DataFrame.from_records(rows, columns=columns)
     conn.close()
-    return df_a, df_b, df_c, df_d
+
+    return df_a, df_b, df_c, df_d, df_e

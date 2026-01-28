@@ -209,6 +209,14 @@ def transform_df_d(df):
     # df["created_at"] = df["created_at"].astype(str)
     return df
 
+def transform_df_e(df):
+    """
+    Transform d data (for attachment)
+    """
+    df = df.copy()
+    # df["created_at"] = df["created_at"].astype(str)
+    return df
+
 
 def get_export_file_path(client_name: str, prefix: str):
     """
