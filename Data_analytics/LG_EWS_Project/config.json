@@ -1,0 +1,26 @@
+{
+  "mailer": {
+    "sender": "PAI_MIS@in.pepper-advantage.com"
+  },
+
+  "recipients": [
+    {
+      "outlook": {
+        "to": ["prashantk@in.pepper-advantage.com"],
+        "cc": [],
+        "bcc": [],
+        "subject": "Early Warning Alert"
+      }
+    }
+  ],
+
+  "alerts": {
+    "to": ["prashantk@in.pepper-advantage.com"],
+    "cc": [],
+    "bcc": []
+  },
+
+  "database": {
+    "driver": "ODBC Driver 18 for SQL Server"
+  }
+}
