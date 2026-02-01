@@ -214,9 +214,22 @@ def transform_df_e(df):
     Transform d data (for attachment)
     """
     df = df.copy()
-    # df["created_at"] = df["created_at"].astype(str)
-    return df
 
+    # FIX Reprocessed FIRST (remove .0)
+    df['Reprocessed'] = df['Reprocessed'].astype('Int64').astype(str)
+
+    # add grand total row
+    df.loc['Grand Total', ['Count of Cases', 'Total']] = (
+        df[['Count of Cases', 'Total']].sum()
+    )
+
+    # keep numeric columns as integers
+    df[['Count of Cases', 'Total']] = df[['Count of Cases', 'Total']].astype('Int64')
+
+    # set label explicitly
+    df.loc['Grand Total', 'Reprocessed'] = 'Grand Total'
+
+    return df
 
 def get_export_file_path(client_name: str, prefix: str):
     """

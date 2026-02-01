@@ -114,12 +114,35 @@ def load_data(client_id, from_date, to_date, curr_date):
     AND CONVERT(date, A.CreatedOn) BETWEEN '{from_date}' AND '{to_date}') A group by [Deletion Reason] order by 2 Desc
     """
 
+    # =========================
+    # QUERY E
+    # =========================
+    query_e = f"""
+    SELECT Processed [Reprocessed], COUNT(Processed) [Count of Cases], (Processed * COUNT(Processed)) [Total] 
+    FROM (SELECT AL_ApplicationNo,COUNT(AL_ApplicationNo) [Processed] 
+    FROM (SELECT *
+    FROM (SELECT AL_APPLICATIONNO,
+    CASE 
+    WHEN AL_Column = 'Application Status' AND AL_Old_Val = 'Pending' AND AL_New_Val IN ('Sampled','Screened') THEN 'Cases Processed by LG'
+    WHEN AL_Column = 'Application Status' and AL_Old_Val = 'For Rejection' and AL_New_Val = 'Rejected' then 'Cases Processed by LG'
+    END AS Remarks
+    FROM ApplicationAuditLog
+    WHERE AL_ClientId = {client_id}
+    AND AL_Datetime >= '{from_date}' 
+    AND AL_Datetime < '{curr_date}'
+    ) A
+    WHERE Remarks IS NOT NULL) B
+    GROUP BY AL_ApplicationNo) C
+    GROUP BY Processed ORDER BY Processed Desc
+    """
+
     df_a = pd.read_sql(query_a, conn)
     # df_b = pd.read_sql(query_b, conn)
     df_c = pd.read_sql(query_c, conn)
     df_d = pd.read_sql(query_d, conn)
     df_b = pd.read_sql_query("EXEC dbo.GetTATAndMarkTATIsApplicableOrNot_ForTMF @FromDate=?, @ToDate=?, @ClientId=?",
         conn, params=[from_date, to_date, client_id])
+    df_e = pd.read_sql(query_e, conn)
     conn.close()
 
     # cursor = conn.cursor()
@@ -134,4 +157,4 @@ def load_data(client_id, from_date, to_date, curr_date):
     # df_e = pd.DataFrame.from_records(rows, columns=columns)
     # conn.close()
 
-    return df_a, df_b, df_c, df_d
+    return df_a, df_b, df_c, df_d, df_e
