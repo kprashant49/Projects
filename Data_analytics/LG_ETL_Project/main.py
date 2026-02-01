@@ -23,8 +23,10 @@ def main():
     # -------------------------
     report_date = (datetime.today() - timedelta(days=1)).strftime("%d/%m/%Y")
     today = datetime.today()
-    from_date = today.replace(day=1).strftime("%Y-%m-%d")
-    to_date = (today - timedelta(days=1)).strftime("%Y-%m-%d")
+    current_date = today.strftime("%Y-%m-%d")
+    to_date = today - timedelta(days=1)
+    from_date = to_date.replace(day=1).strftime("%Y-%m-%d")
+    to_date = to_date.strftime("%Y-%m-%d")
 
     # -------------------------
     # Load full configuration
@@ -44,10 +46,11 @@ def main():
 
         try:
             # -------- Data load --------
-            df_a, df_b, df_c, df_d, df_e = load_data(
+            df_a, df_b, df_c, df_d = load_data(
                 client_id=client_id,
                 from_date=from_date,
-                to_date=to_date
+                to_date=to_date,
+                curr_date=current_date
             )
 
             # -------- Transformations --------
@@ -58,7 +61,6 @@ def main():
             df_b_2 = transform_df_b_2(df_raw)
             df_c = transform_df_c(df_c)
             df_d = transform_df_d(df_d)
-            df_e = transform_df_e(df_e)
 
             # -------- Export the dfs --------
             export_dataframes_to_excel(
@@ -68,8 +70,7 @@ def main():
                     "Report_B_1": df_b_1,
                     "Report_B_2": df_b_2,
                     "Report_C": df_c,
-                    "Report_D": df_d,
-                    "Report_E": df_e
+                    "Report_D": df_d
                 },
                 client_name=client_name
             )

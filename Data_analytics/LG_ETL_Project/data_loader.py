@@ -3,7 +3,7 @@ import pandas as pd
 from secure_config import load_secure_config
 from datetime import datetime
 
-def load_data(client_id, from_date, to_date):
+def load_data(client_id, from_date, to_date, curr_date):
     config = load_secure_config()
     db = config["database"]
 
@@ -26,31 +26,21 @@ def load_data(client_id, from_date, to_date):
     # QUERY A
     # =========================
     query_a = f"""
-    SELECT Remarks AS [Type of Case], COUNT(*) AS [Counts]
-    FROM (
-        SELECT CASE
-            WHEN AL_Column = 'Application Create Status' AND AL_Old_Val = 0 AND AL_New_Val = 1 THEN 'Fresh Cases Submitted'
-            WHEN AL_Column = 'Application Status' AND AL_Old_Val = 'Pending' AND AL_New_Val IN ('Sampled','Screened') THEN 'Cases Processed by LG'
-            WHEN AL_Column = 'Application Status' AND AL_Old_Val IN ('Sampled','Screened') AND AL_New_Val = 'Pending' THEN 'Reopened Cases'
-        END AS Remarks
-        FROM ApplicationAuditLog
-        WHERE AL_ClientId = {client_id}
-          AND AL_Datetime BETWEEN '{from_date}' AND '{to_date}'
-
-        UNION ALL
-
-        SELECT CASE
-            WHEN AL_Column = 'Application Create Status' AND AL_Old_Val = 0 AND AL_New_Val = 1 THEN 'Fresh Cases Submitted'
-            WHEN AL_Column = 'Application Status' AND AL_Old_Val = 'Pending' AND AL_New_Val IN ('Sampled','Screened') THEN 'Cases Processed by LG'
-            WHEN AL_Column = 'Application Status' AND AL_Old_Val IN ('Sampled','Screened') AND AL_New_Val = 'Pending' THEN 'Reopened Cases'
-        END
-        FROM DBLoanguardHistory.dbo.ApplicationAuditLog
-        WHERE AL_ClientId = 35
-          AND AL_Datetime BETWEEN '{from_date}' AND '{to_date}'
-    ) A
-    WHERE Remarks IS NOT NULL
-    GROUP BY Remarks
-    """
+        SELECT Remarks AS [Type of Case], COUNT(*) AS [Counts]
+        FROM (
+            SELECT CASE
+                WHEN AL_Column = 'Application Create Status' AND AL_Old_Val = 0 AND AL_New_Val = 1 THEN 'Fresh Cases Submitted'
+                WHEN AL_Column = 'Application Status' AND AL_Old_Val = 'Pending' AND AL_New_Val IN ('Sampled','Screened') THEN 'Cases Processed by LG'
+                WHEN AL_Column = 'Application Status' and AL_Old_Val = 'For Rejection' and AL_New_Val = 'Rejected' then 'Cases Processed by LG'
+            END AS Remarks
+            FROM ApplicationAuditLog
+            WHERE AL_ClientId = {client_id}
+              AND AL_Datetime >= '{from_date}' 
+              AND AL_Datetime < '{curr_date}'
+            ) A
+        WHERE Remarks IS NOT NULL
+        GROUP BY Remarks
+        """
 
     # =========================
     # QUERY B
@@ -130,18 +120,18 @@ def load_data(client_id, from_date, to_date):
     df_d = pd.read_sql(query_d, conn)
     df_b = pd.read_sql_query("EXEC dbo.GetTATAndMarkTATIsApplicableOrNot_ForTMF @FromDate=?, @ToDate=?, @ClientId=?",
         conn, params=[from_date, to_date, client_id])
-    # conn.close()
-
-    cursor = conn.cursor()
-    cursor.execute("""EXEC dbo.GetApplicationsForReport_TMF @StartDate=?, @EndDate=?, @ClientID=?, @AppStatus=?, @ProductId=?, @BranchId=?, @StateId=?, @CityId=? """,
-        [f'{from_date_sql}', f'{to_date_sql}', f'{client_id}', -1, '0', '0', '0', '0'])
-
-    while cursor.description is None:
-        cursor.nextset()
-
-    columns = [col[0] for col in cursor.description]
-    rows = cursor.fetchall()
-    df_e = pd.DataFrame.from_records(rows, columns=columns)
     conn.close()
 
-    return df_a, df_b, df_c, df_d, df_e
+    # cursor = conn.cursor()
+    # cursor.execute("""EXEC dbo.GetApplicationsForReport_TMF @StartDate=?, @EndDate=?, @ClientID=?, @AppStatus=?, @ProductId=?, @BranchId=?, @StateId=?, @CityId=? """,
+    #     [f'{from_date_sql}', f'{to_date_sql}', f'{client_id}', -1, '0', '0', '0', '0'])
+    #
+    # while cursor.description is None:
+    #     cursor.nextset()
+    #
+    # columns = [col[0] for col in cursor.description]
+    # rows = cursor.fetchall()
+    # df_e = pd.DataFrame.from_records(rows, columns=columns)
+    # conn.close()
+
+    return df_a, df_b, df_c, df_d
