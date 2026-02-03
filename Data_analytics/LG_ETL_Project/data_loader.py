@@ -7,8 +7,8 @@ def load_data(client_id, from_date, to_date, curr_date):
     config = load_secure_config()
     db = config["database"]
 
-    from_date_sql = datetime.strptime(from_date, "%Y-%m-%d").date()
-    to_date_sql = datetime.strptime(to_date, "%Y-%m-%d").date()
+    from_date_sql = datetime.strptime(from_date, "%Y-%m-%d").strftime("%d/%m/%Y")
+    to_date_sql = datetime.strptime(to_date, "%Y-%m-%d").strftime("%d/%m/%Y")
 
     conn_str = (
         f"DRIVER={{{db['driver']}}};"
@@ -43,34 +43,10 @@ def load_data(client_id, from_date, to_date, curr_date):
         """
 
     # =========================
-    # QUERY B
+    # SP B
     # =========================
-    # query_b = f"""
-    # SELECT TOP 10 [Trigger], COUNT(*) AS Counts
-    # FROM (
-    #     SELECT rm2.Message AS [Trigger]
-    #     FROM DocumentRuleMessages drm
-    #     JOIN DocumentValidatingMessages dvm ON drm.DocValMessageId = dvm.DocValMessageId
-    #     JOIN Applications apn ON dvm.ApplicationId = apn.ApplicationId
-    #     JOIN RuleMaster rm1 ON drm.RuleId = rm1.RuleId
-    #     JOIN RuleMessage rm2 ON drm.RuleId = rm2.RuleId
-    #     WHERE apn.AppStatus IN (1,3)
-    #       AND apn.ClientId = {client_id}
-    #       AND CONVERT(date, apn.ModifiedOn) BETWEEN '{from_date}' AND '{to_date}'
-    #
-    #     UNION ALL
-    #
-    #     SELECT drm.ManualTrigger
-    #     FROM DocumentManualTrigger drm
-    #     JOIN DocumentValidatingMessages dvm ON drm.DocValMessageId = dvm.DocValMessageId
-    #     JOIN Applications apn ON dvm.ApplicationId = apn.ApplicationId
-    #     WHERE apn.AppStatus IN (1,3)
-    #       AND apn.ClientId = {client_id}
-    #       AND CONVERT(date, apn.ModifiedOn) BETWEEN '{from_date}' AND '{to_date}'
-    # ) A
-    # GROUP BY [Trigger]
-    # ORDER BY Counts DESC
-    # """
+    df_b = pd.read_sql_query("EXEC dbo.GetTATAndMarkTATIsApplicableOrNot_ForTMF @FromDate=?, @ToDate=?, @ClientId=?",
+        conn, params=[from_date, to_date, client_id])
 
     # =========================
     # QUERY C
@@ -136,25 +112,27 @@ def load_data(client_id, from_date, to_date, curr_date):
     GROUP BY Processed ORDER BY Processed Desc
     """
 
+    # =========================
+    # SP F
+    # =========================
+    cursor = conn.cursor()
+    cursor.execute("""EXEC dbo.GetApplicationsForReport_TMF @StartDate=?, @EndDate=?, @ClientID=?, @AppStatus=?, @ProductId=?, @BranchId=?, @StateId=?, @CityId=? """,
+        [f'{from_date_sql}', f'{to_date_sql}', f'{client_id}', -1, '0', '0', '0', '0'])
+
+    while cursor.description is None:
+        cursor.nextset()
+
+    columns = [col[0] for col in cursor.description]
+    rows = cursor.fetchall()
+    df_f = pd.DataFrame.from_records(rows, columns=columns)
+
+    cursor.close()
+
     df_a = pd.read_sql(query_a, conn)
-    # df_b = pd.read_sql(query_b, conn)
     df_c = pd.read_sql(query_c, conn)
     df_d = pd.read_sql(query_d, conn)
-    df_b = pd.read_sql_query("EXEC dbo.GetTATAndMarkTATIsApplicableOrNot_ForTMF @FromDate=?, @ToDate=?, @ClientId=?",
-        conn, params=[from_date, to_date, client_id])
     df_e = pd.read_sql(query_e, conn)
+
     conn.close()
 
-    # cursor = conn.cursor()
-    # cursor.execute("""EXEC dbo.GetApplicationsForReport_TMF @StartDate=?, @EndDate=?, @ClientID=?, @AppStatus=?, @ProductId=?, @BranchId=?, @StateId=?, @CityId=? """,
-    #     [f'{from_date_sql}', f'{to_date_sql}', f'{client_id}', -1, '0', '0', '0', '0'])
-    #
-    # while cursor.description is None:
-    #     cursor.nextset()
-    #
-    # columns = [col[0] for col in cursor.description]
-    # rows = cursor.fetchall()
-    # df_e = pd.DataFrame.from_records(rows, columns=columns)
-    # conn.close()
-
-    return df_a, df_b, df_c, df_d, df_e
+    return df_a, df_b, df_c, df_d, df_e, df_f

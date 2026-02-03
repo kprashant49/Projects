@@ -7,7 +7,6 @@ def transform_df_a(df):
     Transform a data
     """
     df = df.copy()
-    # df["amount"] = df["amount"].astype(int)
     return df
 
 def transform_df_b(df):
@@ -198,7 +197,6 @@ def transform_df_c(df):
     Transform c data (for attachment)
     """
     df = df.copy()
-    # df["created_at"] = df["created_at"].astype(str)
     return df
 
 def transform_df_d(df):
@@ -206,12 +204,11 @@ def transform_df_d(df):
     Transform d data (for attachment)
     """
     df = df.copy()
-    # df["created_at"] = df["created_at"].astype(str)
     return df
 
 def transform_df_e(df):
     """
-    Transform d data (for attachment)
+    Transform e data (for attachment)
     """
     df = df.copy()
 
@@ -229,6 +226,13 @@ def transform_df_e(df):
     # set label explicitly
     df.loc['Grand Total', 'Reprocessed'] = 'Grand Total'
 
+    return df
+
+def transform_df_f(df):
+    """
+    Transform f data (for attachment)
+    """
+    df = df.copy()
     return df
 
 def get_export_file_path(client_name: str, prefix: str):
