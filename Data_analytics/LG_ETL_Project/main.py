@@ -46,7 +46,7 @@ def main():
 
         try:
             # -------- Data load --------
-            df_a, df_b, df_c, df_d, df_e, df_f = load_data(
+            df_a, df_b, df_c, df_d, df_e, df_f, df_g = load_data(
                 client_id=client_id,
                 from_date=from_date,
                 to_date=to_date,
@@ -63,6 +63,8 @@ def main():
             df_d = transform_df_d(df_d)
             df_e = transform_df_e(df_e)
             df_f = transform_df_f(df_f)
+            df_g = transform_df_g(df_g)
+
 
             # -------- Export the dfs --------
             export_dataframes_to_excel(
@@ -74,7 +76,8 @@ def main():
                     "Report_C": df_c,
                     "Report_D": df_d,
                     "Report_E": df_e,
-                    "Report_F": df_f
+                    "Report_F": df_f,
+                    "Report_G": df_g
                 },
                 client_name=client_name
             )
@@ -88,6 +91,8 @@ def main():
             d_html = df_to_html(df_d, "No data available for the selected period.")
             e_html = df_to_html(df_e, "No data available for the selected period.")
             f_html = df_to_html(df_f, "No data available for the selected period.")
+            g_html = df_to_html(df_g, "No data available for the selected period.")
+
 
             # -------- Email body --------
             html = f"""
@@ -114,6 +119,9 @@ def main():
 
             <p style="margin:12px 0;font-weight:bold;">Working Hours vs Process Summary</p>
             {b_1_html}
+
+            <p style="margin:12px 0;font-weight:bold;">Most Triggers Applied</p>
+            {g_html}
 
             <p style="margin:12px 0;font-weight:bold;">Most Documents Submitted</p>
             {c_html}

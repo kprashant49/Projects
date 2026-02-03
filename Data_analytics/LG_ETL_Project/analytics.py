@@ -235,6 +235,13 @@ def transform_df_f(df):
     df = df.copy()
     return df
 
+def transform_df_g(df):
+    """
+    Transform g data (for attachment)
+    """
+    df = df.copy()
+    return df
+
 def get_export_file_path(client_name: str, prefix: str):
     """
     Builds export directory and filename.
