@@ -128,11 +128,11 @@ def load_data(client_id, from_date, to_date, curr_date):
 
     cursor.close()
 
-    =========================
-    QUERY G
-    =========================
+    # =========================
+    # QUERY G
+    # =========================
     query_g = f"""
-    SELECT TOP 10 [Trigger], COUNT(*) AS Counts
+    SELECT TOP 20 [Trigger], COUNT(*) AS Counts
     FROM (
         SELECT rm2.Message AS [Trigger]
         FROM DocumentRuleMessages drm
@@ -162,7 +162,7 @@ def load_data(client_id, from_date, to_date, curr_date):
     df_c = pd.read_sql(query_c, conn)
     df_d = pd.read_sql(query_d, conn)
     df_e = pd.read_sql(query_e, conn)
-    df_g = pd.read_sql(query_e, conn)
+    df_g = pd.read_sql(query_g, conn)
 
     conn.close()
 
