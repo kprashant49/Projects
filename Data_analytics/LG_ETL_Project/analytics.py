@@ -245,6 +245,7 @@ def transform_df_g(df):
         .str.replace(r"\{.*?\}", "", regex=True)  # remove {anything}
         .str.replace(r"\s{2,}", " ", regex=True)  # collapse extra spaces
         .str.strip())
+    df = df[~df["RuleID"].isin([817, 679])]
 
     agg = (df.groupby(["Final_Severity", "RuleID", "Final_Trigger"])
         .size()
