@@ -194,21 +194,21 @@ def transform_df_b_2(df):
 
 def transform_df_c(df):
     """
-    Transform c data (for attachment)
+    Transform c data
     """
     df = df.copy()
     return df
 
 def transform_df_d(df):
     """
-    Transform d data (for attachment)
+    Transform d data
     """
     df = df.copy()
     return df
 
 def transform_df_e(df):
     """
-    Transform e data (for attachment)
+    Transform e data
     """
     df = df.copy()
 
@@ -230,17 +230,51 @@ def transform_df_e(df):
 
 def transform_df_f(df):
     """
-    Transform f data (for attachment)
+    Transform f data
     """
     df = df.copy()
     return df
 
 def transform_df_g(df):
     """
-    Transform g data (for attachment)
+    Transform g data
     """
     df = df.copy()
-    return df
+
+    df["Final_Trigger"] = (df["Final_Trigger"]
+        .str.replace(r"\{.*?\}", "", regex=True)  # remove {anything}
+        .str.replace(r"\s{2,}", " ", regex=True)  # collapse extra spaces
+        .str.strip())
+
+    agg = (df.groupby(["Final_Severity", "RuleID", "Final_Trigger"])
+        .size()
+        .reset_index(name="Count of Trigger"))
+
+    top10 = (agg.sort_values(["Final_Severity", "Count of Trigger"],
+            ascending=[True, False]
+        ).groupby("Final_Severity").head(10))
+
+    final_rows = []
+
+    for severity, group in top10.groupby("Final_Severity", sort=False):
+        # Severity header row
+        final_rows.append({
+            "RuleID": "",
+            "Final_Trigger": severity,
+            "Count of Trigger": ""
+        })
+
+        # Actual trigger rows
+        for _, row in group.iterrows():
+            final_rows.append({
+                "RuleID": row["RuleID"],
+                "Final_Trigger": row["Final_Trigger"],
+                "Count of Trigger": row["Count of Trigger"]
+            })
+
+    final_df = pd.DataFrame(final_rows)
+
+    return final_df
 
 def get_export_file_path(client_name: str, prefix: str):
     """

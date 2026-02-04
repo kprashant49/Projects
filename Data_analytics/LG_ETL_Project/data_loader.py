@@ -132,30 +132,27 @@ def load_data(client_id, from_date, to_date, curr_date):
     # QUERY G
     # =========================
     query_g = f"""
-    SELECT TOP 20 [Trigger], COUNT(*) AS Counts
-    FROM (
-        SELECT rm2.Message AS [Trigger]
-        FROM DocumentRuleMessages drm
-        JOIN DocumentValidatingMessages dvm ON drm.DocValMessageId = dvm.DocValMessageId
-        JOIN Applications apn ON dvm.ApplicationId = apn.ApplicationId
-        JOIN RuleMaster rm1 ON drm.RuleId = rm1.RuleId
-        JOIN RuleMessage rm2 ON drm.RuleId = rm2.RuleId
-        WHERE apn.AppStatus IN (1,3)
-          AND apn.ClientId = {client_id}
-          AND CONVERT(date, apn.ModifiedOn) BETWEEN '{from_date}' AND '{to_date}'
-
-        UNION ALL
-
-        SELECT drm.ManualTrigger
-        FROM DocumentManualTrigger drm
-        JOIN DocumentValidatingMessages dvm ON drm.DocValMessageId = dvm.DocValMessageId
-        JOIN Applications apn ON dvm.ApplicationId = apn.ApplicationId
-        WHERE apn.AppStatus IN (1,3)
-          AND apn.ClientId = {client_id}
-          AND CONVERT(date, apn.ModifiedOn) BETWEEN '{from_date}' AND '{to_date}'
-    ) A
-    GROUP BY [Trigger]
-    ORDER BY Counts DESC
+    Select RS2.RuleID, [Trigger] AS [Final_Trigger], 
+    Case when RS2.RuleSeverity IS NULL and MAS.IsHighRiskRule = 1 then 'High'
+    when RS2.RuleSeverity IS NULL and MAS.IsHighRiskRule = 0 then 'Low'
+    when RS2.RuleSeverity IS NULL and MAS.IsHighRiskRule IS NULL then 'Low'
+    else RS2.RuleSeverity
+    end [Final_Severity]
+    from (Select RS.RuleID,RS.[Trigger],SEV.RuleSeverity from (SELECT rm1.RuleID [RuleID], rm2.Message AS [Trigger]
+    FROM DocumentRuleMessages drm
+    JOIN DocumentValidatingMessages dvm ON drm.DocValMessageId = dvm.DocValMessageId
+    JOIN Applications apn ON dvm.ApplicationId = apn.ApplicationId
+    JOIN RuleMaster rm1 ON drm.RuleId = rm1.RuleId
+    JOIN RuleMessage rm2 ON drm.RuleId = rm2.RuleId
+    WHERE apn.AppStatus IN (1,3)
+    AND apn.ClientId = {client_id}
+    AND CONVERT(date, apn.ModifiedOn) BETWEEN '{from_date}' AND '{curr_date}') RS
+    left join (Select Distinct A.RuleID, A.RuleDescription, A.RuleMapConstant,A.RuleCategory, D.RuleSeverity from RuleMaster A 
+    join RSevWtCatConfigDetails B on A.RuleID = B.RuleID 
+    join RSevWtCatConfig C on B.RsevWtCatConfigId = C.RSevWtCatConfigID
+    join RuleSeverity D on B.RuleSeverId = D.RuleSeverId
+    where C.clientID = 35) SEV on RS.RuleID = SEV.RuleId) RS2 
+    left join RuleMaster MAS on RS2.RuleID = MAS.RuleId
     """
 
     df_a = pd.read_sql(query_a, conn)

@@ -120,7 +120,7 @@ def main():
             <p style="margin:12px 0;font-weight:bold;">Working Hours vs Process Summary</p>
             {b_1_html}
 
-            <p style="margin:12px 0;font-weight:bold;">Most Triggers Applied</p>
+            <p style="margin:12px 0;font-weight:bold;">Most Triggers Invoked</p>
             {g_html}
 
             <p style="margin:12px 0;font-weight:bold;">Most Documents Submitted</p>
