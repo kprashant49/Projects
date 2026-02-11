@@ -42,7 +42,7 @@ def main():
     b_html = ""
     if lens_sync_breach and not df_c.empty:
         b_html = """
-        <p style="margin:12px 0; font-weight:bold;">
+        <p style="margin:12px 0; font-weight:normal;">
             Please check below cases that are pending to be pushed to Lens.
         </p>
         """
