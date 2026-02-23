@@ -32,9 +32,18 @@ if __name__ == "__main__":
 
     scheduler = BlockingScheduler(timezone="Asia/Kolkata")
 
+    # scheduler.add_job(
+    #     run_job,
+    #     trigger="cron",
+    #     minute="*/30",
+    #     id="ews_email_job",
+    #     replace_existing=True
+    # )
+
     scheduler.add_job(
         run_job,
         trigger="cron",
+        hour="10-21",  # 10 AM to 9 PM (24-hour format)
         minute="*/30",
         id="ews_email_job",
         replace_existing=True
