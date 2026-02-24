@@ -17,8 +17,8 @@ FROM
     where APN.ClientId = 35 
       and APN.AppStatus in (1,3,5)
       and year(APN.ModifiedOn) = 2026
-      and month(APN.ModifiedOn) = 01
-      and DAY(APN.ModifiedOn) BETWEEN 15 AND 31
+      and month(APN.ModifiedOn) = 02
+      and DAY(APN.ModifiedOn) BETWEEN 01 AND 15
 
     UNION ALL
  
@@ -38,6 +38,7 @@ FROM
     where APN.ClientId = 35 
       and APN.AppStatus in (1,3,5)
       and year(APN.ModifiedOn) = 2026
-      and DAY(APN.ModifiedOn) BETWEEN 15 AND 31
+      and month(APN.ModifiedOn) = 02
+      and DAY(APN.ModifiedOn) BETWEEN 01 AND 15
 ) t
 ORDER BY t.ReportDateTime;
