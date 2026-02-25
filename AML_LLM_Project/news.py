@@ -25,6 +25,3 @@ def news_search(query, api_key = "bf8c3fac5ce145dc912629da6dae38aa"):
         })
 
     return evidence
-
-
-print(news_search("Prashant Kumar"))

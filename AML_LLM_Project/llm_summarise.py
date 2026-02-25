@@ -1,6 +1,6 @@
 import os
 import json
-import google.generativeai as genai
+import google_search.generativeai as genai
 
 
 def summarize_with_llm(evidence, score, category):

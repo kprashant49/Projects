@@ -1,4 +1,4 @@
-from google import google_search
+from google_search import google_search
 from news import news_search
 from indian_kanoon import search_indian_kanoon
 import os

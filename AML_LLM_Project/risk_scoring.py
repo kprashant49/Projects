@@ -4,7 +4,7 @@ def calculate_risk(evidence, sanctions_match):
 
     fraud_hits = sum(
         1 for item in evidence
-        if any(word in item["snippet"].lower()
+        if any(word in (item.get("snippet") or "").lower()
                for word in ["fraud", "scam", "money laundering"])
     )
 
