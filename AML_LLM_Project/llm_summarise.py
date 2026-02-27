@@ -1,44 +1,46 @@
 import os
 import json
-import google.generativeai as genai
+from openai import AzureOpenAI
 
 
 def summarize_with_llm(evidence, score, category):
 
-    api_key = os.getenv("GEMINI_API_KEY")
+    endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
+    api_key = os.getenv("AZURE_OPENAI_API_KEY")
+    deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT")
 
-    if not api_key:
-        return "LLM summary unavailable: GEMINI_API_KEY not set."
+    if not endpoint or not api_key or not deployment:
+        return "Azure OpenAI configuration missing."
 
     try:
-        genai.configure(api_key=api_key)
-
-        model = genai.GenerativeModel("gemini-1.5-pro-latest")
+        client = AzureOpenAI(
+            api_key=api_key,
+            api_version="2024-02-01",
+            azure_endpoint=endpoint
+        )
 
         prompt = f"""
 You are a compliance risk analyst.
 
-Below is adverse media and legal evidence collected for a subject.
-
 EVIDENCE:
-{json.dumps(evidence, indent=2)}
+{json.dumps(evidence[:10], indent=2)}
 
 RISK SCORE: {score}
 RISK CATEGORY: {category}
 
-Provide a professional compliance summary including:
-- Key risk findings
-- Nature of allegations (if any)
-- Sanctions exposure (if applicable)
-- Overall risk interpretation
-- Recommendation for enhanced due diligence (if required)
-
-Keep tone formal and suitable for a regulatory compliance report.
+Provide a professional compliance summary suitable for regulatory reporting.
 """
 
-        response = model.generate_content(prompt)
+        response = client.chat.completions.create(
+            model=deployment,
+            messages=[
+                {"role": "system", "content": "You are a professional AML compliance analyst."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.2
+        )
 
-        return response.text.strip()
+        return response.choices[0].message.content.strip()
 
     except Exception as e:
-        return f"LLM summarization failed: {str(e)}"
+        return f"Azure LLM summarization failed: {str(e)}"
