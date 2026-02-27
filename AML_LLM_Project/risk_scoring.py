@@ -28,4 +28,6 @@ def calculate_risk(evidence, sanctions_match):
     else:
         category = "Low"
 
+    score = min(score, 100)
+
     return score, category

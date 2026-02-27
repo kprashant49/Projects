@@ -1,7 +1,7 @@
 import requests
 
 
-def news_search(query, api_key = "2164a55afdfe4459ab7613e5034a883d"):
+def news_search(query, api_key):
 
     if not api_key:
         print("News API key not provided — skipping News search.")
@@ -19,7 +19,6 @@ def news_search(query, api_key = "2164a55afdfe4459ab7613e5034a883d"):
     try:
         response = requests.get(url, params=params, timeout=10)
         response.raise_for_status()
-
         data = response.json()
 
         evidence = []

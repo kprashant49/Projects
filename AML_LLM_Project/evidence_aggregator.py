@@ -1,5 +1,6 @@
 from google_search import web_search
 from news import news_search
+from gnews import gnews_search
 from indian_kanoon import search_indian_kanoon
 from myneta_search import search_myneta
 import os
@@ -16,10 +17,13 @@ def collect_evidence(name, place):
     evidence += web_search(query)
 
     # News
-    evidence += news_search(
-        query,
-        os.getenv("NEWS_API_KEY")
-    )
+    try:
+        evidence += news_search(query, os.getenv("NEWS_API_KEY"))
+    except Exception as e:
+        print("NewsAPI failed:", e)
+
+    news_articles = gnews_search(query)
+    evidence += news_articles
 
     # Indian Kanoon (wrapped safely)
     try:

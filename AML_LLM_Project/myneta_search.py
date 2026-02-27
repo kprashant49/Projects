@@ -4,7 +4,8 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.keys import Keys
-import time
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 def search_myneta(name):
@@ -24,7 +25,9 @@ def search_myneta(name):
         search_box.send_keys(name)
         search_box.send_keys(Keys.RETURN)
 
-        time.sleep(3)
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//a[contains(@href,'candidate.php')]"))
+        )
 
         links = driver.find_elements(By.XPATH, "//a[contains(@href,'candidate.php')]")
 
