@@ -4,7 +4,7 @@ from sanctions import load_un_sanctions
 from rbi_fuzzy_match import fuzzy_match_name
 from risk_scoring import calculate_risk
 from llm_summarise import summarize_with_llm
-
+from report_generator import generate_pdf_report
 
 def run_alm_check(name, place):
 
@@ -47,5 +47,6 @@ if __name__ == "__main__":
     place = "India"
 
     report = run_alm_check(name, place)
-
+    pdf_path = generate_pdf_report(report)
+    print(f"PDF Generated: {pdf_path}")
     print(json.dumps(report, indent=2))
