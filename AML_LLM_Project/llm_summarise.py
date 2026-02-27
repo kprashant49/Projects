@@ -3,7 +3,7 @@ import json
 from openai import AzureOpenAI
 
 
-def summarize_with_llm(evidence, score, category):
+def summarize_with_llm(evidence, score, category, breakdown):
 
     endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
     api_key = os.getenv("AZURE_OPENAI_API_KEY")
@@ -20,16 +20,23 @@ def summarize_with_llm(evidence, score, category):
         )
 
         prompt = f"""
-You are a compliance risk analyst.
+        You are a compliance risk analyst.
 
-EVIDENCE:
-{json.dumps(evidence[:10], indent=2)}
+        EVIDENCE:
+        {json.dumps(evidence[:10], indent=2)}
 
-RISK SCORE: {score}
-RISK CATEGORY: {category}
+        SCORE BREAKDOWN:
+        Fraud Hits: {breakdown['fraud_hits']}
+        Fraud Score: {breakdown['fraud_score']}
+        Sanctions Match: {breakdown['sanctions_match']}
+        Sanctions Score: {breakdown['sanctions_score']}
+        PEP Hits: {breakdown['pep_hits']}
+        PEP Score: {breakdown['pep_score']}
+        Total Score: {breakdown['total_score']}
+        Risk Category: {category}
 
-Provide a professional compliance summary suitable for regulatory reporting.
-"""
+        Provide a professional compliance summary suitable for regulatory reporting.
+        """
 
         response = client.chat.completions.create(
             model=deployment,

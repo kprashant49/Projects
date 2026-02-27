@@ -20,16 +20,17 @@ def run_alm_check(name, place):
     sanctions_flag = len(sanctions_matches) > 0
 
     print("Calculating risk score...")
-    score, category = calculate_risk(evidence, sanctions_flag)
+    score, category, breakdown = calculate_risk(evidence, sanctions_flag)
 
     print("Generating compliance summary...")
-    summary = summarize_with_llm(evidence, score, category)
+    summary = summarize_with_llm(evidence, score, category, breakdown)
 
     result = {
         "name": name,
         "place": place,
         "risk_score": score,
         "risk_category": category,
+        "score_breakdown": breakdown,
         "sanctions_flag": sanctions_flag,
         "sanctions_matches": sanctions_matches,
         "evidence_count": len(evidence),
