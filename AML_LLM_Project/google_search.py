@@ -1,28 +1,26 @@
-import requests
+from serpapi_search import serpapi_search
 
-def google_search(query, api_key, cx, num_results=5):
-    url = "https://www.googleapis.com/customsearch/v1"
+def web_search(query):
+    results = serpapi_search(query, engine="google", num=5)
 
-    params = {
-        "key": api_key,
-        "cx": cx,
-        "q": query,
-        "num": num_results
-    }
+    output = []
 
-    response = requests.get(url, params=params)
-    response.raise_for_status()
+    for item in results.get("organic_results", []):
 
-    results = response.json()
+        source_field = item.get("source")
 
-    evidence = []
+        if isinstance(source_field, dict):
+            source_value = source_field.get("domain", "")
+        elif isinstance(source_field, str):
+            source_value = source_field
+        else:
+            source_value = ""
 
-    for item in results.get("items", []):
-        evidence.append({
-            "source": "Google",
+        output.append({
+            "source": source_value,
             "title": item.get("title"),
             "link": item.get("link"),
-            "snippet": item.get("snippet")
+            "snippet": item.get("snippet") or ""
         })
 
-    return evidence
+    return output

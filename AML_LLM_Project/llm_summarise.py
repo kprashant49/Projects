@@ -1,6 +1,6 @@
 import os
 import json
-import google_search.generativeai as genai
+import google.generativeai as genai
 
 
 def summarize_with_llm(evidence, score, category):
@@ -13,7 +13,7 @@ def summarize_with_llm(evidence, score, category):
     try:
         genai.configure(api_key=api_key)
 
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-1.5-pro-latest")
 
         prompt = f"""
 You are a compliance risk analyst.

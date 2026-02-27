@@ -1,4 +1,11 @@
-def news_search(query, api_key = "bf8c3fac5ce145dc912629da6dae38aa"):
+import requests
+
+
+def news_search(query, api_key = "2164a55afdfe4459ab7613e5034a883d"):
+
+    if not api_key:
+        print("News API key not provided — skipping News search.")
+        return []
 
     url = "https://newsapi.org/v2/everything"
 
@@ -9,19 +16,32 @@ def news_search(query, api_key = "bf8c3fac5ce145dc912629da6dae38aa"):
         "sortBy": "relevancy"
     }
 
-    response = requests.get(url, params=params)
-    response.raise_for_status()
+    try:
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
 
-    data = response.json()
+        data = response.json()
 
-    evidence = []
+        evidence = []
 
-    for article in data.get("articles", []):
-        evidence.append({
-            "source": "NewsAPI",
-            "title": article.get("title"),
-            "link": article.get("url"),
-            "snippet": article.get("description")
-        })
+        for article in data.get("articles", []):
+            evidence.append({
+                "source": "NewsAPI",
+                "title": article.get("title"),
+                "link": article.get("url"),
+                "snippet": article.get("description") or ""
+            })
 
-    return evidence
+        return evidence
+
+    except requests.exceptions.HTTPError as e:
+        print(f"News API HTTP error: {e}")
+        return []
+
+    except requests.exceptions.RequestException as e:
+        print(f"News API request failed: {e}")
+        return []
+
+    except Exception as e:
+        print(f"Unexpected News API error: {e}")
+        return []

@@ -1,27 +1,8 @@
-# from google import genai
-
-# print(f"***Welcome to Web Fraud Check based on GeminiAI***")
-# Custome_Name = input("Custome_Name: ")
-# Place = input("Place of Residence: ")
-# Mobile_Number = int(input("Mobile_Number: "))
-
-# client = genai.Client(api_key="")
-
-# response = client.models.generate_content(
-#     model="gemini-3-flash-preview", 
-#     contents=f"Adverse Media Search Results for {Custome_Name} living in {Place} having mobile number {Mobile_Number} (fraud / scam / criminal / AML / Civil Suits /Social Media Risk/  Facebook / Instagram / My Neta / Indian Kanoon/ Adverse media / Default/ Political link in Instagram/ phone risk/ LinkedIn/ TV News) Give a details in table format"
-# )
-
-# print(response.text)
-
-
 import os
 import re
 import json
 from datetime import datetime
-
 from google import genai
-
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import pagesizes
@@ -56,10 +37,12 @@ def clean_and_parse_json(response_text: str) -> dict:
 # =========================================================
 def run_gemini_fraud_check(customer_name: str, place: str, mobile: str) -> dict:
 
-    if not api_key:
-        raise ValueError("GEMINI_API_KEY environment variable not set")
+    client = genai.Client(api_key="AIzaSyDD-C5wF1xkkl9z_UzqAM8YynIq7IKynYs")
 
-    client = genai.Client(api_key=api_key)
+    # if not api_key:
+    #     raise ValueError("GEMINI_API_KEY environment variable not set")
+
+    # client = genai.Client(api_key=api_key)
 
     prompt = f"""
             You are a financial crime risk analyst.
@@ -159,9 +142,9 @@ def generate_pdf(data: dict, file_path: str):
     doc.build(elements)
 
 
-# =========================================================
-# 4️. Main Execution (CLI Style Like Your Original)
-# =========================================================
+# =========================
+# 4️. Main Execution
+# =========================
 
 if __name__ == "__main__":
 
@@ -189,10 +172,12 @@ if __name__ == "__main__":
             "outputs": gemini_output
         }
 
-        file_path = r"C:\Users\PrashantKumar\OneDrive - Pepper India Resolution Private Limited\Desktop\Fraud_Check_Report.pdf"
-        generate_pdf(final_data, file_path)
+        file_path = r"C:\Users\PrashantKumar\OneDrive - Pepper India Resolution Private Limited\Desktop\Fraud_Check_Reports\Fraud_Check_Report.pdf"
+        customer_name_clean = customer_name.replace(" ", "_").lower()
+        new_file_path = file_path.replace(".pdf", f"_{customer_name_clean}.pdf")
+        generate_pdf(final_data, new_file_path)
 
-        print(f"\nReport generated successfully: {file_path}")
+        print(f"\nReport generated successfully: {new_file_path}")
 
     except Exception as e:
         print("\nERROR:", str(e))

@@ -1,6 +1,7 @@
-from google_search import google_search
+from google_search import web_search
 from news import news_search
 from indian_kanoon import search_indian_kanoon
+from myneta_search import search_myneta
 import os
 from dedupe import deduplicate_evidence
 
@@ -11,12 +12,8 @@ def collect_evidence(name, place):
 
     evidence = []
 
-    # Google
-    evidence += google_search(
-        query,
-        os.getenv("GOOGLE_KEY"),
-        os.getenv("GOOGLE_CX")
-    )
+    # Serp
+    evidence += web_search(query)
 
     # News
     evidence += news_search(
@@ -30,6 +27,12 @@ def collect_evidence(name, place):
     except Exception as e:
         print(f"Indian Kanoon failed: {e}")
         kanoon_results = []
+
+    # Myneta (PEP screening)
+    try:
+        evidence += search_myneta(name)
+    except Exception as e:
+        print("Myneta failed:", e)
 
     # Normalize structure
     for item in kanoon_results:
