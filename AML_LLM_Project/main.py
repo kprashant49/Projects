@@ -6,10 +6,10 @@ from risk_scoring import calculate_risk
 from llm_summarise import summarize_with_llm
 from report_generator import generate_pdf_report
 
-def run_alm_check(name, place):
+def run_alm_check(name, place, mobile=None, pan=None):
 
     print("Collecting evidence...")
-    evidence = collect_evidence(name, place)
+    evidence = collect_evidence(name, place, mobile, pan)
 
     print("Loading sanctions list...")
     sanctions_names = load_un_sanctions("data/un_sanctions.xml")
@@ -20,7 +20,13 @@ def run_alm_check(name, place):
     sanctions_flag = len(sanctions_matches) > 0
 
     print("Calculating risk score...")
-    score, category, breakdown = calculate_risk(evidence, sanctions_flag)
+
+    score, category, breakdown = calculate_risk(
+        evidence,
+        sanctions_flag,
+        mobile,
+        pan
+    )
 
     print("Generating compliance summary...")
     summary = summarize_with_llm(evidence, score, category, breakdown)
@@ -45,8 +51,11 @@ if __name__ == "__main__":
 
     name = "Vijay Mallya"
     place = "India"
+    mobile = "9876543210"
+    pan = "ABCDE1234F"
 
-    report = run_alm_check(name, place)
+    report = run_alm_check(name, place, mobile, pan)
+    print(json.dumps(report, indent=2))
     pdf_path = generate_pdf_report(report)
     print(f"PDF Generated: {pdf_path}")
     print(json.dumps(report, indent=2))

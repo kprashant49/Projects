@@ -7,9 +7,62 @@ import os
 from dedupe import deduplicate_evidence
 
 
-def collect_evidence(name, place):
+def collect_evidence(name, place, mobile=None, pan=None):
+    # ---- Base Query ----
+    base_query = f"{name} {place}"
 
-    query = f"{name} {place} fraud OR scam OR criminal OR default"
+    # ---- Optional Exact Match Fields ----
+    mobile_query = f'"{mobile}"' if mobile else ""
+    pan_query = f'"{pan.upper()}"' if pan else ""
+
+    # ---- Risk Keywords ----
+    risk_keywords = [
+        # Financial Crimes
+        "fraud",
+        "scam",
+        "money laundering",
+        "hawala",
+        "embezzlement",
+        "forgery",
+        "cheating",
+        "ponzi",
+        "misappropriation",
+
+        # Regulatory / Enforcement
+        "criminal",
+        "arrest",
+        "convicted",
+        "charged",
+        "investigation",
+        "enforcement",
+        "ED raid",
+        "CBI case",
+        "income tax raid",
+        "SEBI action",
+        "RBI penalty",
+        "blacklist",
+        "defaulter",
+
+        # Financial Distress
+        "bankrupt",
+        "insolvency",
+        "NPA",
+        "wilful defaulter",
+        "loan default",
+
+        # Terror / National Risk
+        "terror funding",
+        "terror link",
+        "sanctioned",
+        "OFAC",
+        "UN sanction"
+    ]
+
+    risk_terms = " OR ".join(risk_keywords)
+
+    # ---- Final Query ----
+    query_parts = [base_query, mobile_query, pan_query, risk_terms]
+    query = " ".join(part for part in query_parts if part).strip()
 
     evidence = []
 

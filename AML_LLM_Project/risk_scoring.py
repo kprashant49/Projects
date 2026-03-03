@@ -1,4 +1,4 @@
-def calculate_risk(evidence, sanctions_match):
+def calculate_risk(evidence, sanctions_match, mobile=None, pan=None):
 
     score = 0
 
@@ -13,6 +13,31 @@ def calculate_risk(evidence, sanctions_match):
 
     fraud_score = min(fraud_hits * 10, 40)
     score += fraud_score
+
+    # ---- Mobile Exposure ----
+    mobile_hits = 0
+    mobile_score = 0
+
+    if mobile:
+        mobile_hits = sum(
+            1 for item in evidence
+            if mobile in (item.get("snippet") or "")
+        )
+        mobile_score = 15 if mobile_hits > 0 else 0
+        score += mobile_score
+
+    # ---- PAN Exposure ----
+    pan_hits = 0
+    pan_score = 0
+
+    if pan:
+        pan_upper = pan.upper()
+        pan_hits = sum(
+            1 for item in evidence
+            if pan_upper in (item.get("snippet") or "")
+        )
+        pan_score = 20 if pan_hits > 0 else 0
+        score += pan_score
 
     # ---- Sanctions ----
     sanctions_score = 60 if sanctions_match else 0
@@ -46,6 +71,10 @@ def calculate_risk(evidence, sanctions_match):
         "sanctions_score": sanctions_score,
         "pep_hits": pep_hits,
         "pep_score": pep_score,
+        "mobile_hits": mobile_hits,
+        "mobile_score": mobile_score,
+        "pan_hits": pan_hits,
+        "pan_score": pan_score,
         "total_score": score
     }
 
