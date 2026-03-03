@@ -56,9 +56,9 @@ def calculate_risk(evidence, sanctions_match, mobile=None, pan=None):
     score = min(score, 100)
 
     # ---- Risk Category ----
-    if score >= 70:
+    if score >= 50:
         category = "High"
-    elif score >= 40:
+    elif score >= 35:
         category = "Medium"
     else:
         category = "Low"

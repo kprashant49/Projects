@@ -16,47 +16,7 @@ def collect_evidence(name, place, mobile=None, pan=None):
     pan_query = f'"{pan.upper()}"' if pan else ""
 
     # ---- Risk Keywords ----
-    risk_keywords = [
-        # Financial Crimes
-        "fraud",
-        "scam",
-        "money laundering",
-        "hawala",
-        "embezzlement",
-        "forgery",
-        "cheating",
-        "ponzi",
-        "misappropriation",
-
-        # Regulatory / Enforcement
-        "criminal",
-        "arrest",
-        "convicted",
-        "charged",
-        "investigation",
-        "enforcement",
-        "ED raid",
-        "CBI case",
-        "income tax raid",
-        "SEBI action",
-        "RBI penalty",
-        "blacklist",
-        "defaulter",
-
-        # Financial Distress
-        "bankrupt",
-        "insolvency",
-        "NPA",
-        "wilful defaulter",
-        "loan default",
-
-        # Terror / National Risk
-        "terror funding",
-        "terror link",
-        "sanctioned",
-        "OFAC",
-        "UN sanction"
-    ]
+    risk_keywords = ["fraud","scam","criminal","default"]
 
     risk_terms = " OR ".join(risk_keywords)
 

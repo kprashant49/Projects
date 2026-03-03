@@ -49,10 +49,10 @@ def run_alm_check(name, place, mobile=None, pan=None):
 
 if __name__ == "__main__":
 
-    name = "Vijay Mallya"
-    place = "India"
-    mobile = "9876543210"
-    pan = "ABCDE1234F"
+    name = input("Name of Customer: ")
+    place = input("Place of Residence: ")
+    mobile = input("Enter Mobile Number: ")
+    pan = input("Enter Pan number: ")
 
     report = run_alm_check(name, place, mobile, pan)
     print(json.dumps(report, indent=2))
