@@ -56,7 +56,7 @@ def generate_pdf_report(result, logo_path=r"D:\Projects\AML_LLM_Project\PAI_logo
     # Auto filename
     safe_name = result["name"].replace(" ", "_")
     date_str = datetime.now().strftime("%Y-%m-%d")
-    output_path = rf"C:\Users\kpras\Desktop\ALM_{safe_name}_{date_str}.pdf"
+    output_path = rf"C:\Users\kpras\Desktop\AML_{safe_name}_{date_str}.pdf"
 
     doc = SimpleDocTemplate(
         output_path,

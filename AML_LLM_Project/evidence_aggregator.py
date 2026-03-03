@@ -5,7 +5,8 @@ from indian_kanoon import search_indian_kanoon
 from myneta_search import search_myneta
 import os
 from dedupe import deduplicate_evidence
-
+from rapidfuzz import fuzz
+from name_matcher import is_strong_name_match
 
 def collect_evidence(name, place, mobile=None, pan=None):
     # ---- Base Query ----
@@ -17,7 +18,6 @@ def collect_evidence(name, place, mobile=None, pan=None):
 
     # ---- Risk Keywords ----
     risk_keywords = ["fraud","scam","criminal","default"]
-
     risk_terms = " OR ".join(risk_keywords)
 
     # ---- Final Query ----
@@ -39,25 +39,63 @@ def collect_evidence(name, place, mobile=None, pan=None):
     evidence += news_articles
 
     # Indian Kanoon (wrapped safely)
-    try:
-        kanoon_results = search_indian_kanoon(query)
-    except Exception as e:
-        print(f"Indian Kanoon failed: {e}")
-        kanoon_results = []
+    # try:
+    #     kanoon_results = search_indian_kanoon(query)
+    # except Exception as e:
+    #     print(f"Indian Kanoon failed: {e}")
+    #     kanoon_results = []
+
+    kanoon_query = f'"{name}" site:indiankanoon.org'
+    evidence += web_search(kanoon_query)
 
     # Myneta (PEP screening)
-    try:
-        evidence += search_myneta(name)
-    except Exception as e:
-        print("Myneta failed:", e)
+    # try:
+    #     evidence += search_myneta(name)
+    # except Exception as e:
+    #     print("Myneta failed:", e)
+
+    myneta_query = f'"{name}" site:myneta.info'
+    evidence += web_search(myneta_query)
 
     # Normalize structure
-    for item in kanoon_results:
-        evidence.append({
-            "source": item.get("source"),
-            "title": item.get("title"),
-            "link": item.get("link"),
-            "snippet": "Legal case reference from Indian Kanoon"
-        })
+    # for item in kanoon_results:
+    #     evidence.append({
+    #         "source": item.get("source"),
+    #         "title": item.get("title"),
+    #         "link": item.get("link"),
+    #         "snippet": "Legal case reference from Indian Kanoon"
+    #     })
 
-    return deduplicate_evidence(evidence)
+    print(evidence)
+
+    for item in evidence:
+        if "myneta" in (item.get("source") or "").lower():
+            print("Myneta Found:", item["title"])
+
+    unique = deduplicate_evidence(evidence)
+    filtered = filter_evidence_by_name(unique, name)
+
+    print("Total before filter:", len(unique))
+    print("Total after filter:", len(filtered))
+
+    return filtered
+
+
+def filter_evidence_by_name(evidence, name, place=None):
+    filtered = []
+
+    for item in evidence:
+        title = item.get("title", "")
+        snippet = (item.get("snippet") or "").lower()
+
+        if is_strong_name_match(name, title):
+
+            if place:
+                if place.lower() in snippet:
+                    filtered.append(item)
+                else:
+                    continue
+            else:
+                filtered.append(item)
+
+    return filtered

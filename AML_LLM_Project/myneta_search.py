@@ -6,6 +6,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from rapidfuzz import fuzz
 
 
 def search_myneta(name):
@@ -33,13 +34,20 @@ def search_myneta(name):
 
         results = []
 
+        input_name = name.lower().strip()
+
         for link in links:
-            results.append({
-                "source": "Myneta",
-                "title": link.text,
-                "link": link.get_attribute("href"),
-                "snippet": "Political exposure record found in Myneta"
-            })
+            result_name = link.text.strip().lower()
+
+            similarity = fuzz.token_sort_ratio(input_name, result_name)
+
+            if similarity >= 90:
+                results.append({
+                    "source": "Myneta",
+                    "title": link.text,
+                    "link": link.get_attribute("href"),
+                    "snippet": "Political exposure record found in Myneta"
+                })
 
         return results
 
