@@ -54,10 +54,11 @@ def run_gemini_fraud_check(customer_name: str, place: str, mobile: str, comapny:
     prompt = f"""
             You are a financial crime risk analyst.
 
-            Perform adverse media and fraud risk websearch which inculde keywords like: 
+            Perform adverse media and fraud risk websearch which include keywords like: 
             FIR lodged, Tax Evasion, GST suo moto, Misappropriation of funds, Fraud, Scam, Chit fund, Criminal, Anti money laundering, Civil Suit,
             Default, Phone risk on various sites like Crime check, My Neta, eCourts, News and Indian Kanoon.
-            Additonally, also scan Social Media sites Facebook, Instagram, LinkedIn, Naukri.com for any Adverse media findings and Political link in Instagram
+            Check if the Name, Identifier/Company_Name appears in any prominent News Channels like ANI, Times of India, The Indian Express, Aaj Tak, and NDTV etc.
+            Additionally, also scan Social Media sites Facebook, Instagram, LinkedIn, Youtube and Naukri.com for any Adverse media findings and Political link in Instagram
             Also, check if the name appears in United Nations Sanction List.
             for:
 
