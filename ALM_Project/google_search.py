@@ -1,12 +1,15 @@
+"""
+google_search.py — Web search via SerpAPI (Google engine).
+"""
+
 from serpapi_search import serpapi_search
 
-def web_search(query):
-    results = serpapi_search(query, engine="google", num=5)
 
-    output = []
+def web_search(query: str) -> list[dict]:
+    results = serpapi_search(query, engine="google")
+    output  = []
 
     for item in results.get("organic_results", []):
-
         source_field = item.get("source")
 
         if isinstance(source_field, dict):
@@ -17,10 +20,10 @@ def web_search(query):
             source_value = ""
 
         output.append({
-            "source": source_value,
-            "title": item.get("title"),
-            "link": item.get("link"),
-            "snippet": item.get("snippet") or ""
+            "source":  source_value,
+            "title":   item.get("title", ""),
+            "link":    item.get("link", ""),
+            "snippet": item.get("snippet") or "",
         })
 
     return output
