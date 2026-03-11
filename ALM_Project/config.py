@@ -89,6 +89,6 @@ RISK_KEYWORDS = [
     "false statement", "misrepresent", "money laundering",
 ]
 
-MAX_EVIDENCE_FOR_LLM    = 10   # number of evidence items sent to Azure OpenAI
-MAX_EVIDENCE_IN_REPORT  = 20   # number of evidence items printed in PDF
-SEARCH_RESULTS_PER_QUERY = 5   # organic results fetched from SerpAPI per query
+MAX_EVIDENCE_FOR_LLM    = 100   # number of evidence items sent to Azure OpenAI
+MAX_EVIDENCE_IN_REPORT  = 100   # number of evidence items printed in PDF
+SEARCH_RESULTS_PER_QUERY = 20   # organic results fetched from SerpAPI per query
