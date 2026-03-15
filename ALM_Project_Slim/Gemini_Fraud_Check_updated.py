@@ -28,7 +28,7 @@ from reportlab.platypus import (SimpleDocTemplate, Paragraph, Spacer, Table, Tab
 # Configuration  ← Edit these values for your environment
 # =========================================================
 GEMINI_MODEL    = "gemini-2.5-flash"                    # Model to use
-LOGO_PATH       = r"D:\Projects\ALM_Project_Slim\PAI_logo_inline.png"   # Abs path to logo PNG/JPG, or "" to skip
+LOGO_PATH       = "PAI_logo_inline.png"                 # Abs path to logo PNG/JPG, or "" to skip
 OUTPUT_DIR      = str(Path.home() / "Fraud_check_reports")  # Output folder (auto-created)
 OUTPUT_FILENAME = "Fraud_Check_Report"                   # Base filename (customer name is appended)
 

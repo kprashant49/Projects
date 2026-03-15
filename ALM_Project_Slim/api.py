@@ -44,7 +44,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 # Configuration  ← Edit these values for your environment
 # =========================================================
 GEMINI_MODEL = "gemini-2.5-flash"
-LOGO_PATH    = r"D:\Projects\ALM_Project_Slim\PAI_logo_inline.png"  # "" to skip
+LOGO_PATH    = "PAI_logo_inline.png"  # "" to skip
 
 
 # =========================================================
