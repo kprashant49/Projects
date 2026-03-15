@@ -60,6 +60,7 @@ SCORE BREAKDOWN:
 Write a concise, professional compliance summary (200–300 words) suitable for
 inclusion in a regulatory filing. Cite specific evidence where relevant.
 Do not invent facts not present in the evidence list.
+Do not include a heading or title like "Compliance Summary" — begin directly with the narrative text.
 """
 
     for attempt in range(1, _MAX_RETRIES + 1):

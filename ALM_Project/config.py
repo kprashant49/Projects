@@ -41,7 +41,7 @@ USE_SELENIUM_MYNETA        = False
 # ---------------------------------------------------------------------------
 # Report Assets
 # ---------------------------------------------------------------------------
-LOGO_PATH = ASSETS_DIR / r"D:\Projects\ALM_Project_Refactored\PAI_logo_inline.png"
+LOGO_PATH = ASSETS_DIR / r"D:\Projects\ALM_Project\PAI_logo_inline.png"
 
 # ---------------------------------------------------------------------------
 # Risk Scoring Weights
