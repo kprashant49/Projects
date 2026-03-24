@@ -191,7 +191,7 @@ def generate_pdf(data: dict, file_path: str, logo_path: str = "") -> None:
 
         canv.setFont("Helvetica-Bold", 16)
         canv.setFillColor(colors.HexColor("#0F172A"))
-        canv.drawString(left_x, hdr_y, "Web Fraud Check Report  ✦ Powered by Gemini AI")
+        canv.drawString(left_x, hdr_y, "Web Fraud Check Report by ✦GeminiAI")
 
         canv.setFont("Helvetica", 9.5)
         canv.setFillColor(colors.HexColor("#475569"))
