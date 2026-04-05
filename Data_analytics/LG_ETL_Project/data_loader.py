@@ -160,8 +160,7 @@ def load_data(client_id, from_date, to_date, curr_date):
     df_d = pd.read_sql(query_d, conn)
     df_e = pd.read_sql(query_e, conn)
     df_g = pd.read_sql(query_g, conn)
-    df_g_ext = df_g
 
     conn.close()
 
-    return df_a, df_b, df_c, df_d, df_e, df_f, df_g, df_g_ext
+    return df_a, df_b, df_c, df_d, df_e, df_f, df_g

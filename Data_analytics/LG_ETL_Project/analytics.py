@@ -237,40 +237,73 @@ def transform_df_f(df):
 
 def transform_df_g(df):
     """
-    Transform g data
+    Transform g data with Unique Application count
     """
     df = df.copy()
 
+    # Clean trigger text
     df["Final_Trigger"] = (df["Final_Trigger"]
-        .str.replace(r"\{.*?\}", "", regex=True)  # remove {anything}
-        .str.replace(r"\s{2,}", " ", regex=True)  # collapse extra spaces
+        .str.replace(r"\{.*?\}", "", regex=True)
+        .str.replace(r"\s{2,}", " ", regex=True)
         .str.strip())
+
+    # Remove unwanted RuleIDs
     df = df[~df["RuleID"].isin([817, 679])]
 
-    agg = (df.groupby(["Final_Severity", "RuleID", "Final_Trigger"])
-        .size()
-        .reset_index(name="Count of Trigger"))
+    # ==============================
+    # Aggregations
+    # ==============================
 
-    top10 = (agg.sort_values(["Final_Severity", "Count of Trigger"],
-            ascending=[True, False]
-        ).groupby("Final_Severity").head(10))
+    # 1. Total trigger count (existing)
+    agg_count = (df.groupby(["Final_Severity", "RuleID", "Final_Trigger"])
+                   .size()
+                   .reset_index(name="Count of Trigger"))
 
+    # 2. Unique applications count
+    agg_unique = (df.groupby(["Final_Severity", "RuleID"])["APN"]
+                    .nunique()
+                    .reset_index(name="Unique Applications"))
+
+    # Merge both
+    agg = agg_count.merge(
+        agg_unique,
+        on=["Final_Severity", "RuleID"],
+        how="left"
+    )
+
+    # ==============================
+    # Top 10 per severity
+    # ==============================
+    top10 = (agg.sort_values(
+                ["Final_Severity", "Count of Trigger"],
+                ascending=[True, False]
+            )
+            .groupby("Final_Severity")
+            .head(10)
+    )
+
+    # ==============================
+    # Format final output
+    # ==============================
     final_rows = []
 
     for severity, group in top10.groupby("Final_Severity", sort=False):
-        # Severity header row
+
+        # Header row
         final_rows.append({
             "RuleID": "",
             "Final_Trigger": severity,
-            "Count of Trigger": ""
+            "Count of Trigger": "",
+            "Unique Applications": ""
         })
 
-        # Actual trigger rows
+        # Data rows
         for _, row in group.iterrows():
             final_rows.append({
                 "RuleID": row["RuleID"],
                 "Final_Trigger": row["Final_Trigger"],
-                "Count of Trigger": row["Count of Trigger"]
+                "Count of Trigger": row["Count of Trigger"],
+                "Unique Applications": row["Unique Applications"]
             })
 
     final_df = pd.DataFrame(final_rows)
