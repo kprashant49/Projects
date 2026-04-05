@@ -132,13 +132,13 @@ def load_data(client_id, from_date, to_date, curr_date):
     # QUERY G
     # =========================
     query_g = f"""
-    Select RS2.RuleID, [Trigger] AS [Final_Trigger], 
+    Select [APN], RS2.RuleID, [Trigger] AS [Final_Trigger], 
     Case when RS2.RuleSeverity IS NULL and MAS.IsHighRiskRule = 1 then 'High'
     when RS2.RuleSeverity IS NULL and MAS.IsHighRiskRule = 0 then 'Low'
     when RS2.RuleSeverity IS NULL and MAS.IsHighRiskRule IS NULL then 'Low'
     else RS2.RuleSeverity
     end [Final_Severity]
-    from (Select RS.RuleID,RS.[Trigger],SEV.RuleSeverity from (SELECT rm1.RuleID [RuleID], rm2.Message AS [Trigger]
+    from (Select [APN], RS.RuleID,RS.[Trigger],SEV.RuleSeverity from (SELECT apn.ApplicationNo [Apn], rm1.RuleID [RuleID], rm2.Message AS [Trigger]
     FROM DocumentRuleMessages drm
     JOIN DocumentValidatingMessages dvm ON drm.DocValMessageId = dvm.DocValMessageId
     JOIN Applications apn ON dvm.ApplicationId = apn.ApplicationId
@@ -151,7 +151,7 @@ def load_data(client_id, from_date, to_date, curr_date):
     join RSevWtCatConfigDetails B on A.RuleID = B.RuleID 
     join RSevWtCatConfig C on B.RsevWtCatConfigId = C.RSevWtCatConfigID
     join RuleSeverity D on B.RuleSeverId = D.RuleSeverId
-    where C.clientID = 35) SEV on RS.RuleID = SEV.RuleId) RS2 
+    where C.clientID = {client_id}) SEV on RS.RuleID = SEV.RuleId) RS2 
     left join RuleMaster MAS on RS2.RuleID = MAS.RuleId
     """
 
@@ -160,7 +160,8 @@ def load_data(client_id, from_date, to_date, curr_date):
     df_d = pd.read_sql(query_d, conn)
     df_e = pd.read_sql(query_e, conn)
     df_g = pd.read_sql(query_g, conn)
+    df_g_ext = df_g
 
     conn.close()
 
-    return df_a, df_b, df_c, df_d, df_e, df_f, df_g
+    return df_a, df_b, df_c, df_d, df_e, df_f, df_g, df_g_ext

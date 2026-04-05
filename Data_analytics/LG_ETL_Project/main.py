@@ -46,7 +46,7 @@ def main():
 
         try:
             # -------- Data load --------
-            df_a, df_b, df_c, df_d, df_e, df_f, df_g = load_data(
+            df_a, df_b, df_c, df_d, df_e, df_f, df_g, df_g_ext = load_data(
                 client_id=client_id,
                 from_date=from_date,
                 to_date=to_date,
