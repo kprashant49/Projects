@@ -1,6 +1,8 @@
 import pyodbc
 import json
 import os
+import pandas as pd
+import xlsxwriter
 
 # Load config
 with open("config.json", "r", encoding="utf-8") as f:
@@ -47,3 +49,113 @@ print(f"JSON saved at: {OUTPUT_PATH}")
 
 cursor.close()
 conn.close()
+
+JSON_PATH = r"C:\Users\kpras\Desktop\Output.json"
+
+API_MAPPING = {
+    "PanProAPI": {
+        "RequestKey": "PanProData",
+        "ResponseKey": "panProDTO"
+    },
+    "BankAPI": {
+        "RequestKey": "Bankdata",
+        "ResponseKey": "bankDTO"
+    },
+    "GSTAPI": {
+        "RequestKey": "GSTData",
+        "ResponseKey": "gSTDTO"
+    },
+    "DrivingLicenceAPI": {
+        "RequestKey": "DLdata",
+        "ResponseKey": "drivingLicenseDTO"
+    },
+    "PanAPI": {
+        "RequestKey": "Pandata",
+        "ResponseKey": "panCardDTO"
+    },
+    "ElectricityBillAPI": {
+        "RequestKey": "MSEBdata",
+        "ResponseKey": "electricityBillDTO"
+    },
+    "VehicleRCAPI": {
+        "RequestKey": "RCData",
+        "ResponseKey": "vehicleRCDTO"
+    },
+    "VoterIdAPI": {
+        "RequestKey": "VoterData",
+        "ResponseKey": "voterCardDTO"
+    },
+    "EmploymentCheckAPIInternal": {
+        "RequestKey": "EmploymentCheckData",
+        "ResponseKey": "employmentCheckDTO"
+    },
+    "AadharAPI": {
+        "RequestKey": "AadharData",
+        "ResponseKey": "aadharCardDTO"
+    },
+    "CAMembershipVerificationAPI": {
+        "RequestKey": "CAMembershipVerificationData",
+        "ResponseKey": "caMembershipDTO"
+    },
+    "UdyamAadharAPI": {
+        "RequestKey": "UdyamAadharData",
+        "ResponseKey": "udyamAadharDTO"
+    },
+    "ShopActAPI": {
+        "RequestKey": "ShopActData",
+        "ResponseKey": "shopActDTO"
+    },
+    "EmploymentCheckWithMobileNumberAPI": {
+        "RequestKey": "EmpCheckWithMobileNumData",
+        "ResponseKey": "empCheckWithMobileNumberDTO"
+    },
+    "MobileLookupAPI": {
+        "RequestKey": "MobileLookupData",
+        "ResponseKey": "mobileLookupDTO"
+    },
+    "VehicleRCAdvanceAPI": {
+        "RequestKey": "RCAdvanceData",
+        "ResponseKey": "vehicleRCAdvanceDTO"
+    },
+}
+
+df = pd.read_json(JSON_PATH)
+
+# PARSE JSON STRINGS
+df["APIRequest_dict"] = df["APIRequest"].apply(lambda x: json.loads(x) if pd.notna(x) else {})
+
+df["APIResponse_dict"] = df["APIResponse"].apply(lambda x: json.loads(x) if pd.notna(x) else {})
+
+# DYNAMIC EXTRACTION
+def extract_req_res(row):
+    api = row["APIName"]
+
+    if api not in API_MAPPING:
+        return pd.Series([None, None])
+
+    req_key = API_MAPPING[api]["RequestKey"]
+    res_key = API_MAPPING[api]["ResponseKey"]
+
+    request_obj = row["APIRequest_dict"].get(req_key)
+    response_obj = row["APIResponse_dict"].get(res_key)
+
+    return pd.Series([request_obj, response_obj])
+
+df[["Request", "Response"]] = df.apply(
+    extract_req_res, axis=1
+)
+
+# FINAL OUTPUT
+df_final = df[["CaseId","LgId","MarkCompleteDateTime","ReportDateTime","CaseStatus","APIName","Request","Response"]]
+df_final = df_final[~df_final["Response"].astype(str).str.contains(r"'ResponseCode':\s*'108'", na=False)]
+
+# EXPORT TO EXCEL
+OUTPUT_EXCEL_PATH = r"C:\Users\kpras\Desktop\API_Extracted_Output.xlsx"
+df_final.to_excel(r"C:\Users\kpras\Desktop\API_Extracted_Output.xlsx",index=False,engine="xlsxwriter")
+
+if os.path.exists(JSON_PATH):
+    os.remove(JSON_PATH)
+else:
+    print("File does not exist")
+
+print(f"Excel file created at: {OUTPUT_EXCEL_PATH}")
